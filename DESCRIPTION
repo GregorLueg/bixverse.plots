@@ -1,0 +1,25 @@
+Package: bixverse.plots
+Title: Plotting functions for bixverse
+Version: 0.0.0.9
+Authors@R: 
+    c(
+      person(
+        given = "Gregor", 
+        family = "Lueg", 
+        email = "gregorlueg@me.com", 
+        role = c("aut", "cre")
+      ),
+      person(
+        given = "Liesbeth", 
+        family = "Francois",
+        email = "francois.liesbeth@gmail.com", 
+        role = c("ctb")
+      )
+    )
+Description: 
+    This package contains various plotting helpers for the core functions of
+    the bixverse package.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
