@@ -10,7 +10,8 @@ plot_gsea_enrichment(
   pathways_of_interest,
   gsea_results = NULL,
   gsea_param = 1,
-  tick_size = 0.2
+  tick_size = 0.2,
+  text_size = 5
 )
 }
 \arguments{
@@ -29,6 +30,9 @@ added to the plot.}
 \item{gsea_param}{Numeric. Defaults to \code{1}.}
 
 \item{tick_size}{Numeric. The tick size. Defaults ot \code{0.2}.}
+
+\item{text_size}{Numeric. The text size. Defaults ot \code{8}. Only relevant when
+\code{gsea_results} is provided.}
 }
 \description{
 Helper function to create the classical GSEA plots for a set of pathways

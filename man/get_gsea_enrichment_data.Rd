@@ -21,6 +21,10 @@ this pathway.}
 \item{pathways_of_interest}{String vector. Names of the pathways to plot.
 These strings need to be represented in the names of pathways.}
 
+\item{gsea_results}{Optional data.table with the bixverse GSEA results. If
+provided, the FDR and NES for the given pathway of interest will be also
+added to the plot.}
+
 \item{gsea_param}{Numeric. Defaults to \code{1}}
 }
 \value{
