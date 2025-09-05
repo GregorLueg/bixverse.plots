@@ -109,3 +109,32 @@ expect_true(
   current = all(sprintf("%s.pdf", names(plot_list)) %in% list.files(dir_path)),
   info = paste("saving from plot list to PDF")
 )
+
+### complex heatmaps -----------------------------------------------------------
+
+if (requireNamespace("ComplexHeatmap", quietly = TRUE)) {
+  random_matrix_data <- matrix(data = rnorm(100), nrow = 10)
+  heatmap <- ComplexHeatmap::Heatmap(random_matrix_data)
+
+  suppressMessages(save_plot(
+    plot = heatmap,
+    path = dir_path,
+    plot_params = params_plots(file_type = ".pdf")
+  ))
+
+  suppressMessages(save_plot(
+    plot = heatmap,
+    path = dir_path,
+    plot_params = params_plots(file_type = ".png")
+  ))
+
+  expect_true(
+    current = "heatmap.png" %in% list.files(dir_path),
+    info = paste("saving ComplexHeatmap to unnamed PNG")
+  )
+
+  expect_true(
+    current = "heatmap.pdf" %in% list.files(dir_path),
+    info = paste("saving ComplexHeatmap to unnamed PDF")
+  )
+}
