@@ -62,8 +62,8 @@ save_plot <- function(
   } else {
     switch(
       plot_params$file_type,
-      pdf = save_pdf(plot = plot, f_path = f_path, plot_params = plot_params),
-      png = save_png(plot = plot, f_path = f_path, plot_params = plot_params)
+      .pdf = save_pdf(plot = plot, f_path = f_path, plot_params = plot_params),
+      .png = save_png(plot = plot, f_path = f_path, plot_params = plot_params)
     )
   }
 
