@@ -72,7 +72,7 @@ expect_true(current = "ggplot" %in% class(p), info = "dotplot - single version")
 
 ### list case ------------------------------------------------------------------
 
-oae_res <- bixverse::gse_hypergeometric_list(
+oae_res_ls <- bixverse::gse_hypergeometric_list(
   target_genes = target_genes_ls,
   gene_set_list = all_pathways,
   threshold = 0.99,
@@ -80,11 +80,11 @@ oae_res <- bixverse::gse_hypergeometric_list(
 )
 
 expect_message(
-  current = plot_gse_dotplot(res = oae_res),
+  current = plot_gse_dotplot(res = oae_res_ls),
   info = paste("list version - correct message")
 )
 
-p <- plot_gse_dotplot(res = oae_res, .verbose = FALSE)
+p <- plot_gse_dotplot(res = oae_res_ls, .verbose = FALSE)
 
 expect_true(
   class(p) == "list",
@@ -103,3 +103,37 @@ expect_true(
   )),
   info = paste("list version - every element is a ggplot object")
 )
+
+## enrichment map version ------------------------------------------------------
+
+enrichr_map_pathways <- list(
+  "pathway_a" = letters[1:3],
+  "pathway_b" = letters[1:4],
+  "pathway_c" = letters[2:7],
+  "pathway_d" = letters[3:7],
+  "pathway_e" = letters[20:26],
+  "pathway_f" = letters[18:23],
+  "pathway_g" = letters[22:24]
+)
+
+enrichr_target_genes <- c(letters[2:5], letters[16], letters[21:25])
+
+enrichr_result <- bixverse::gse_hypergeometric(
+  target_genes = enrichr_target_genes,
+  gene_set_list = enrichr_map_pathways,
+  threshold = 0.99,
+  minimum_overlap = 1L
+)
+
+
+res = enrichr_result
+pathways = enrichr_map_pathways
+overlap_coefficient = FALSE
+min_similarity = 0.2
+
+enriched_gs <- res[["gene_set_name"]]
+
+edges <- data.table::setDT(bixverse::rs_set_similarity_list(
+  list = pathways[enriched_gs],
+  overlap_coefficient = overlap_coefficient
+))[sim >= min_similarity]
