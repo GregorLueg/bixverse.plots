@@ -1,6 +1,6 @@
 Package: bixverse.plots
 Title: Plotting functions for bixverse
-Version: 0.0.0.9
+Version: 0.0.1.0
 Authors@R: 
     c(
       person(
@@ -8,12 +8,6 @@ Authors@R:
         family = "Lueg", 
         email = "gregorlueg@me.com", 
         role = c("aut", "cre")
-      ),
-      person(
-        given = "Liesbeth", 
-        family = "Francois",
-        email = "francois.liesbeth@gmail.com", 
-        role = c("ctb")
       )
     )
 Description: 
@@ -22,4 +16,24 @@ Description:
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
+Imports:
+    bixverse (>= 0.0.2.1),
+    checkmate,
+    data.table,
+    ggplot2,
+    ggraph,
+    igraph,
+    magrittr,
+    purrr,
+    scales,
+    stringr,
+    visNetwork,
+    zeallot
+Suggests: 
+    ComplexHeatmap,
+    pheatmap,
+    UpSetR,
+    tinytest
+Remotes: 
+    GregorLueg/bixverse
