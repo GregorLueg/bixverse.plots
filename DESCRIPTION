@@ -22,8 +22,11 @@ Imports:
     checkmate,
     data.table,
     ggplot2,
+    ggraph,
     magrittr,
     purrr,
+    stringr,
+    visNetwork,
     zeallot
 Suggests: 
     ComplexHeatmap,

@@ -106,6 +106,8 @@ expect_true(
 
 ## enrichment map version ------------------------------------------------------
 
+library(magrittr)
+
 enrichr_map_pathways <- list(
   "pathway_a" = letters[1:3],
   "pathway_b" = letters[1:4],
@@ -125,15 +127,111 @@ enrichr_result <- bixverse::gse_hypergeometric(
   minimum_overlap = 1L
 )
 
+devtools::load_all()
 
-res = enrichr_result
-pathways = enrichr_map_pathways
-overlap_coefficient = FALSE
-min_similarity = 0.2
+g <- enrichment_map_oae(
+  res = enrichr_result,
+  threshold = 1.0,
+  pathways = enrichr_map_pathways
+)
 
-enriched_gs <- res[["gene_set_name"]]
+plot(x)
 
-edges <- data.table::setDT(bixverse::rs_set_similarity_list(
-  list = pathways[enriched_gs],
-  overlap_coefficient = overlap_coefficient
-))[sim >= min_similarity]
+
+igraph::V(g)$community
+igraph::V(g)$size
+
+plot_enrichment_map_ggraph <- function(g) {
+  ggraph::ggraph(g, layout = g$layout) +
+    ggraph::geom_edge_link(
+      aes(width = weight),
+      edge_colour = "grey70",
+      alpha = 0.6
+    ) +
+    ggraph::geom_node_point(
+      aes(size = size, fill = factor(community)),
+      shape = 21,
+      colour = "black",
+      stroke = 0.5
+    ) +
+    ggraph::geom_node_text(
+      aes(label = name),
+      repel = TRUE,
+      size = 3
+    ) +
+    ggraph::scale_edge_width(range = c(0.3, 2)) +
+    ggplot2::scale_size(range = c(3, 8)) +
+    ggplot2::scale_fill_viridis_d(guide = "none") +
+    ggplot2::theme_void() +
+    ggplot2::theme(plot.margin = ggplot2::margin(10, 10, 10, 10))
+}
+
+plot_enrichment_map_visnetwork <- function(g) {
+  layout_coords <- g$layout
+  community_colours <- viridis::viridis(length(unique(igraph::V(g)$community)))
+
+  nodes <- igraph::as_data_frame(g, what = "vertices") %>%
+    data.table::as.data.table() %>%
+    .[, `:=`(
+      id = name,
+      label = name,
+      value = size,
+      color = community_colours[community],
+      title = paste0(name, "\n(Size: ", round(size, 2), ")")
+    )] %>%
+    .[, .(id, label, value, color, title)]
+
+  edges <- igraph::as_data_frame(g, what = "edges") %>%
+    data.table::as.data.table() %>%
+    .[, `:=`(
+      title = paste0("Similarity: ", round(weight, 3))
+    )] %>%
+    .[, .(from, to, value = weight, title)]
+
+  visNetwork::visNetwork(nodes, edges) %>%
+    visNetwork::visIgraphLayout(
+      layout = 'layout.norm',
+      layoutMatrix = layout_coords
+    ) %>%
+    visNetwork::visOptions(
+      highlightNearest = TRUE,
+      nodesIdSelection = TRUE
+    )
+}
+
+
+plot_enrichment_map_ggraph(x)
+
+plot_enrichment_map_visnetwork(x)
+
+g <- x
+
+
+layout_coords <- g$layout
+community_colours <- viridis::viridis(length(unique(igraph::V(g)$community)))
+
+nodes <- igraph::as_data_frame(g, what = "vertices") %>%
+  data.table::as.data.table() %>%
+  .[, `:=`(
+    id = name,
+    label = name,
+    value = size,
+    x = layout_coords[, 1],
+    y = layout_coords[, 2],
+    color = community_colours[community],
+    title = paste0(name, "\n(Size: ", round(size, 2), ")")
+  )] %>%
+  .[, .(id, label, value, x, y, color, title)]
+
+edges <- igraph::as_data_frame(g, what = "edges") %>%
+  data.table::as.data.table() %>%
+  .[, `:=`(
+    title = paste0("Similarity: ", round(weight, 3))
+  )] %>%
+  .[, .(from, to, value = weight, title)]
+
+visNetwork::visNetwork(nodes, edges) %>%
+  visNetwork::visOptions(
+    highlightNearest = TRUE,
+    nodesIdSelection = TRUE
+  )
