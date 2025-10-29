@@ -23,6 +23,8 @@ dots in the plot.}
 \code{\link[ggplot2:scale_viridis]{ggplot2::scale_fill_viridis_c()}}.}
 
 \item{direction}{\code{1} or \code{-1}. The direction in the colour palette.}
+
+\item{.verbose}{Boolean. Controls verbosity of the function.}
 }
 \value{
 If the output of \code{\link[bixverse:gse_hypergeometric_list]{bixverse::gse_hypergeometric_list()}} was provided,

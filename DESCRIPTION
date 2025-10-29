@@ -23,8 +23,10 @@ Imports:
     data.table,
     ggplot2,
     ggraph,
+    igraph,
     magrittr,
     purrr,
+    scales,
     stringr,
     visNetwork,
     zeallot

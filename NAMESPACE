@@ -2,10 +2,13 @@
 
 export(enrichment_map_oae)
 export(params_plots)
+export(plot_enrichment_map_ggraph)
+export(plot_enrichment_map_visnetwork)
 export(plot_gse_dotplot)
 export(plot_gsea_enrichment)
 export(save_plot)
 export(save_plot_ls)
 import(data.table)
 import(ggplot2)
+importFrom(magrittr,`%>%`)
 importFrom(zeallot,`%<-%`)

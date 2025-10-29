@@ -10,7 +10,9 @@ enrichment_map_oae(
   pathways,
   overlap_coefficient = FALSE,
   min_sim = 0.2,
-  layout_func = igraph::layout_with_fr()
+  resolution = 1,
+  layout_func = igraph::layout_with_fr,
+  ...
 )
 }
 \arguments{
@@ -28,8 +30,14 @@ instead of the Jaccard similarity.}
 \item{min_sim}{Numeric. Minimum similarity between two gene sets to be
 connected.}
 
-\item{layout_func}{Layout function. Please check \code{\link[igraph:add_layout_]{igraph::add_layout_()}}
-for options.}
+\item{resolution}{Numeric. The resolution parameter for the Louvain
+clustering.}
+
+\item{layout_func}{Layout function. Please see \code{\link[igraph:add_layout_]{igraph::add_layout_()}}
+for options. This one will be used to layout the graph.}
+
+\item{...}{Further parameters to forward to
+\code{\link[=wrap_and_truncate]{wrap_and_truncate()}}.}
 }
 \value{
 \code{igraph} object representing the enrichment map.

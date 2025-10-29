@@ -106,7 +106,7 @@ expect_true(
 
 ## enrichment map version ------------------------------------------------------
 
-library(magrittr)
+### igraph part ----------------------------------------------------------------
 
 enrichr_map_pathways <- list(
   "pathway_a" = letters[1:3],
@@ -127,111 +127,95 @@ enrichr_result <- bixverse::gse_hypergeometric(
   minimum_overlap = 1L
 )
 
-devtools::load_all()
-
-g <- enrichment_map_oae(
+enrichment_map_igraph <- enrichment_map_oae(
   res = enrichr_result,
   threshold = 1.0,
   pathways = enrichr_map_pathways
 )
 
-plot(x)
+expect_true(
+  checkmate::checkClass(enrichment_map_igraph, "igraph"),
+  info = "enrichment map is an igraph"
+)
+expect_true(
+  igraph::vcount(enrichment_map_igraph) > 0,
+  info = "graph has vertices"
+)
+expect_true(
+  igraph::ecount(enrichment_map_igraph) > 0,
+  info = "graph has edges"
+)
+expect_true(
+  all(
+    c("size", "community", "label", "neg_log10_fdr") %in%
+      igraph::vertex_attr_names(enrichment_map_igraph)
+  ),
+  info = "graph has required vertex attributes"
+)
 
 
-igraph::V(g)$community
-igraph::V(g)$size
+### ggraph ---------------------------------------------------------------------
 
-plot_enrichment_map_ggraph <- function(g) {
-  ggraph::ggraph(g, layout = g$layout) +
-    ggraph::geom_edge_link(
-      aes(width = weight),
-      edge_colour = "grey70",
-      alpha = 0.6
-    ) +
-    ggraph::geom_node_point(
-      aes(size = size, fill = factor(community)),
-      shape = 21,
-      colour = "black",
-      stroke = 0.5
-    ) +
-    ggraph::geom_node_text(
-      aes(label = name),
-      repel = TRUE,
-      size = 3
-    ) +
-    ggraph::scale_edge_width(range = c(0.3, 2)) +
-    ggplot2::scale_size(range = c(3, 8)) +
-    ggplot2::scale_fill_viridis_d(guide = "none") +
-    ggplot2::theme_void() +
-    ggplot2::theme(plot.margin = ggplot2::margin(10, 10, 10, 10))
-}
+enrichment_map_ggraph <- plot_enrichment_map_ggraph(
+  enrichment_map_igraph,
+  label_nodes = "all"
+)
 
-plot_enrichment_map_visnetwork <- function(g) {
-  layout_coords <- g$layout
-  community_colours <- viridis::viridis(length(unique(igraph::V(g)$community)))
-
-  nodes <- igraph::as_data_frame(g, what = "vertices") %>%
-    data.table::as.data.table() %>%
-    .[, `:=`(
-      id = name,
-      label = name,
-      value = size,
-      color = community_colours[community],
-      title = paste0(name, "\n(Size: ", round(size, 2), ")")
-    )] %>%
-    .[, .(id, label, value, color, title)]
-
-  edges <- igraph::as_data_frame(g, what = "edges") %>%
-    data.table::as.data.table() %>%
-    .[, `:=`(
-      title = paste0("Similarity: ", round(weight, 3))
-    )] %>%
-    .[, .(from, to, value = weight, title)]
-
-  visNetwork::visNetwork(nodes, edges) %>%
-    visNetwork::visIgraphLayout(
-      layout = 'layout.norm',
-      layoutMatrix = layout_coords
-    ) %>%
-    visNetwork::visOptions(
-      highlightNearest = TRUE,
-      nodesIdSelection = TRUE
-    )
-}
+expect_true(
+  checkmate::checkClass(enrichment_map_ggraph, c("ggraph", "ggplot")),
+  info = "correct plot classes returned"
+)
+expect_equal(
+  length(enrichment_map_ggraph$layers),
+  3L,
+  info = "plot has expected number of layers"
+)
+expect_true(
+  "GeomEdgePath" %in%
+    sapply(enrichment_map_ggraph$layers, function(x) class(x$geom)[1]),
+  info = "plot contains edge layer"
+)
+expect_true(
+  "GeomPoint" %in%
+    sapply(enrichment_map_ggraph$layers, function(x) class(x$geom)[1]),
+  info = "plot contains node layer"
+)
 
 
-plot_enrichment_map_ggraph(x)
+# Test adaptive labelling
+enrichment_map_adaptive <- plot_enrichment_map_ggraph(
+  enrichment_map_igraph,
+  label_nodes = "adaptive"
+)
+n_labels <- sum(!is.na(enrichment_map_adaptive$data$label))
+expect_true(
+  n_labels < igraph::vcount(enrichment_map_igraph),
+  info = "adaptive labelling reduces number of labels"
+)
 
-plot_enrichment_map_visnetwork(x)
+# Test NULL labelling
+enrichment_map_no_labels <- plot_enrichment_map_ggraph(
+  enrichment_map_igraph,
+  label_nodes = NULL
+)
+expect_true(
+  all(is.na(enrichment_map_no_labels$data$label)),
+  info = "NULL removes all labels"
+)
 
-g <- x
+### visnetwork -----------------------------------------------------------------
 
+enrichment_map_vis <- plot_enrichment_map_visnetwork(enrichment_map_igraph)
 
-layout_coords <- g$layout
-community_colours <- viridis::viridis(length(unique(igraph::V(g)$community)))
-
-nodes <- igraph::as_data_frame(g, what = "vertices") %>%
-  data.table::as.data.table() %>%
-  .[, `:=`(
-    id = name,
-    label = name,
-    value = size,
-    x = layout_coords[, 1],
-    y = layout_coords[, 2],
-    color = community_colours[community],
-    title = paste0(name, "\n(Size: ", round(size, 2), ")")
-  )] %>%
-  .[, .(id, label, value, x, y, color, title)]
-
-edges <- igraph::as_data_frame(g, what = "edges") %>%
-  data.table::as.data.table() %>%
-  .[, `:=`(
-    title = paste0("Similarity: ", round(weight, 3))
-  )] %>%
-  .[, .(from, to, value = weight, title)]
-
-visNetwork::visNetwork(nodes, edges) %>%
-  visNetwork::visOptions(
-    highlightNearest = TRUE,
-    nodesIdSelection = TRUE
-  )
+expect_true(
+  checkmate::checkClass(enrichment_map_vis, c("visNetwork", "htmlwidget")),
+  info = "visNetwork returns correct classes"
+)
+expect_true(
+  nrow(enrichment_map_vis$x$nodes) == igraph::vcount(enrichment_map_igraph),
+  info = "visNetwork has correct number of nodes"
+)
+expect_true(
+  nrow(enrichment_map_vis$x$edges) == igraph::ecount(enrichment_map_igraph),
+  info = "visNetwork has correct number of edges"
+)
