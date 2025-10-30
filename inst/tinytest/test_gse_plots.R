@@ -203,6 +203,23 @@ expect_true(
   info = "NULL removes all labels"
 )
 
+# Test labels_to_include overrides adaptive labelling
+specific_labels <- igraph::V(enrichment_map_igraph)$label[1:2]
+enrichment_map_forced <- plot_enrichment_map_ggraph(
+  enrichment_map_igraph,
+  label_nodes = NULL,
+  labels_to_include = specific_labels
+)
+expect_true(
+  all(specific_labels %in% na.omit(enrichment_map_forced$data$label)),
+  info = "labels_to_include forces specific labels to show"
+)
+expect_equal(
+  sum(!is.na(enrichment_map_forced$data$label)),
+  length(specific_labels),
+  info = "only forced labels are shown when label_nodes is NULL"
+)
+
 ### visnetwork -----------------------------------------------------------------
 
 enrichment_map_vis <- plot_enrichment_map_visnetwork(enrichment_map_igraph)

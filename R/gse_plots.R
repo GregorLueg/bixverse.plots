@@ -240,11 +240,15 @@ enrichment_map_oae <- function(
 #' - `"adaptive"`: Adaptive labelling based on community size (default)
 #' - `NULL`: No labels
 #' - Integer: Label top N nodes by size
+#' @param labels_to_include Optional string. These are labels you want to
+#' include no matter what.
 #' @param adaptive_thresholds Named numeric. The names indicate the community
 #' size and the values how many pathways per community to show. An example would
 #' be `c(15 = 3, 5 = 2, 2 = 1, 1 = 0)`
 #' @param font_size Numeric. Font size of the labels on top of the enrichment
 #' map.
+#' @param ... Other parameters you wish to forward to
+#' [ggraph::geom_node_text()].
 #'
 #' @returns A ggplot2 object with the enrichment map
 #'
@@ -252,8 +256,10 @@ enrichment_map_oae <- function(
 plot_enrichment_map_ggraph <- function(
   g,
   label_nodes = "adaptive",
+  labels_to_include = NULL,
   adaptive_thresholds = c("15" = 3, "5" = 2, "2" = 1, "1" = 0),
-  font_size = 4
+  font_size = 4,
+  ...
 ) {
   # checks
   checkmate::assertClass(g, "igraph")
@@ -270,6 +276,7 @@ plot_enrichment_map_ggraph <- function(
     names = "named"
   )
   checkmate::qassert(font_size, "N1")
+  checkmate::qassert(labels_to_include, c("0", "S+"))
 
   # determine which nodes to label
   node_data <- data.table::data.table(
@@ -311,6 +318,11 @@ plot_enrichment_map_ggraph <- function(
     node_data[!name %in% keep, label := NA_character_]
   }
 
+  # override with labels_to_include
+  if (!is.null(labels_to_include)) {
+    node_data[name %in% labels_to_include, label := name]
+  }
+
   igraph::V(g)$label <- node_data$label
 
   p <- ggraph::ggraph(graph = g, layout = g$layout) +
@@ -329,7 +341,8 @@ plot_enrichment_map_ggraph <- function(
       mapping = aes(label = label),
       repel = TRUE,
       size = font_size,
-      fontface = "bold"
+      fontface = "bold",
+      ...
     ) +
     ggraph::scale_edge_width(range = c(0.3, 2)) +
     ggplot2::scale_size(range = c(3, 8)) +
