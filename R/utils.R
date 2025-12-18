@@ -5,7 +5,12 @@
 #' @param text String. The string to truncate.
 #' @param width Integer. Maximum width of a given line.
 #' @param max_lines Integer. Maximum lines before truncating.
-#' @param whitespace_only Boolean
+#' @param whitespace_only Boolean. Shall the string wrapping happen only around
+#' whitespaces.
+#'
+#' @returns The string wrapped and/or truncated.
+#'
+#' @export
 wrap_and_truncate <- function(
   text,
   width = 40L,
