@@ -140,7 +140,9 @@ helper_gse_dot_plot <- function(
 
 ## igraph part -----------------------------------------------------------------
 
-#' Generate enrichment map igraph
+### oae ------------------------------------------------------------------------
+
+#' Generate enrichment map igraph (for overenrichment tests)
 #'
 #' @description
 #' Helper function to generate an enrichment map based on overenrichment
@@ -149,7 +151,7 @@ helper_gse_dot_plot <- function(
 #' returns an igraph object for subsequent visualisations.
 #'
 #' @param res data.table with the enrichment results. Needs to have the columns
-#' `c("gene_set_lengths", "gene_set_name", "fdr")`.
+#' `c("gene_set_name", "fdr")`.
 #' @param threshold Numeric. The FDR threshold you wish to filter for.
 #' @param pathways Named list. The original pathway list used for the
 #' calculation of the overenrichment analysis.
@@ -181,12 +183,16 @@ enrichment_map_oae <- function(
   checkmate::assertDataTable(res)
   checkmate::assertNames(
     names(res),
-    must.include = c("gene_set_lengths", "gene_set_name", "fdr")
+    must.include = c("gene_set_name", "fdr")
   )
+  checkmate::qassert(threshold, "N[0, 1]")
   checkmate::assertList(pathways, types = "character", names = "named")
   checkmate::qassert(overlap_coefficient, "B1")
   checkmate::qassert(min_sim, "N[0, 1]")
   checkmate::assertFunction(layout_func)
+
+  # filter
+  res <- res[fdr <= threshold]
 
   # calculate similarities
   enriched_gs <- res[["gene_set_name"]]
@@ -218,10 +224,113 @@ enrichment_map_oae <- function(
     character(1),
     ...
   )
+
+  # -log10(fdr) for colouring
   igraph::V(g)$neg_log10_fdr <- -log10(res[
     match(enriched_gs, gene_set_name),
     fdr
   ])
+
+  # generic colouring attribute
+  igraph::V(g)$color_value <- igraph::V(g)$neg_log10_fdr
+  g$color_type <- "fdr"
+
+  return(g)
+}
+
+### gsea -----------------------------------------------------------------------
+
+#' Generate enrichment map igraph (for GSEA)
+#'
+#' @description
+#' Helper function to generate an enrichment map based on GSEA results. Similar
+#' enriched gene sets are clustered together via their Jaccard similarity
+#' (alternatively overlap coefficient) and the function returns an igraph object
+#' for subsequent visualisations.
+#'
+#' @param res data.table with the enrichment results. Needs to have the columns
+#' `c("geneset_name", "nes", "fdr")`.
+#' @param threshold Numeric. The FDR threshold you wish to filter for.
+#' @param pathways Named list. The original pathway list used for the
+#' calculation of the overenrichment analysis.
+#' @param overlap_coefficient Boolean. Shall the overlap coefficient be used
+#' instead of the Jaccard similarity.
+#' @param min_sim Numeric. Minimum similarity between two gene sets to be
+#' connected.
+#' @param resolution Numeric. The resolution parameter for the Louvain
+#' clustering.
+#' @param layout_func Layout function. Please see [igraph::add_layout_()]
+#' for options. This one will be used to layout the graph.
+#' @param ... Further parameters to forward to
+#' [bixverse.plots::wrap_and_truncate()].
+#'
+#' @return `igraph` object representing the enrichment map.
+#'
+#' @export
+enrichment_map_gsea <- function(
+  res,
+  threshold,
+  pathways,
+  overlap_coefficient = FALSE,
+  min_sim = 0.2,
+  resolution = 1.0,
+  layout_func = igraph::layout_with_fr,
+  ...
+) {
+  # checks
+  checkmate::assertDataTable(res)
+  checkmate::assertNames(
+    names(res),
+    must.include = c("geneset_name", "nes", "fdr")
+  )
+  checkmate::qassert(threshold, "N[0, 1]")
+  checkmate::assertList(pathways, types = "character", names = "named")
+  checkmate::qassert(overlap_coefficient, "B1")
+  checkmate::qassert(min_sim, "N[0, 1]")
+  checkmate::assertFunction(layout_func)
+
+  # filter
+  res <- res[fdr <= threshold]
+
+  # calculate similarities
+  enriched_gs <- res[["geneset_name"]]
+  edges <- data.table::setDT(bixverse::rs_set_similarity_list(
+    list = pathways[enriched_gs],
+    overlap_coefficient = overlap_coefficient
+  ))[sim >= min_sim]
+
+  g <- igraph::graph_from_data_frame(
+    d = edges[, .(from, to, weight = sim)],
+    directed = FALSE,
+    vertices = enriched_gs
+  )
+
+  # node size
+  igraph::V(g)$size <- log10(lengths(pathways[enriched_gs]))
+
+  # community detection
+  communities <- igraph::cluster_louvain(g, resolution = resolution)
+  igraph::V(g)$community <- igraph::membership(communities)
+
+  # add layout coordinates
+  layout <- layout_func(g)
+  g$layout <- layout
+
+  igraph::V(g)$label <- vapply(
+    igraph::V(g)$name,
+    wrap_and_truncate,
+    character(1),
+    ...
+  )
+
+  igraph::V(g)$nes <- res[
+    match(enriched_gs, geneset_name),
+    nes
+  ]
+
+  # generic colouring attribute
+  igraph::V(g)$color_value <- igraph::V(g)$nes
+  g$color_type <- "nes"
 
   return(g)
 }
@@ -231,10 +340,11 @@ enrichment_map_oae <- function(
 #' igraph enrichment map to ggraph plot
 #'
 #' @description
-#' Takes in the output from [bixverse.plots::enrichment_map_oae()] and generates
-#' a ggraph object for subsequent saving, etc.
+#' Takes in the output from [bixverse.plots::enrichment_map_oae()] or
+#' [bixverse.plots::enrichment_map_gsea()] and generates a ggraph object for
+#' subsequent saving, etc.
 #'
-#' @param g igraph. Output from [bixverse.plots::enrichment_map_oae()].
+#' @param g igraph. Output from enrichment_map functions.
 #' @param label_nodes String. Controls which nodes to label. Options:
 #' - `"all"`: Label all nodes
 #' - `"adaptive"`: Adaptive labelling based on community size (default)
@@ -265,6 +375,7 @@ plot_enrichment_map_ggraph <- function(
   checkmate::assertClass(g, "igraph")
   checkmate::assertTRUE(!is.null(igraph::V(g)$community))
   checkmate::assertTRUE(!is.null(igraph::V(g)$size))
+  checkmate::assertTRUE(!is.null(igraph::V(g)$color_value))
   checkmate::assert(
     checkmate::check_string(label_nodes),
     checkmate::check_int(label_nodes, lower = 1),
@@ -290,12 +401,10 @@ plot_enrichment_map_ggraph <- function(
   node_data[, comm_size := .N, by = community]
 
   if (is.null(label_nodes)) {
-    # no labels
     node_data[, label := NA_character_]
   } else if (is.character(label_nodes) && label_nodes == "all") {
     # keep all labels as is
   } else if (is.character(label_nodes) && label_nodes == "adaptive") {
-    # determine number of labels per community based on community size
     thresholds_sorted <- adaptive_thresholds[order(as.numeric(names(
       adaptive_thresholds
     )))]
@@ -313,17 +422,18 @@ plot_enrichment_map_ggraph <- function(
     node_data[, rank := frank(-size, ties.method = "first"), by = community]
     node_data[rank > n_labels, label := NA_character_]
   } else if (is.numeric(label_nodes)) {
-    # label by top X size
     keep <- node_data[order(-size)][1:min(label_nodes, .N)]$name
     node_data[!name %in% keep, label := NA_character_]
   }
 
-  # override with labels_to_include
   if (!is.null(labels_to_include)) {
     node_data[name %in% labels_to_include, label := name]
   }
 
   igraph::V(g)$label <- node_data$label
+
+  # determine colour scale based on colour type
+  color_type <- if (!is.null(g$color_type)) g$color_type else "fdr"
 
   p <- ggraph::ggraph(graph = g, layout = g$layout) +
     ggraph::geom_edge_link(
@@ -332,7 +442,7 @@ plot_enrichment_map_ggraph <- function(
       alpha = 0.6
     ) +
     ggraph::geom_node_point(
-      mapping = aes(size = size, fill = neg_log10_fdr),
+      mapping = aes(size = size, fill = color_value),
       shape = 21,
       colour = "grey90",
       stroke = 0.5
@@ -345,12 +455,28 @@ plot_enrichment_map_ggraph <- function(
       ...
     ) +
     ggraph::scale_edge_width(range = c(0.3, 2)) +
-    ggplot2::scale_size(range = c(3, 8)) +
-    ggplot2::scale_fill_distiller(
-      palette = "Blues",
-      direction = 1,
-      name = "-log10(FDR)"
-    ) +
+    ggplot2::scale_size(range = c(3, 8))
+
+  # add appropriate colour scale
+  if (color_type == "nes") {
+    p <- p +
+      ggplot2::scale_fill_gradient2(
+        low = "#235070",
+        mid = "white",
+        high = "#8b3a2b",
+        midpoint = 0,
+        name = "NES"
+      )
+  } else {
+    p <- p +
+      ggplot2::scale_fill_distiller(
+        palette = "Blues",
+        direction = 1,
+        name = "-log10(FDR)"
+      )
+  }
+
+  p <- p +
     ggplot2::theme_void() +
     ggplot2::theme(plot.margin = ggplot2::margin(10, 10, 10, 10))
 
@@ -362,10 +488,11 @@ plot_enrichment_map_ggraph <- function(
 #' igraph enrichment map to VisNetwork interactive network
 #'
 #' @description
-#' Takes in the output from [bixverse.plots::enrichment_map_oae()] and generates
-#' an interactive VisNetwork widget.
+#' Takes in the output from [bixverse.plots::enrichment_map_oae()] or
+#' [bixverse.plots::enrichment_map_gsea()] and generates an interactive
+#' VisNetwork widget.
 #'
-#' @param g igraph. Output from [bixverse.plots::enrichment_map_oae()].
+#' @param g igraph. Output from enrichment_map functions.
 #'
 #' @returns The interactive visnetwork
 #'
@@ -378,18 +505,31 @@ plot_enrichment_map_visnetwork <- function(g) {
   checkmate::assertClass(g, "igraph")
   checkmate::assertTRUE(!is.null(igraph::V(g)$community))
   checkmate::assertTRUE(!is.null(igraph::V(g)$size))
-  checkmate::assertTRUE(!is.null(igraph::V(g)$neg_log10_fdr))
+  checkmate::assertTRUE(!is.null(igraph::V(g)$color_value))
 
   layout_coords <- g$layout
 
-  # map -log10(FDR) to Blues palette
-  fdr_values <- igraph::V(g)$neg_log10_fdr
-  colour_palette <- scales::col_numeric(
-    palette = "Blues",
-    domain = range(fdr_values),
-    reverse = FALSE
-  )
-  node_colours <- colour_palette(fdr_values)
+  # determine colour scale based on colour type
+  color_type <- if (!is.null(g$color_type)) g$color_type else "fdr"
+  color_values <- igraph::V(g)$color_value
+
+  if (color_type == "nes") {
+    max_abs <- max(abs(color_values))
+    colour_palette <- scales::col_numeric(
+      palette = c("darkred", "white", "darkblue"),
+      domain = c(-max_abs, max_abs)
+    )
+    color_label <- "NES"
+  } else {
+    colour_palette <- scales::col_numeric(
+      palette = "Blues",
+      domain = range(color_values),
+      reverse = FALSE
+    )
+    color_label <- "-log10(FDR)"
+  }
+
+  node_colours <- colour_palette(color_values)
 
   nodes <- igraph::as_data_frame(g, what = "vertices") %>%
     data.table::as.data.table() %>%
@@ -402,8 +542,10 @@ plot_enrichment_map_visnetwork <- function(g) {
         name,
         "\nSize: ",
         round(size, 2),
-        "\n-log10(FDR): ",
-        round(neg_log10_fdr, 2)
+        "\n",
+        color_label,
+        ": ",
+        round(color_value, 2)
       )
     )] %>%
     .[, .(id, label, value, color, title)]
