@@ -14,7 +14,7 @@ plot_enrichment_map_ggraph(
 )
 }
 \arguments{
-\item{g}{igraph. Output from \code{\link[=enrichment_map_oae]{enrichment_map_oae()}}.}
+\item{g}{igraph. Output from enrichment_map functions.}
 
 \item{label_nodes}{String. Controls which nodes to label. Options:
 \itemize{
@@ -41,6 +41,7 @@ map.}
 A ggplot2 object with the enrichment map
 }
 \description{
-Takes in the output from \code{\link[=enrichment_map_oae]{enrichment_map_oae()}} and generates
-a ggraph object for subsequent saving, etc.
+Takes in the output from \code{\link[=enrichment_map_oae]{enrichment_map_oae()}} or
+\code{\link[=enrichment_map_gsea]{enrichment_map_gsea()}} and generates a ggraph object for
+subsequent saving, etc.
 }
