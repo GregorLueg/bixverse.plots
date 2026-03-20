@@ -93,6 +93,8 @@ plot_gse_dotplot <- function(
 #' @return The GSE dot plot.
 #'
 #' @import ggplot2
+#'
+#' @keywords internal
 helper_gse_dot_plot <- function(
   res,
   size_range = c(2, 5),

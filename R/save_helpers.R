@@ -118,6 +118,8 @@ save_plot_ls <- function(plot_ls, path, plot_params = params_plots()) {
 #' @param plot_params List. Output of [bixverse.plots::params_plots()].
 #'
 #' @return Saves the PNG to disk.
+#'
+#' @keywords internal
 save_png <- function(plot, f_path, plot_params) {
   # checks
   checkmate::assertPathForOutput(f_path, overwrite = TRUE)
@@ -178,6 +180,8 @@ save_png <- function(plot, f_path, plot_params) {
 #' @param plot_params List. Output of [bixverse.plots::params_plots()].
 #'
 #' @return Saves the PDF to disk.
+#'
+#' @keywords internal
 save_pdf <- function(plot, f_path, plot_params) {
   # checks
   checkmate::assertPathForOutput(f_path, overwrite = TRUE)

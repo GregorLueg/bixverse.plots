@@ -29,3 +29,4 @@ The GSE dot plot.
 \description{
 Helper to generate a GSE dot plot
 }
+\keyword{internal}
