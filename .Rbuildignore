@@ -1,3 +1,7 @@
 ^LICENSE\.md$
 ^\.Rproj\.user$
 ^bixverse\.plots\.Rproj$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
+^\.github$
