@@ -54,12 +54,9 @@ reference:
   - title: Single cell plotting functions
     desc: Generate different single cell plots
     contents: 
-      - plot_qc_violin
-      - violin_plot
-      - plot_qc_density
-      - density_plot
-      - plot_joint_qc
-      - joint_plot
+      - violin_plot_sc
+      - density_plot_sc
+      - joint_plot_sc
   # Other utils
   - title: Utility functions
     desc: General utilitys
