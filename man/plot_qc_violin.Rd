@@ -10,7 +10,9 @@ plot_qc_violin(
   variable,
   group_name = NULL,
   var_name = NULL,
-  log_scale = TRUE
+  log_scale = TRUE,
+  show_outlier = TRUE,
+  outlier_column = "global_outlier"
 )
 }
 \arguments{
@@ -25,6 +27,10 @@ plot_qc_violin(
 \item{var_name}{Character. Label for the y-axis (default: NULL).}
 
 \item{log_scale}{Boolean. Log scale (default: TRUE)}
+
+\item{show_outlier}{Boolean. Show the cells that are identified as outliers (default: TRUE)}
+
+\item{outlier_column}{Character. Which column contains the cells identified as outliers}
 }
 \value{
 A \code{\link[ggplot2]{ggplot}} object.

@@ -4,11 +4,21 @@
 \alias{plot_joined_qc}
 \title{Plot joint QC metrics}
 \usage{
-plot_joined_qc(df)
+plot_joined_qc(
+  df,
+  library_size = "lib_size",
+  nb_features = "nnz",
+  log_scale = FALSE
+)
 }
 \arguments{
-\item{df}{A data frame with columns \code{nnz} (genes per cell) and
-\code{lib_size} (UMIs per cell).}
+\item{df}{Dataframe. Input data table containing QC metrics.}
+
+\item{library_size}{Character. Column containing library size information per cell}
+
+\item{nb_features}{Character. Column containing information on number of features per cell}
+
+\item{log_scale}{Boolean. If TRUE, will log-scale the data. (Default: FALSE)}
 }
 \value{
 A \code{ggExtraPlot} object with a hexbin center plot and marginal

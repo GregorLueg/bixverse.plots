@@ -11,6 +11,7 @@
 #' @param var_name Character. Label for the x-axis (default: NULL).
 #' @param nmads Integer. Number of MADs to use for outlier detection (default: 3).
 #' @param log_scale Boolean. Log scale (default: TRUE)
+#' @param adjust_position_label Numeric. Value to adjust the position of the labels on the X axis (default: 0)
 #'
 #' @return A \code{\link[ggplot2]{ggplot}} object.
 #'
@@ -54,16 +55,18 @@ plot_qc_density <- function(
   variable,
   var_name = NULL,
   nmads = 3,
-  log_scale = TRUE
+  log_scale = TRUE,
+  adjust_position_label = 0
 ) {
   ## checkmates
   checkmate::assertDataTable(df)
   checkmate::assert(all(c(grouping_column, variable) %in% colnames(df)))
   checkmate::assertLogical(log_scale)
   checkmate::assert(
-    checkmate::checkCharacter(group_name),
-    checkmate::checkNull(group_name)
+    checkmate::checkCharacter(var_name),
+    checkmate::checkNull(var_name)
   )
+  checkmate::assertNumeric(adjust_position_label)
 
   ## Identify outlier samples
   #  Flag outliers per donor using MAD on log(nnz)
@@ -77,13 +80,15 @@ plot_qc_density <- function(
     by = grouping_column
   ]
   median_var <- median(median_by_donor$median_var)
-  mad_nnz <- mad(median_by_donor$median_var)
+  mad_var <- mad(median_by_donor$median_var)
   ##
-  outliers_nnz <- median_var - nmads * mad_nnz
+  outliers_var_neg <- median_var - nmads * mad_var
+  outliers_var_pos <- median_var + nmads * mad_var
   median_by_donor <- median_by_donor[,
-    nnz_outlier := median_var <= outliers_nnz
+    var_outlier := (median_var <= outliers_var_neg |
+      median_var >= outliers_var_pos)
   ]
-  outlier_donors <- median_by_donor[(nnz_outlier)]
+  outlier_donors <- median_by_donor[(var_outlier)]
 
   ## Max y for plotting label
   max_y <- df[,
@@ -101,11 +106,8 @@ plot_qc_density <- function(
     }),
     by = grouping_column
   ][, max(max_density)]
-  ## For the log scale, we need to probably adjust the position of the label to be readible
-  ## We'll add 10% quantile of the density distribution for readibility
-  pos_label_x <- quantile(density(df[[variable]])$x, probs = 0.1)
   ## X label
-  if (is.null(group_name)) {
+  if (is.null(var_name)) {
     var_name = variable
   }
   ## Plot
@@ -143,7 +145,7 @@ plot_qc_density <- function(
       geom_label(
         data = outlier_donors,
         mapping = aes(
-          x = median_var + pos_label_x,
+          x = median_var + adjust_position_label,
           y = max_y,
           label = .data[[grouping_column]],
           fill = .data[[grouping_column]]
@@ -156,7 +158,8 @@ plot_qc_density <- function(
       theme(legend.position = "none") +
       labs(
         x = var_name,
-        y = "Density"
+        y = "Density",
+        title = var_name
       )
   }
   return(p)
@@ -175,6 +178,8 @@ plot_qc_density <- function(
 #' @param group_name Character. Label for the x-axis (default: NULL).
 #' @param var_name Character. Label for the y-axis (default: NULL).
 #' @param log_scale Boolean. Log scale (default: TRUE)
+#' @param show_outlier Boolean. Show the cells that are identified as outliers (default: TRUE)
+#' @param outlier_column Character. Which column contains the cells identified as outliers
 #'
 #' @return A \code{\link[ggplot2]{ggplot}} object.
 #'
@@ -205,11 +210,15 @@ plot_qc_violin <- function(
   variable,
   group_name = NULL,
   var_name = NULL,
-  log_scale = TRUE
+  log_scale = TRUE,
+  show_outlier = TRUE,
+  outlier_column = "global_outlier"
 ) {
   ## checkmates
   checkmate::assertDataTable(df)
-  checkmate::assert(all(c(grouping_column, variable) %in% colnames(df)))
+  checkmate::assert(all(
+    c(grouping_column, variable) %in% colnames(df)
+  ))
   checkmate::assertLogical(log_scale)
   checkmate::assert(
     checkmate::checkCharacter(var_name),
@@ -219,7 +228,12 @@ plot_qc_violin <- function(
     checkmate::checkCharacter(group_name),
     checkmate::checkNull(group_name)
   )
-
+  checkmate::assertLogical(show_outlier)
+  ## If outlier, then the column must exist
+  if (show_outlier) {
+    checkmate::assertNames(colnames(df), must.include = outlier_column)
+  }
+  ##
   if (is.null(group_name)) {
     group_name = grouping_column
   }
@@ -227,11 +241,10 @@ plot_qc_violin <- function(
     var_name = variable
   }
   p <- ggplot(
-    toplot,
+    df,
     aes(
       x = .data[[grouping_column]],
-      y = .data[[variable]],
-      fill = .data[[grouping_column]]
+      y = .data[[variable]]
     )
   ) +
     geom_violin(alpha = 0.6) +
@@ -242,7 +255,8 @@ plot_qc_violin <- function(
     ) +
     labs(
       x = group_name,
-      y = var_name
+      y = var_name,
+      title = var_name
     )
   if (log_scale) {
     p <- p +
@@ -250,6 +264,18 @@ plot_qc_violin <- function(
       labs(
         y = paste(var_name, "(log10)")
       )
+  }
+  if (show_outlier) {
+    outlier_colours <- c("FALSE" = "lightgrey", "TRUE" = "orange")
+    p <- p +
+      geom_jitter(
+        mapping = aes(colour = .data[[outlier_column]]),
+        width = 0.05,
+        size = 0.4,
+        alpha = 0.5,
+        show.legend = FALSE
+      ) +
+      scale_colour_manual(values = outlier_colours)
   }
   return(p)
 }
@@ -260,17 +286,31 @@ plot_qc_violin <- function(
 #' marginal histograms. Useful for visualizing cell quality and detecting
 #' outliers, doublets or empty droplets.
 #'
-#' @param df A data frame with columns \code{nnz} (genes per cell) and
-#'   \code{lib_size} (UMIs per cell).
+#' @param df Dataframe. Input data table containing QC metrics.
+#' @param library_size Character. Column containing library size information per cell
+#' @param nb_features Character. Column containing information on number of features per cell
+#' @param log_scale Boolean. If TRUE, will log-scale the data. (Default: FALSE)
 #'
 #' @return A \code{ggExtraPlot} object with a hexbin center plot and marginal
 #'   histograms on log10 axes.
 #'
 #' @export
-plot_joined_qc <- function(df) {
-  checkmate::assertNames(colnames(df), must.include = c("nnz", "lib_size"))
+plot_joined_qc <- function(
+  df,
+  library_size = "lib_size",
+  nb_features = "nnz",
+  log_scale = FALSE
+) {
+  checkmate::assertNames(
+    colnames(df),
+    must.include = c(library_size, nb_features)
+  )
 
-  p <- ggplot(toplot, aes(x = log10(nnz), y = log10(lib_size))) +
+  if (log_scale) {
+    df[["log10_lib_size"]] <- log10(df[[library_size]])
+    df[["log10_nnz"]] <- log10(df[[nb_features]])
+  }
+  p <- ggplot(df, aes(x = log10_nnz, y = log10_lib_size)) +
     geom_point(alpha = 0) + # invisible, just satisfies ggMarginal
     geom_hex(bins = 80) +
     scale_fill_gradientn(colors = RColorBrewer::brewer.pal(9, "Blues")[4:9]) +
@@ -287,4 +327,156 @@ plot_joined_qc <- function(df) {
   )
 
   return(p)
+}
+
+## Bixverse SC generics
+
+### generics -----------------------------------------------------------------------
+
+#' Generic violin plot function
+#'
+#' @param x An object to plot.
+#' @param ... Additional arguments passed to methods.
+#'
+#' @return A named list of ggplot objects.
+#'
+#' @export
+violin_plot <- function(x, ...) {
+  UseMethod("violin_plot")
+}
+
+#' @export
+violin_plot.default <- function(x, ...) {
+  stop(
+    "No violin_plot method for object of class: ",
+    paste(class(x), collapse = ", ")
+  )
+}
+
+
+#' Generic density plot function
+#'
+#' @param x An object to plot.
+#' @param ... Additional arguments passed to methods.
+#'
+#' @return A named list of ggplot objects.
+#'
+#' @export
+density_plot <- function(x, ...) {
+  UseMethod("density_plot")
+}
+
+#' @export
+density_plot.default <- function(x, ...) {
+  stop(
+    "No density_plot method for object of class: ",
+    paste(class(x), collapse = ", ")
+  )
+}
+
+
+#' Generic joint plot function
+#'
+#' @param x An object to plot.
+#' @param ... Additional arguments passed to methods.
+#'
+#' @return A named list of ggplot objects.
+#'
+#' @export
+joint_plot <- function(x, ...) {
+  UseMethod("joint_plot")
+}
+
+#' @export
+joint_plot.default <- function(x, ...) {
+  stop(
+    "No joint_plot method for object of class: ",
+    paste(class(x), collapse = ", ")
+  )
+}
+
+### plots -----------------------------------------------------------------------
+
+#' Plot per-cell QC violin plots from a CellQc object
+#'
+#' @param x A `CellQc` object.
+#' @param ... Ignored.
+#'
+#' @return A named list of ggplot objects, one per metric.
+#'
+#' @export
+#'
+#' @import ggplot2
+#'
+#' @keywords internal
+violin_plot.CellQc <- function(x, ...) {
+  outlier_colours <- c("FALSE" = "lightgrey", "TRUE" = "orange")
+  plot_df <- get_obs_data(x)
+
+  plots <- purrr::map(names(x$metrics), function(metric) {
+    p <- bixverse.plots::plot_qc_violin(
+      df = plot_df,
+      grouping_column = "grp",
+      variable = metric,
+      var_name = metric,
+      log_scale = FALSE,
+      outlier_column = "global_outlier",
+      show_outlier = TRUE
+    )
+    p
+  })
+  setNames(plots, names(x$metrics))
+}
+
+#' Plot per-cell QC density plots from a CellQc object
+#'
+#' @param x A `CellQc` object.
+#' @param ... Ignored.
+#'
+#' @return A named list of ggplot objects, one per metric.
+#'
+#' @export
+#'
+#' @import ggplot2
+#'
+#' @keywords internal
+density_plot.CellQc <- function(x, ...) {
+  plot_df <- get_obs_data(x)
+
+  plots <- purrr::map(names(x$metrics), function(metric) {
+    p <- bixverse.plots::plot_qc_density(
+      df = plot_df,
+      grouping_column = "grp",
+      variable = metric,
+      var_name = metric,
+      log_scale = FALSE
+    )
+    p
+  })
+  setNames(plots, names(x$metrics))
+}
+
+
+#' Joint QC plots from a CellQc object
+#'
+#' @param x A `CellQc` object.
+#' @param ... Ignored.
+#'
+#' @return A named list of ggplot objects, one per metric.
+#'
+#' @export
+#'
+#' @import ggplot2
+#'
+#' @keywords internal
+joint_plot.CellQc <- function(x, ...) {
+  plot_df <- get_obs_data(x)
+
+  p <- bixverse.plots::plot_joined_qc(
+    df = plot_df,
+    library_size = "log10_lib_size",
+    nb_features = "log10_nnz",
+    log_scale = FALSE
+  )
+  p
 }

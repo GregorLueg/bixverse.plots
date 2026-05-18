@@ -10,7 +10,8 @@ plot_qc_density(
   variable,
   var_name = NULL,
   nmads = 3,
-  log_scale = TRUE
+  log_scale = TRUE,
+  adjust_position_label = 0
 )
 }
 \arguments{
@@ -25,6 +26,8 @@ plot_qc_density(
 \item{nmads}{Integer. Number of MADs to use for outlier detection (default: 3).}
 
 \item{log_scale}{Boolean. Log scale (default: TRUE)}
+
+\item{adjust_position_label}{Numeric. Value to adjust the position of the labels on the X axis (default: 0)}
 }
 \value{
 A \code{\link[ggplot2]{ggplot}} object.
