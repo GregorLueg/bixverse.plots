@@ -40,7 +40,7 @@
 #' # Simulate a low-quality donor
 #' df[donor_id == "D5", nnz := rnbinom(.N, mu = 200, size = 5)]
 #'
-#' plot_qc_density(
+#' plot_density_sc(
 #'   df = df,
 #'   grouping_column = "donor_id",
 #'   variable = "nnz",
@@ -48,8 +48,7 @@
 #' )
 #' }
 #'
-#' @export
-plot_qc_density <- function(
+plot_density_sc <- function(
   df,
   grouping_column,
   variable,
@@ -195,7 +194,7 @@ plot_qc_density <- function(
 #' # Simulate a low-quality donor
 #' df[donor_id == "D5", nnz := rnbinom(.N, mu = 200, size = 5)]
 #'
-#' plot_qc_violin(
+#' plot_violin_sc(
 #'   df = df,
 #'   grouping_column = "donor_id",
 #'   variable = "nnz",
@@ -203,8 +202,7 @@ plot_qc_density <- function(
 #' )
 #' }
 #'
-#' @export
-plot_qc_violin <- function(
+plot_violin_sc <- function(
   df,
   grouping_column,
   variable,
@@ -294,8 +292,7 @@ plot_qc_violin <- function(
 #' @return A \code{ggExtraPlot} object with a hexbin center plot and marginal
 #'   histograms on log10 axes.
 #'
-#' @export
-plot_joint_qc <- function(
+plot_joint_sc <- function(
   df,
   library_size = "lib_size",
   nb_features = "nnz",
@@ -341,14 +338,14 @@ plot_joint_qc <- function(
 #' @return A named list of ggplot objects.
 #'
 #' @export
-violin_plot <- function(x, ...) {
-  UseMethod("violin_plot")
+violin_plot_sc <- function(x, ...) {
+  UseMethod("violin_plot_sc")
 }
 
 #' @export
-violin_plot.default <- function(x, ...) {
+violin_plot_sc.default <- function(x, ...) {
   stop(
-    "No violin_plot method for object of class: ",
+    "No violin_plot_sc method for object of class: ",
     paste(class(x), collapse = ", ")
   )
 }
@@ -362,14 +359,14 @@ violin_plot.default <- function(x, ...) {
 #' @return A named list of ggplot objects.
 #'
 #' @export
-density_plot <- function(x, ...) {
-  UseMethod("density_plot")
+density_plot_sc <- function(x, ...) {
+  UseMethod("density_plot_sc")
 }
 
 #' @export
-density_plot.default <- function(x, ...) {
+density_plot_sc.default <- function(x, ...) {
   stop(
-    "No density_plot method for object of class: ",
+    "No density_plot_sc method for object of class: ",
     paste(class(x), collapse = ", ")
   )
 }
@@ -383,14 +380,14 @@ density_plot.default <- function(x, ...) {
 #' @return A named list of ggplot objects.
 #'
 #' @export
-joint_plot <- function(x, ...) {
-  UseMethod("joint_plot")
+joint_plot_sc <- function(x, ...) {
+  UseMethod("joint_plot_sc")
 }
 
 #' @export
-joint_plot.default <- function(x, ...) {
+joint_plot_sc.default <- function(x, ...) {
   stop(
-    "No joint_plot method for object of class: ",
+    "No joint_plot_sc method for object of class: ",
     paste(class(x), collapse = ", ")
   )
 }
@@ -409,23 +406,72 @@ joint_plot.default <- function(x, ...) {
 #' @import ggplot2
 #'
 #' @keywords internal
-violin_plot.CellQc <- function(x, ...) {
+violin_plot_sc.CellQc <- function(
+  x,
+  grouping_column = "grp",
+  variable,
+  group_name = NULL,
+  var_name = NULL,
+  log_scale = FALSE,
+  outlier_column = "global_outlier",
+  show_outlier = TRUE,
+  ...
+) {
   outlier_colours <- c("FALSE" = "lightgrey", "TRUE" = "orange")
   plot_df <- get_data(x)
 
   plots <- purrr::map(names(x$metrics), function(metric) {
-    p <- bixverse.plots::plot_qc_violin(
+    p <- plot_violin_sc(
       df = plot_df,
-      grouping_column = "grp",
+      grouping_column = grouping_column,
       variable = metric,
       var_name = metric,
-      log_scale = FALSE,
-      outlier_column = "global_outlier",
-      show_outlier = TRUE
+      log_scale = log_scale,
+      outlier_column = outlier_column,
+      show_outlier = show_outlier
     )
     p
   })
   setNames(plots, names(x$metrics))
+}
+
+#' Plot joint QC metrics
+#'
+#' Creates a joint hexbin plot of gene counts vs UMI counts per cell, with
+#' marginal histograms. Useful for visualizing cell quality and detecting
+#' outliers, doublets or empty droplets.
+#'
+#' @param df data.table Input data table containing QC metrics.
+#' @param library_size Character. Column containing library size information per cell
+#' @param nb_features Character. Column containing information on number of features per cell
+#' @param log_scale Boolean. If TRUE, will log-scale the data. (Default: FALSE)
+#'
+#' @return A \code{ggExtraPlot} object with a hexbin center plot and marginal
+#'   histograms on log10 axes.
+#'
+#' @rdname violin_plot
+#' @export
+violin_plot_sc.data.table <- function(
+  df,
+  grouping_column,
+  variable,
+  group_name = NULL,
+  var_name = NULL,
+  log_scale = TRUE,
+  show_outlier = TRUE,
+  outlier_column = "global_outlier",
+  ...
+) {
+  plot_violin_sc(
+    df = df,
+    grouping_column = grouping_column,
+    variable = variable,
+    group_name = group_name,
+    var_name = var_name,
+    log_scale = log_scale,
+    show_outlier = show_outlier,
+    outlier_column = outlier_column
+  )
 }
 
 #' Plot per-cell QC density plots from a CellQc object
@@ -440,11 +486,11 @@ violin_plot.CellQc <- function(x, ...) {
 #' @import ggplot2
 #'
 #' @keywords internal
-density_plot.CellQc <- function(x, ...) {
+density_plot_sc.CellQc <- function(x, ...) {
   plot_df <- get_data(x)
 
   plots <- purrr::map(names(x$metrics), function(metric) {
-    p <- bixverse.plots::plot_qc_density(
+    p <- plot_density_sc(
       df = plot_df,
       grouping_column = "grp",
       variable = metric,
@@ -454,6 +500,45 @@ density_plot.CellQc <- function(x, ...) {
     p
   })
   setNames(plots, names(x$metrics))
+}
+
+#' Plot per-cell QC density plots from a data.table
+#'
+#' @param df data.table. Input data table containing QC metrics.
+#' @param grouping_column Character. Name of the column used to group density plot
+#' @param variable Character. Name of the numeric QC column to plot on the x-axis.
+#' @param group_name Character. Label for the x-axis (default: NULL).
+#' @param var_name Character. Label for the y-axis (default: NULL).
+#' @param log_scale Boolean. Log scale (default: TRUE)
+#' @param show_outlier Boolean. Show the cells that are identified as outliers (default: TRUE)
+#' @param outlier_column Character. Which column contains the cells identified as outliers
+#'
+#'
+#' @return A named list of ggplot objects, one per metric.
+#'
+#' @export
+#'
+#' @import ggplot2
+#'
+#' @keywords internal
+density_plot_sc.data.table <- function(
+  df,
+  grouping_column,
+  variable,
+  var_name = NULL,
+  nmads = 3,
+  log_scale = TRUE,
+  adjust_position_label = 0
+) {
+  plot_density_sc(
+    df = df,
+    grouping_column = "grp",
+    variable = variable,
+    var_name = var_name,
+    nmads = 3,
+    log_scale = log_scale,
+    adjust_position_label = adjust_position_label
+  )
 }
 
 
@@ -469,14 +554,43 @@ density_plot.CellQc <- function(x, ...) {
 #' @import ggplot2
 #'
 #' @keywords internal
-joint_plot.CellQc <- function(x, ...) {
+joint_plot_sc.CellQc <- function(x, ...) {
   plot_df <- get_data(x)
 
-  p <- bixverse.plots::plot_joint_qc(
+  plot_joint_sc(
     df = plot_df,
     library_size = "log10_lib_size",
     nb_features = "log10_nnz",
     log_scale = FALSE
   )
-  p
+}
+
+#' Joint QC plots from a data.table object
+#'
+#' Creates a joint hexbin plot of gene counts vs UMI counts per cell, with
+#' marginal histograms. Useful for visualizing cell quality and detecting
+#' outliers, doublets or empty droplets.
+#'
+#' @param df data.table. Input data table containing QC metrics.
+#' @param library_size Character. Column containing library size information per cell
+#' @param nb_features Character. Column containing information on number of features per cell
+#' @param log_scale Boolean. If TRUE, will log-scale the data. (Default: FALSE)
+#'
+#' @return A \code{ggExtraPlot} object with a hexbin center plot and marginal
+#'   histograms on log10 axes.
+#'
+#' @export
+joint_plot_sc.data.table <- function(
+  df,
+  library_size = "lib_size",
+  nb_features = "nnz",
+  log_scale = FALSE,
+  ...
+) {
+  plot_joint_sc(
+    df = df,
+    library_size = library_size,
+    nb_features = nb_features,
+    log_scale = log_scale
+  )
 }

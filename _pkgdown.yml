@@ -55,11 +55,11 @@ reference:
     desc: Generate different single cell plots
     contents: 
       - plot_qc_violin
-      - violin_plot.CellQc
+      - violin_plot
       - plot_qc_density
-      - density_plot.CellQc
+      - density_plot
       - plot_joint_qc
-      - joint_plot.CellQc
+      - joint_plot
   # Other utils
   - title: Utility functions
     desc: General utilitys
