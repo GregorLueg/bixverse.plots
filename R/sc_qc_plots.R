@@ -411,7 +411,7 @@ joint_plot.default <- function(x, ...) {
 #' @keywords internal
 violin_plot.CellQc <- function(x, ...) {
   outlier_colours <- c("FALSE" = "lightgrey", "TRUE" = "orange")
-  plot_df <- get_obs_data(x)
+  plot_df <- get_data(x)
 
   plots <- purrr::map(names(x$metrics), function(metric) {
     p <- bixverse.plots::plot_qc_violin(
@@ -441,7 +441,7 @@ violin_plot.CellQc <- function(x, ...) {
 #'
 #' @keywords internal
 density_plot.CellQc <- function(x, ...) {
-  plot_df <- get_obs_data(x)
+  plot_df <- get_data(x)
 
   plots <- purrr::map(names(x$metrics), function(metric) {
     p <- bixverse.plots::plot_qc_density(
@@ -470,7 +470,7 @@ density_plot.CellQc <- function(x, ...) {
 #'
 #' @keywords internal
 joint_plot.CellQc <- function(x, ...) {
-  plot_df <- get_obs_data(x)
+  plot_df <- get_data(x)
 
   p <- bixverse.plots::plot_joint_qc(
     df = plot_df,
