@@ -1,0 +1,58 @@
+url: https://gregorlueg.github.io/bixverse.plots/
+
+template:
+  bootstrap: 5
+  bootswatch: darkly
+  bslib:
+    bg: "#0d1b2e"
+    fg: "#e0e0e0"
+    primary: "#e07a5a"
+    secondary: "#7ba7bc"
+    navbar-bg: "#08111e"
+    code-bg: "#0a1628"
+    border-radius: 0.4rem
+    btn-border-radius: 0.4rem
+  css: pkgdown/extra.css
+
+home:
+  title: "bixverse.plots"
+  description: "Plotting helpers for bixverse"
+navbar:
+  structure:
+    left: [intro, reference, news]
+    right: [search, github]
+  components:
+    github:
+      icon: fab fa-github
+      href: https://github.com/GregorLueg/bixverse.plots
+      aria-label: GitHub
+
+reference:
+  # Helpers to save various plot types to disk
+  - title: Saving plots
+    desc: Utilities to save plots to PNG or PDF
+    contents:
+      - save_plot
+      - save_plot_ls
+      - params_plots
+  # Gene set enrichment plotting
+  - title: Gene set enrichment plots
+    desc: Utilities to save plots to PNG or PDF
+    contents:
+      - get_gsea_enrichment_data
+      - plot_gse_dotplot
+      - plot_gsea_enrichment
+  # Enrichment map
+  - title: Enrichment map plotting
+    desc: Generate enrichment map plots
+    contents:
+      - enrichment_map_gsea
+      - enrichment_map_oae
+      - plot_enrichment_map_ggraph
+      - plot_enrichment_map_visnetwork
+  # Other utils
+  - title: Utility functions
+    desc: General utilitys
+    contents:
+      - wrap_and_truncate
+      - prepare_mitch_scores

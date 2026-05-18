@@ -2,7 +2,7 @@
 % Please edit documentation in R/gse_plots.R
 \name{enrichment_map_oae}
 \alias{enrichment_map_oae}
-\title{Generate enrichment map igraph}
+\title{Generate enrichment map igraph (for overenrichment tests)}
 \usage{
 enrichment_map_oae(
   res,
@@ -17,7 +17,7 @@ enrichment_map_oae(
 }
 \arguments{
 \item{res}{data.table with the enrichment results. Needs to have the columns
-\code{c("gene_set_lengths", "gene_set_name", "fdr")}.}
+\code{c("gene_set_name", "fdr")}.}
 
 \item{threshold}{Numeric. The FDR threshold you wish to filter for.}
 

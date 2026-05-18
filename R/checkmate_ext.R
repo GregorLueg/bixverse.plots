@@ -9,6 +9,8 @@
 #' @param x The list to check/assert
 #'
 #' @return \code{TRUE} if the check was successful, otherwise an error message.
+#'
+#' @keywords internal
 checkPlotParams <- function(x) {
   # Checkmate extension
   res <- checkmate::checkList(x)
@@ -70,10 +72,6 @@ checkPlotParams <- function(x) {
   return(TRUE)
 }
 
-# asserts ----------------------------------------------------------------------
-
-## plot params ----------------------------------------------------------
-
 #' Assert general graph parameters
 #'
 #' @description Checkmate extension for asserting the general plot parameters.
@@ -86,4 +84,6 @@ checkPlotParams <- function(x) {
 #' [checkmate::makeAssertCollection()].
 #'
 #' @return Invisibly returns the checked object if the assertion is successful.
+#'
+#' @keywords internal
 assertPlotParams <- checkmate::makeAssertionFunction(checkPlotParams)

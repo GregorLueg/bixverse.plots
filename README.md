@@ -1,8 +1,17 @@
 # *bixverse.plots package*
 
-![r_package](https://img.shields.io/badge/R_package-0.0.1.0-orange) 
+![r_package](https://img.shields.io/badge/R_package-0.0.1.1-orange) 
+[![CI](https://github.com/GregorLueg/bixverse.plots/actions/workflows/R-cmd-check.yml/badge.svg)](https://github.com/GregorLueg/bixverse.plots/actions/workflows/R-cmd-check.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![pkgdown](https://img.shields.io/badge/pkgdown-website-1b5e9f?logo=github)](https://gregorlueg.github.io/bixverse.plots/)
 
-## *Description*
+</br>
+
+<img src="man/figures/bixverse_plots_logo.png" width="128" height="128" alt="bixverse.plots logo">
+
+</br>
+
+## Intro
 
 This package contains a lot of additional plotting helpers for the
 [bixverse](https://github.com/GregorLueg/bixverse) package. As that one is
@@ -13,24 +22,16 @@ various plotting helpers.
 
 Official release of the package with **0.0.1.0**. In this version, we have
 the following features:
-- Helpers to save plots to disk easily
-- Generation of [Enrichment Map like plots](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0013984).
-- Helpers to generate [DotPlots](https://rdrr.io/bioc/enrichplot/man/dotplot.html)
-akin to ClusterProfiler.
-- Enrichment plots akin to the [fgsea plots](https://bioconductor.org/packages/devel/bioc/vignettes/fgsea/inst/doc/fgsea-tutorial.html).
 
-## *Installation*
+
+## Installation
 
 The package depends on [bixverse](https://github.com/GregorLueg/bixverse). 
 Please check the details there for the set-up of Rust. Some of the 
 Rust-accelerated functions are being used here.
 
-## *Docs*
-
-Not applicable yet.
-
-## *Aim*
+## Aim
 
 Provide additional plotting capabilities to `bixverse`. 
 
-*Last update to the read-me: 29.10.2025*
+*Last update to the read-me: 20.03.2026*

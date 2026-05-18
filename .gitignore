@@ -4,3 +4,9 @@
 
 # Apple
 .DS_Store
+
+# other
+workbench.R
+
+scratch.R
+docs

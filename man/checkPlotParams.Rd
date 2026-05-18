@@ -15,3 +15,4 @@ checkPlotParams(x)
 \description{
 Checkmate extension for checking the general plot parameters.
 }
+\keyword{internal}

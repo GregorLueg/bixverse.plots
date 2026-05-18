@@ -19,3 +19,4 @@ Saves the PDF to disk.
 \description{
 Helper function to save various plot types to PDF
 }
+\keyword{internal}
