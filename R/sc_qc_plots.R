@@ -295,7 +295,7 @@ plot_qc_violin <- function(
 #'   histograms on log10 axes.
 #'
 #' @export
-plot_joined_qc <- function(
+plot_joint_qc <- function(
   df,
   library_size = "lib_size",
   nb_features = "nnz",
@@ -472,7 +472,7 @@ density_plot.CellQc <- function(x, ...) {
 joint_plot.CellQc <- function(x, ...) {
   plot_df <- get_obs_data(x)
 
-  p <- bixverse.plots::plot_joined_qc(
+  p <- bixverse.plots::plot_joint_qc(
     df = plot_df,
     library_size = "log10_lib_size",
     nb_features = "log10_nnz",

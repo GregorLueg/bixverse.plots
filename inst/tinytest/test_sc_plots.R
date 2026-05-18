@@ -40,7 +40,7 @@ expect_true(
 )
 
 ## Joint plot
-p <- plot_joined_qc(
+p <- plot_joint_qc(
   df = df,
   library_size = "lib_size",
   nb_features = "nnz",

@@ -50,6 +50,16 @@ reference:
       - enrichment_map_oae
       - plot_enrichment_map_ggraph
       - plot_enrichment_map_visnetwork
+  # Single cell plotting
+  - title: Single cell plotting functions
+    desc: Generate different single cell plots
+    contents: 
+      - plot_qc_violin
+      - violin_plot.CellQc
+      - plot_qc_density
+      - density_plot.CellQc
+      - plot_joint_qc
+      - joint_plot.CellQc
   # Other utils
   - title: Utility functions
     desc: General utilitys
