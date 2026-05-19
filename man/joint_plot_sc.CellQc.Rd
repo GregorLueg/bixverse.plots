@@ -17,4 +17,3 @@ A named list of ggplot objects, one per metric.
 \description{
 Joint QC plots from a CellQc object
 }
-\keyword{internal}

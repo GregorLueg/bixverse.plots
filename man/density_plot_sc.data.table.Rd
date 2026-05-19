@@ -37,4 +37,23 @@ A named list of ggplot objects, one per metric.
 \description{
 Plot per-cell QC density plots from a data.table
 }
-\keyword{internal}
+\examples{
+\dontrun{
+
+set.seed(42)
+n_cells <- 500
+df <- data.table(
+  donor_id = sample(paste0("D", 1:5), n_cells, replace = TRUE),
+  nnz      = rnbinom(n_cells, mu = 2000, size = 5)
+)
+# Simulate a low-quality donor
+df[donor_id == "D5", nnz := rnbinom(.N, mu = 200, size = 5)]
+
+plot_density_sc(
+  df = df,
+  grouping_column = "donor_id",
+  variable = "nnz",
+  var_name = "Number of non-zero genes"
+)
+}
+}

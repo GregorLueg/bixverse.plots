@@ -29,3 +29,4 @@ Creates a joint hexbin plot of gene counts vs UMI counts per cell, with
 marginal histograms. Useful for visualizing cell quality and detecting
 outliers, doublets or empty droplets.
 }
+\keyword{internal}

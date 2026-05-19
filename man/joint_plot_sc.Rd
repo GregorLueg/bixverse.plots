@@ -17,3 +17,4 @@ A named list of ggplot objects.
 \description{
 Generic joint plot function
 }
+\keyword{internal}

@@ -17,3 +17,4 @@ A named list of ggplot objects.
 \description{
 Generic density plot function
 }
+\keyword{internal}

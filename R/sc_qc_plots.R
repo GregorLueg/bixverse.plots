@@ -27,26 +27,7 @@
 #' where \eqn{\tilde{x}_g} is the per-group median and the median and MAD are
 #' taken across all groups.
 #'
-#'
-#' @examples
-#' \dontrun{
-#'
-#' set.seed(42)
-#' n_cells <- 500
-#' df <- data.table(
-#'   donor_id = sample(paste0("D", 1:5), n_cells, replace = TRUE),
-#'   nnz      = rnbinom(n_cells, mu = 2000, size = 5)
-#' )
-#' # Simulate a low-quality donor
-#' df[donor_id == "D5", nnz := rnbinom(.N, mu = 200, size = 5)]
-#'
-#' plot_density_sc(
-#'   df = df,
-#'   grouping_column = "donor_id",
-#'   variable = "nnz",
-#'   var_name = "Number of non-zero genes"
-#' )
-#' }
+#' @keywords internal
 #'
 plot_density_sc <- function(
   df,
@@ -181,7 +162,7 @@ plot_density_sc <- function(
 #' @param outlier_column Character. Which column contains the cells identified as outliers
 #'
 #' @return A \code{\link[ggplot2]{ggplot}} object.
-#'
+#' @keywords internal
 #' @examples
 #' \dontrun{
 #'
@@ -291,7 +272,7 @@ plot_violin_sc <- function(
 #'
 #' @return A \code{ggExtraPlot} object with a hexbin center plot and marginal
 #'   histograms on log10 axes.
-#'
+#' @keywords internal
 plot_joint_sc <- function(
   df,
   library_size = "lib_size",
@@ -338,6 +319,7 @@ plot_joint_sc <- function(
 #' @return A named list of ggplot objects.
 #'
 #' @export
+#' @keywords internal
 violin_plot_sc <- function(x, ...) {
   UseMethod("violin_plot_sc")
 }
@@ -359,6 +341,7 @@ violin_plot_sc.default <- function(x, ...) {
 #' @return A named list of ggplot objects.
 #'
 #' @export
+#' @keywords internal
 density_plot_sc <- function(x, ...) {
   UseMethod("density_plot_sc")
 }
@@ -380,6 +363,7 @@ density_plot_sc.default <- function(x, ...) {
 #' @return A named list of ggplot objects.
 #'
 #' @export
+#' @keywords internal
 joint_plot_sc <- function(x, ...) {
   UseMethod("joint_plot_sc")
 }
@@ -405,7 +389,6 @@ joint_plot_sc.default <- function(x, ...) {
 #'
 #' @import ggplot2
 #'
-#' @keywords internal
 violin_plot_sc.CellQc <- function(
   x,
   grouping_column = "grp",
@@ -449,8 +432,28 @@ violin_plot_sc.CellQc <- function(
 #' @return A \code{ggExtraPlot} object with a hexbin center plot and marginal
 #'   histograms on log10 axes.
 #'
-#' @rdname violin_plot
 #' @export
+#'
+#' @examples
+#' \dontrun{
+#'
+#' set.seed(42)
+#' n_cells <- 500
+#' df <- data.table(
+#'   donor_id = sample(paste0("D", 1:5), n_cells, replace = TRUE),
+#'   nnz      = rnbinom(n_cells, mu = 2000, size = 5)
+#' )
+#' # Simulate a low-quality donor
+#' df[donor_id == "D5", nnz := rnbinom(.N, mu = 200, size = 5)]
+#'
+#' plot_violin_sc(
+#'   df = df,
+#'   grouping_column = "donor_id",
+#'   variable = "nnz",
+#'   var_name = "Number of non-zero genes",
+#'   show_outlier = FALSE
+#' )
+#' }
 violin_plot_sc.data.table <- function(
   df,
   grouping_column,
@@ -484,8 +487,6 @@ violin_plot_sc.data.table <- function(
 #' @export
 #'
 #' @import ggplot2
-#'
-#' @keywords internal
 density_plot_sc.CellQc <- function(x, ...) {
   plot_df <- get_data(x)
 
@@ -520,7 +521,26 @@ density_plot_sc.CellQc <- function(x, ...) {
 #'
 #' @import ggplot2
 #'
-#' @keywords internal
+#'
+#' @examples
+#' \dontrun{
+#'
+#' set.seed(42)
+#' n_cells <- 500
+#' df <- data.table(
+#'   donor_id = sample(paste0("D", 1:5), n_cells, replace = TRUE),
+#'   nnz      = rnbinom(n_cells, mu = 2000, size = 5)
+#' )
+#' # Simulate a low-quality donor
+#' df[donor_id == "D5", nnz := rnbinom(.N, mu = 200, size = 5)]
+#'
+#' plot_density_sc(
+#'   df = df,
+#'   grouping_column = "donor_id",
+#'   variable = "nnz",
+#'   var_name = "Number of non-zero genes"
+#' )
+#' }
 density_plot_sc.data.table <- function(
   df,
   grouping_column,
@@ -553,7 +573,6 @@ density_plot_sc.data.table <- function(
 #'
 #' @import ggplot2
 #'
-#' @keywords internal
 joint_plot_sc.CellQc <- function(x, ...) {
   plot_df <- get_data(x)
 
@@ -580,6 +599,27 @@ joint_plot_sc.CellQc <- function(x, ...) {
 #'   histograms on log10 axes.
 #'
 #' @export
+#'
+#' @import ggplot2
+#'
+#'
+#' @examples
+#' \dontrun{
+#'
+#' set.seed(42)
+#' n_cells <- 500
+#' df <- data.table(
+#'   donor_id = sample(paste0("D", 1:5), n_cells, replace = TRUE),
+#'   nnz      = rnbinom(n_cells, mu = 2000, size = 5),
+#'   lib_size      = rnbinom(n_cells, mu = 10000, size = 100),
+#' )
+#' joint_plot_sc(
+#'   df = df,
+#'   library_size = "lib_size",
+#'   nb_features = "nnz",
+#'   log_scale = TRUE
+#' )
+#' }
 joint_plot_sc.data.table <- function(
   df,
   library_size = "lib_size",

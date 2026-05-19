@@ -27,4 +27,3 @@ A named list of ggplot objects, one per metric.
 \description{
 Plot per-cell QC violin plots from a CellQc object
 }
-\keyword{internal}

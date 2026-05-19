@@ -30,3 +30,21 @@ Creates a joint hexbin plot of gene counts vs UMI counts per cell, with
 marginal histograms. Useful for visualizing cell quality and detecting
 outliers, doublets or empty droplets.
 }
+\examples{
+\dontrun{
+
+set.seed(42)
+n_cells <- 500
+df <- data.table(
+  donor_id = sample(paste0("D", 1:5), n_cells, replace = TRUE),
+  nnz      = rnbinom(n_cells, mu = 2000, size = 5),
+  lib_size      = rnbinom(n_cells, mu = 10000, size = 100),
+)
+joint_plot_sc(
+  df = df,
+  library_size = "lib_size",
+  nb_features = "nnz",
+  log_scale = TRUE
+)
+}
+}

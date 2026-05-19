@@ -17,3 +17,4 @@ A named list of ggplot objects.
 \description{
 Generic violin plot function
 }
+\keyword{internal}
