@@ -8,6 +8,12 @@ Authors@R:
         family = "Lueg", 
         email = "gregorlueg@me.com", 
         role = c("aut", "cre")
+      ),
+      person(
+        given = "Liesbeth", 
+        family = "François", 
+        email = "francois.liesbeth@gmail.com", 
+        role = c("aut")
       )
     )
 Description: 
@@ -16,7 +22,6 @@ Description:
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.3
 Imports:
     bixverse (>= 0.0.2.1),
     checkmate,
@@ -31,10 +36,13 @@ Imports:
     visNetwork,
     zeallot
 Suggests: 
+    hexbin,
+    ggExtra,
     ComplexHeatmap,
     pheatmap,
     UpSetR,
     tinytest
 Remotes: 
     GregorLueg/bixverse
+Config/roxygen2/version: 8.0.0
 URL: https://gregorlueg.github.io/bixverse.plots/
