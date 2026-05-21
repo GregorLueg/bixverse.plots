@@ -63,6 +63,10 @@ reference:
       - joint_plot_sc
       - joint_plot_sc.CellQc
       - joint_plot_sc.data.table
+      - dot_plot_sc
+      - embedding_plot_sc
+      - feature_plot_sc
+      - stacked_violin_plot_sc
   # Other utils
   - title: Utility functions
     desc: General utilitys
