@@ -2,12 +2,14 @@
 % Please edit documentation in R/sc_qc_plots.R
 \name{density_plot_sc.CellQc}
 \alias{density_plot_sc.CellQc}
-\title{Plot per-cell QC density plots from a CellQc object}
+\title{Per-metric density plots from a CellQc object}
 \usage{
-\method{density_plot_sc}{CellQc}(x, ...)
+\method{density_plot_sc}{CellQc}(x, adjust_position_label = 0, ...)
 }
 \arguments{
 \item{x}{A \code{CellQc} object.}
+
+\item{adjust_position_label}{Numeric. x-offset for the labels (default: 0).}
 
 \item{...}{Ignored.}
 }
@@ -15,5 +17,5 @@
 A named list of ggplot objects, one per metric.
 }
 \description{
-Plot per-cell QC density plots from a CellQc object
+Requires grouped data; outlier groups are read from \code{per_group_stats}.
 }

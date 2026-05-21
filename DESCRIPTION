@@ -46,3 +46,4 @@ Remotes:
     GregorLueg/bixverse
 Config/roxygen2/version: 8.0.0
 URL: https://gregorlueg.github.io/bixverse.plots/
+RoxygenNote: 7.3.3
