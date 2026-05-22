@@ -15,6 +15,8 @@ feature_plot_sc(
   point_size = NULL,
   raster = NULL,
   raster_dpi = c(512, 512),
+  highlight_features = FALSE,
+  highlight_quantile = 0.25,
   ...
 )
 }
@@ -42,6 +44,11 @@ number of cells is larger than \code{1e5}, defaults to TRUE.}
 
 \item{raster_dpi}{Two numerics. Pixel resolution for rasterized plots, passed
 to geom_scattermore(). Default is \code{c(512, 512)}.}
+
+\item{highlight_features}{Boolean. Shall the features be more strongly
+highlighted. Useful for sparsely expressed genes.}
+
+\item{highlight_quantile}{Numeric between \verb{[0, 1]}. Defines the threshold.}
 
 \item{...}{Additional arguments forwarded to
 \code{\link[bixverse:extract_embedding_data]{bixverse::extract_embedding_data()}}.}

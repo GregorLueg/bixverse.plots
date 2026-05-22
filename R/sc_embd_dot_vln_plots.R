@@ -26,7 +26,9 @@
   point_size = 0.3,
   point_alpha = 0.5,
   raster = FALSE,
-  raster_dpi = c(512, 512)
+  raster_dpi = c(512, 512),
+  highlight = FALSE,
+  highlight_quantile = 0.25
 ) {
   checkmate::assertDataTable(df)
   checkmate::qassert(colour, "S1")
@@ -35,33 +37,82 @@
   checkmate::qassert(point_alpha, "N1")
   checkmate::qassert(raster, "B1")
   checkmate::qassert(raster_dpi, "N2")
+  checkmate::qassert(highlight, "B1")
   checkmate::assertNames(names(df), must.include = c("dim_1", "dim_2", colour))
+  checkmate::qassert(highlight, "B1")
+  checkmate::qassert(highlight_quantile, "N[0,1]")
 
   discrete <- is.factor(df[[colour]]) ||
     is.character(df[[colour]]) ||
     is.logical(df[[colour]])
 
-  p <- ggplot(df, aes(x = dim_1, y = dim_2))
+  if (highlight && !discrete) {
+    threshold <- quantile(
+      df[[colour]],
+      probs = highlight_quantile,
+      na.rm = TRUE
+    )
+    bg <- df[df[[colour]] <= threshold, ]
+    fg <- df[df[[colour]] > threshold, ]
 
-  if (raster) {
-    p <- p +
-      scattermore::geom_scattermore(
-        mapping = aes(colour = .data[[colour]]),
-        pointsize = point_size,
-        pixels = raster_dpi
-      ) +
-      theme_bw()
+    if (raster) {
+      p <- ggplot() +
+        scattermore::geom_scattermore(
+          data = bg,
+          aes(x = dim_1, y = dim_2),
+          colour = "lightgrey",
+          pointsize = point_size,
+          pixels = raster_dpi
+        ) +
+        geom_point(
+          data = fg,
+          aes(x = dim_1, y = dim_2, colour = .data[[colour]]),
+          size = point_size,
+          alpha = point_alpha
+        ) +
+        theme_bw()
+    } else {
+      p <- ggplot() +
+        geom_point(
+          data = bg,
+          aes(x = dim_1, y = dim_2),
+          colour = "lightgrey",
+          size = point_size,
+          alpha = point_alpha
+        ) +
+        geom_point(
+          data = fg,
+          aes(x = dim_1, y = dim_2, colour = .data[[colour]]),
+          size = point_size + 1,
+          alpha = point_alpha
+        ) +
+        theme_bw()
+    }
+
+    p <- p + bixverse.plots:::scale_colour_single_cell(discrete = FALSE)
   } else {
-    p <- p +
-      geom_point(
-        aes(colour = .data[[colour]]),
-        size = point_size,
-        alpha = point_alpha
-      ) +
-      theme_bw()
-  }
+    p <- ggplot(df, aes(x = dim_1, y = dim_2))
 
-  p <- p + scale_colour_single_cell(discrete = discrete)
+    if (raster) {
+      p <- p +
+        scattermore::geom_scattermore(
+          mapping = aes(colour = .data[[colour]]),
+          pointsize = point_size,
+          pixels = raster_dpi
+        ) +
+        theme_bw()
+    } else {
+      p <- p +
+        geom_point(
+          aes(colour = .data[[colour]]),
+          size = point_size,
+          alpha = point_alpha
+        ) +
+        theme_bw()
+    }
+
+    p <- p + bixverse.plots:::scale_colour_single_cell(discrete = discrete)
+  }
 
   if (!is.null(facet)) {
     p <- p + facet_wrap(stats::as.formula(paste("~", facet)))
@@ -259,6 +310,9 @@ embedding_plot_sc <- function(
 #' number of cells is larger than `1e5`, defaults to TRUE.
 #' @param raster_dpi Two numerics. Pixel resolution for rasterized plots, passed
 #' to geom_scattermore(). Default is `c(512, 512)`.
+#' @param highlight_features Boolean. Shall the features be more strongly
+#' highlighted. Useful for sparsely expressed genes.
+#' @param highlight_quantile Numeric between `[0, 1]`. Defines the threshold.
 #' @param ... Additional arguments forwarded to
 #' [bixverse::extract_embedding_data()].
 #'
@@ -277,6 +331,8 @@ feature_plot_sc <- function(
   point_size = NULL,
   raster = NULL,
   raster_dpi = c(512, 512),
+  highlight_features = FALSE,
+  highlight_quantile = 0.25,
   ...
 ) {
   modality <- match.arg(modality)
@@ -284,6 +340,8 @@ feature_plot_sc <- function(
   checkmate::qassert(raster, c("0", "B1"))
   checkmate::qassert(raster_dpi, c("N2"))
   checkmate::qassert(point_size, c("N1", "0"))
+  checkmate::qassert(highlight_features, "B1")
+  checkmate::qassert(highlight_quantile, "N1[0,1]")
 
   dt <- bixverse::extract_feature_plot_data(
     object,
@@ -294,6 +352,8 @@ feature_plot_sc <- function(
     modality = modality,
     ...
   )
+
+  data.table::setorder(dt, expression)
 
   if (!is.null(feature_labels)) {
     present <- intersect(features, levels(dt$gene))
@@ -324,7 +384,8 @@ feature_plot_sc <- function(
     embedding = embedding,
     point_size = point_size,
     raster = raster,
-    raster_dpi = raster_dpi
+    raster_dpi = raster_dpi,
+    highlight = highlight_features
   )
 }
 
