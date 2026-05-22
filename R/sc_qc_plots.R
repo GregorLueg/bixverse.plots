@@ -82,6 +82,7 @@
 #' @param log_scale Logical. Apply a log10 y-axis (default: TRUE).
 #' @param show_outlier Logical. Overlay jittered points coloured by
 #' `outlier_column` (default: TRUE).
+#' @param raster Boolean. Shall [scattermore::geom_scattermore()] be used.
 #'
 #' @return A \code{\link[ggplot2]{ggplot}} object.
 #'
@@ -94,13 +95,15 @@
   group_name = NULL,
   var_name = NULL,
   log_scale = TRUE,
-  show_outlier = TRUE
+  show_outlier = TRUE,
+  raster = FALSE
 ) {
   checkmate::assertDataTable(df)
   checkmate::qassert(grouping_column, "S1")
   checkmate::qassert(variable, "S1")
   checkmate::qassert(log_scale, "B1")
   checkmate::qassert(show_outlier, "B1")
+  checkmate::qassert(raster, "B1")
   checkmate::qassert(group_name, c("S1", "0"))
   checkmate::qassert(var_name, c("S1", "0"))
   if (show_outlier) {
@@ -132,14 +135,24 @@
 
   if (show_outlier) {
     outlier_colours <- c("FALSE" = "lightgrey", "TRUE" = "orange")
-    p <- p +
+    jitter_layer <- if (raster) {
+      scattermore::geom_scattermore(
+        mapping = aes(colour = .data[[outlier_column]]),
+        position = position_jitter(width = 0.05),
+        pointsize = 0.4,
+        show.legend = FALSE
+      )
+    } else {
       geom_jitter(
         mapping = aes(colour = .data[[outlier_column]]),
         width = 0.05,
         size = 0.4,
         alpha = 0.5,
         show.legend = FALSE
-      ) +
+      )
+    }
+    p <- p +
+      jitter_layer +
       scale_colour_manual(values = outlier_colours)
   }
 
@@ -206,6 +219,8 @@
 #' @param x A `CellQc` object.
 #' @param log_scale Logical. Apply a log10 y-axis (default: FALSE).
 #' @param show_outlier Logical. Overlay outlier points (default: TRUE).
+#' @param raster Optional boolean. Shall the plot be rasterised. If `NULL` and
+#' number of cells is larger than `1e5`, defaults to TRUE.
 #' @param ... Ignored.
 #'
 #' @return A named list of ggplot objects, one per metric.
@@ -217,9 +232,19 @@ violin_plot_sc.CellQc <- function(
   x,
   log_scale = FALSE,
   show_outlier = TRUE,
+  raster = NULL,
   ...
 ) {
-  plot_df <- get_data(x)
+  plot_df <- bixverse::get_data(x)
+
+  n_cells <- nrow(plot_df)
+  raster <- raster %||% (n_cells > 1e5)
+
+  if (raster) {
+    message(paste(
+      "Raster was set to TRUE or n_cells > 1e5 -> Rasterising the plot"
+    ))
+  }
 
   plots <- purrr::map(names(x$metrics), function(metric_name) {
     .plot_violin(
@@ -229,7 +254,8 @@ violin_plot_sc.CellQc <- function(
       outlier_column = sprintf("%s_is_outlier", metric_name),
       var_name = metric_name,
       log_scale = log_scale,
-      show_outlier = show_outlier
+      show_outlier = show_outlier,
+      raster = raster
     )
   })
 
@@ -249,6 +275,8 @@ violin_plot_sc.CellQc <- function(
 #' @param var_name Character. y-axis label (default: NULL).
 #' @param log_scale Logical. Apply a log10 y-axis (default: TRUE).
 #' @param show_outlier Logical. Overlay outlier points (default: TRUE).
+#' @param raster Optional boolean. Shall the plot be rasterised. If `NULL` and
+#' number of cells is larger than `1e5`, defaults to TRUE.
 #' @param ... Ignored.
 #'
 #' @return A \code{\link[ggplot2]{ggplot}} object.
@@ -266,6 +294,7 @@ violin_plot_sc.data.table <- function(
   var_name = NULL,
   log_scale = TRUE,
   show_outlier = TRUE,
+  raster = NULL,
   ...
 ) {
   direction <- match.arg(direction)
@@ -276,6 +305,9 @@ violin_plot_sc.data.table <- function(
   )
   checkmate::qassert(threshold, "N1")
   checkmate::qassert(show_outlier, "B1")
+
+  n_cells <- nrow(df)
+  raster <- raster %||% (n_cells > 1e5)
 
   outlier_column <- NULL
   if (show_outlier) {
@@ -299,7 +331,8 @@ violin_plot_sc.data.table <- function(
     group_name = group_name,
     var_name = var_name,
     log_scale = log_scale,
-    show_outlier = show_outlier
+    show_outlier = show_outlier,
+    raster = raster
   )
 }
 

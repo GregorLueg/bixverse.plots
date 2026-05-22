@@ -51,7 +51,7 @@
       geom_point(
         aes(colour = .data[[colour]]),
         size = point_size,
-        alpha = alpha
+        alpha = point_alpha_alpha
       ) +
       theme_bw()
   }
@@ -226,7 +226,9 @@ embedding_plot_sc <- function(
     df = dt,
     colour = colour_by,
     embedding = embedding,
-    point_size = point_size
+    point_size = point_size,
+    raster = raster,
+    raster_dpi = raster_dpi
   )
 }
 
@@ -307,7 +309,9 @@ feature_plot_sc <- function(
     colour = "expression",
     facet = "gene",
     embedding = embedding,
-    point_size = point_size
+    point_size = point_size,
+    raster = raster,
+    raster_dpi = raster_dpi
   )
 }
 

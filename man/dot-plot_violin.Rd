@@ -12,7 +12,8 @@
   group_name = NULL,
   var_name = NULL,
   log_scale = TRUE,
-  show_outlier = TRUE
+  show_outlier = TRUE,
+  raster = FALSE
 )
 }
 \arguments{
@@ -32,6 +33,8 @@
 
 \item{show_outlier}{Logical. Overlay jittered points coloured by
 \code{outlier_column} (default: TRUE).}
+
+\item{raster}{Boolean. Shall \code{\link[scattermore:geom_scattermore]{scattermore::geom_scattermore()}} be used.}
 }
 \value{
 A \code{\link[ggplot2]{ggplot}} object.
