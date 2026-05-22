@@ -28,6 +28,7 @@ Imports:
     data.table,
     ggplot2,
     ggraph,
+    ggrepel,
     igraph,
     magrittr,
     MetBrewer,

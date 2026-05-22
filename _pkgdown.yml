@@ -50,6 +50,12 @@ reference:
       - enrichment_map_oae
       - plot_enrichment_map_ggraph
       - plot_enrichment_map_visnetwork
+  # Other plots
+  - title: Other useful plots
+    desc: Other plotting helpers like for volcano plots, etc.
+    contents:
+      - volcano_plot
+      - params_volcano
   # Single cell plotting
   - title: Single cell plotting functions
     desc: Generate different single cell plots

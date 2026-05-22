@@ -30,6 +30,9 @@ column yields a discrete scale, a numeric column a continuous one.}
 \item{point_alpha}{Numeric. Alpha parameter (default: 0.5).}
 
 \item{raster}{Boolean. Shall \code{\link[scattermore:geom_scattermore]{scattermore::geom_scattermore()}} be used.}
+
+\item{raster_dpi}{Two numerics. Pixel resolution for rasterized plots, passed
+to geom_scattermore(). Default is \code{c(512, 512)}.}
 }
 \value{
 A \code{\link[ggplot2]{ggplot}} object.
