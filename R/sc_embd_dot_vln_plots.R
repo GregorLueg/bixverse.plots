@@ -46,7 +46,10 @@
     is.character(df[[colour]]) ||
     is.logical(df[[colour]])
 
+  n_cells <- length(unique(df$cell_id))
+
   if (highlight && !discrete) {
+    # path to strongly highlight rare genes
     threshold <- quantile(
       df[[colour]],
       probs = highlight_quantile,
@@ -67,7 +70,8 @@
         geom_point(
           data = fg,
           aes(x = dim_1, y = dim_2, colour = .data[[colour]]),
-          size = point_size,
+          # use the auto point detection here...
+          size = auto_point_size(n_samples = n_cells, raster = FALSE) * 2,
           alpha = point_alpha
         ) +
         theme_bw()
