@@ -30,8 +30,10 @@ Imports:
     ggraph,
     igraph,
     magrittr,
+    MetBrewer,
     purrr,
     scales,
+    scattermore,
     stringr,
     visNetwork,
     zeallot

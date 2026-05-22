@@ -4,7 +4,16 @@
 \alias{.plot_embedding}
 \title{Scatter plot worker for embeddings}
 \usage{
-.plot_embedding(df, colour, facet = NULL, embedding = NULL, point_size = 0.5)
+.plot_embedding(
+  df,
+  colour,
+  facet = NULL,
+  embedding = NULL,
+  point_size = 0.3,
+  point_alpha = 0.5,
+  raster = FALSE,
+  raster_dpi = c(512, 512)
+)
 }
 \arguments{
 \item{df}{data.table. Must contain \code{dim_1}, \code{dim_2} and \code{colour}.}
@@ -17,6 +26,10 @@ column yields a discrete scale, a numeric column a continuous one.}
 \item{embedding}{Character. Embedding name for axis labels (default: NULL).}
 
 \item{point_size}{Numeric. Point size (default: 0.5).}
+
+\item{point_alpha}{Numeric. Alpha parameter (default: 0.5).}
+
+\item{raster}{Boolean. Shall \code{\link[scattermore:geom_scattermore]{scattermore::geom_scattermore()}} be used.}
 }
 \value{
 A \code{\link[ggplot2]{ggplot}} object.

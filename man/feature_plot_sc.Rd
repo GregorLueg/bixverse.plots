@@ -13,6 +13,8 @@ feature_plot_sc(
   clip = NULL,
   modality = c("rna", "adt"),
   point_size = 0.3,
+  raster = NULL,
+  raster_dpi = c(512, 512),
   ...
 )
 }
@@ -33,6 +35,12 @@ display labels (default: NULL).}
 \item{modality}{String. One of \code{c("rna", "adt")}.}
 
 \item{point_size}{Numeric. Point size (default: 0.3).}
+
+\item{raster}{Optional boolean. Shall the plot be rasterised. If \code{NULL} and
+number of cells is larger than \code{1e5}, defaults to TRUE.}
+
+\item{raster_dpi}{Two numerics. Pixel resolution for rasterized plots, passed
+to geom_scattermore(). Default is \code{c(512, 512)}.}
 
 \item{...}{Additional arguments forwarded to
 \code{\link[bixverse:extract_embedding_data]{bixverse::extract_embedding_data()}}.}

@@ -10,6 +10,10 @@
 #' @param facet Character. Optional column to facet by (default: NULL).
 #' @param embedding Character. Embedding name for axis labels (default: NULL).
 #' @param point_size Numeric. Point size (default: 0.5).
+#' @param point_alpha Numeric. Alpha parameter (default: 0.5).
+#' @param raster Boolean. Shall [scattermore::geom_scattermore()] be used.
+#' @param raster_dpi Two numerics. Pixel resolution for rasterized plots, passed
+#' to geom_scattermore(). Default is `c(512, 512)`.
 #'
 #' @return A \code{\link[ggplot2]{ggplot}} object.
 #'
@@ -19,24 +23,40 @@
   colour,
   facet = NULL,
   embedding = NULL,
-  point_size = 0.5
+  point_size = 0.3,
+  point_alpha = 0.5,
+  raster = FALSE,
+  raster_dpi = c(512, 512)
 ) {
   checkmate::assertDataTable(df)
   checkmate::qassert(colour, "S1")
   checkmate::qassert(facet, c("0", "S1"))
   checkmate::qassert(point_size, "N1")
+  checkmate::qassert(point_alpha, "N1")
+  checkmate::qassert(raster, "B1")
+  checkmate::qassert(raster_dpi, "N2")
   checkmate::assertNames(names(df), must.include = c("dim_1", "dim_2", colour))
 
   discrete <- is.factor(df[[colour]]) ||
     is.character(df[[colour]]) ||
     is.logical(df[[colour]])
 
-  p <- ggplot(df, aes(x = dim_1, y = dim_2)) +
-    geom_point(aes(colour = .data[[colour]]), size = point_size) +
-    theme_bw()
+  p <- ggplot(df, aes(x = dim_1, y = dim_2))
 
-  p <- p +
-    if (discrete) scale_colour_viridis_d() else scale_colour_viridis_c()
+  if (raster) {
+    p <- p +
+      scattermore::geom_scattermore(pointsize = point_size, pixels = raster_dpi)
+  } else {
+    p <- p +
+      geom_point(
+        aes(colour = .data[[colour]]),
+        size = point_size,
+        alpha = alpha
+      ) +
+      theme_bw()
+  }
+
+  p <- p + scale_colour_single_cell(discrete = discrete)
 
   if (!is.null(facet)) {
     p <- p + facet_wrap(stats::as.formula(paste("~", facet)))
@@ -84,7 +104,7 @@
 
   ggplot(df, aes(x = group, y = gene)) +
     geom_point(aes(size = pct_exp, colour = scaled_exp)) +
-    scale_colour_viridis_c() +
+    scale_colour_single_cell(discrete = FALSE) +
     scale_size_continuous(range = c(0, 6)) +
     theme_bw() +
     labs(
@@ -129,7 +149,7 @@
 
   ggplot(df, aes(x = group, y = expression, fill = group)) +
     geom_violin(scale = scale_y, alpha = 0.8, linewidth = 0.2) +
-    scale_fill_viridis_d() +
+    scale_fill_single_cell(discrete = TRUE) +
     facet_grid(gene ~ ., scales = "free_y", switch = "y") +
     theme_bw() +
     theme(
@@ -154,7 +174,11 @@
 #' @param discrete Optional boolean. Force a discrete scale by coercing
 #' `colour_by` to a factor. `NULL` (default) picks the scale from the column
 #' type.
-#' @param point_size Numeric. Point size (default: 0.5).
+#' @param point_size Numeric. Point size (default: 0.3).
+#' @param raster Optional boolean. Shall the plot be rasterised. If `NULL` and
+#' number of cells is larger than `1e5`, defaults to TRUE.
+#' @param raster_dpi Two numerics. Pixel resolution for rasterized plots, passed
+#' to geom_scattermore(). Default is `c(512, 512)`.
 #' @param ... Additional arguments forwarded to
 #' [bixverse::extract_embedding_data()].
 #'
@@ -167,11 +191,15 @@ embedding_plot_sc <- function(
   embedding,
   colour_by,
   discrete = NULL,
-  point_size = 0.5,
+  point_size = 0.3,
+  raster = NULL,
+  raster_dpi = c(512, 512),
   ...
 ) {
   checkmate::qassert(colour_by, "S1")
   checkmate::qassert(discrete, c("0", "B1"))
+  checkmate::qassert(raster, c("0", "B1"))
+  checkmate::qassert(raster_dpi, c("N2"))
 
   dt <- bixverse::extract_embedding_data(
     object,
@@ -182,6 +210,16 @@ embedding_plot_sc <- function(
 
   if (isTRUE(discrete)) {
     dt[, (colour_by) := as.factor(get(colour_by))]
+  }
+
+  n_cells <- length(unique(dt$cell_id))
+
+  raster <- raster %||% (n_cells > 1e5)
+
+  if (raster) {
+    message(paste(
+      "Raster was set to TRUE or n_cells > 1e5 -> Rasterising the plot"
+    ))
   }
 
   .plot_embedding(
@@ -205,6 +243,10 @@ embedding_plot_sc <- function(
 #' @param clip Optional numeric. Clip z-scores if `scale = TRUE`.
 #' @param modality String. One of `c("rna", "adt")`.
 #' @param point_size Numeric. Point size (default: 0.3).
+#' @param raster Optional boolean. Shall the plot be rasterised. If `NULL` and
+#' number of cells is larger than `1e5`, defaults to TRUE.
+#' @param raster_dpi Two numerics. Pixel resolution for rasterized plots, passed
+#' to geom_scattermore(). Default is `c(512, 512)`.
 #' @param ... Additional arguments forwarded to
 #' [bixverse::extract_embedding_data()].
 #'
@@ -221,9 +263,14 @@ feature_plot_sc <- function(
   clip = NULL,
   modality = c("rna", "adt"),
   point_size = 0.3,
+  raster = NULL,
+  raster_dpi = c(512, 512),
   ...
 ) {
   modality <- match.arg(modality)
+
+  checkmate::qassert(raster, c("0", "B1"))
+  checkmate::qassert(raster_dpi, c("N2"))
 
   dt <- bixverse::extract_feature_plot_data(
     object,
@@ -243,6 +290,16 @@ feature_plot_sc <- function(
         levels = feature_labels[present]
       )
     ]
+  }
+
+  n_cells <- length(unique(dt$cell_id))
+
+  raster <- raster %||% (n_cells > 1e5)
+
+  if (raster) {
+    message(paste(
+      "Raster was set to TRUE or n_cells > 1e5 -> Rasterising the plot"
+    ))
   }
 
   .plot_embedding(
