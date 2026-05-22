@@ -58,3 +58,28 @@ wrap_and_truncate <- function(
 
   paste(lines, collapse = "\n")
 }
+
+## auto scale points -----------------------------------------------------------
+
+#' Automatic point size
+#'
+#' @description
+#' Ported over from Seurats `AutoPointSize()`.
+#'
+#' @param n_samples Integer. Number of samples.
+#' @param raster Optional boolean. If rastering is activating.
+#'
+#' @returns Automated dot size
+#'
+#' @keywords internal
+auto_point_size <- function(n_samples, raster = NULL) {
+  # checks
+  checkmate::qassert(n_samples, "I1")
+  checkmate::qassert(raster, c("B1", "0"))
+
+  return(ifelse(
+    test = isTRUE(x = raster),
+    yes = 1,
+    no = min(1583 / n_samples, 1)
+  ))
+}

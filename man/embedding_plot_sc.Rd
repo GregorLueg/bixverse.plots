@@ -9,7 +9,7 @@ embedding_plot_sc(
   embedding,
   colour_by,
   discrete = NULL,
-  point_size = 0.3,
+  point_size = NULL,
   raster = NULL,
   raster_dpi = c(512, 512),
   ...
@@ -26,7 +26,8 @@ embedding_plot_sc(
 \code{colour_by} to a factor. \code{NULL} (default) picks the scale from the column
 type.}
 
-\item{point_size}{Numeric. Point size (default: 0.3).}
+\item{point_size}{Optional numeric. Defines the point size. If not provided,
+will be auto-determined.}
 
 \item{raster}{Optional boolean. Shall the plot be rasterised. If \code{NULL} and
 number of cells is larger than \code{1e5}, defaults to TRUE.}

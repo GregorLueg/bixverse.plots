@@ -139,7 +139,7 @@
       scattermore::geom_scattermore(
         mapping = aes(colour = .data[[outlier_column]]),
         position = position_jitter(width = 0.05),
-        pointsize = 0.4,
+        pointsize = 1,
         show.legend = FALSE
       )
     } else {

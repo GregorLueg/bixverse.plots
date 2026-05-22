@@ -45,13 +45,18 @@
 
   if (raster) {
     p <- p +
-      scattermore::geom_scattermore(pointsize = point_size, pixels = raster_dpi)
+      scattermore::geom_scattermore(
+        mapping = aes(colour = .data[[colour]]),
+        pointsize = point_size,
+        pixels = raster_dpi
+      ) +
+      theme_bw()
   } else {
     p <- p +
       geom_point(
         aes(colour = .data[[colour]]),
         size = point_size,
-        alpha = point_alpha_alpha
+        alpha = point_alpha
       ) +
       theme_bw()
   }
@@ -174,7 +179,8 @@
 #' @param discrete Optional boolean. Force a discrete scale by coercing
 #' `colour_by` to a factor. `NULL` (default) picks the scale from the column
 #' type.
-#' @param point_size Numeric. Point size (default: 0.3).
+#' @param point_size Optional numeric. Defines the point size. If not provided,
+#' will be auto-determined.
 #' @param raster Optional boolean. Shall the plot be rasterised. If `NULL` and
 #' number of cells is larger than `1e5`, defaults to TRUE.
 #' @param raster_dpi Two numerics. Pixel resolution for rasterized plots, passed
@@ -191,7 +197,7 @@ embedding_plot_sc <- function(
   embedding,
   colour_by,
   discrete = NULL,
-  point_size = 0.3,
+  point_size = NULL,
   raster = NULL,
   raster_dpi = c(512, 512),
   ...
@@ -200,6 +206,7 @@ embedding_plot_sc <- function(
   checkmate::qassert(discrete, c("0", "B1"))
   checkmate::qassert(raster, c("0", "B1"))
   checkmate::qassert(raster_dpi, c("N2"))
+  checkmate::qassert(point_size, c("N1", "0"))
 
   dt <- bixverse::extract_embedding_data(
     object,
@@ -215,6 +222,8 @@ embedding_plot_sc <- function(
   n_cells <- length(unique(dt$cell_id))
 
   raster <- raster %||% (n_cells > 1e5)
+  point_size <- point_size %||%
+    auto_point_size(n_samples = n_cells, raster = raster)
 
   if (raster) {
     message(paste(
@@ -244,7 +253,8 @@ embedding_plot_sc <- function(
 #' @param scale Boolean. Whether to z-score the expression values.
 #' @param clip Optional numeric. Clip z-scores if `scale = TRUE`.
 #' @param modality String. One of `c("rna", "adt")`.
-#' @param point_size Numeric. Point size (default: 0.3).
+#' @param point_size Optional numeric. Defines the point size. If not provided,
+#' will be auto-determined.
 #' @param raster Optional boolean. Shall the plot be rasterised. If `NULL` and
 #' number of cells is larger than `1e5`, defaults to TRUE.
 #' @param raster_dpi Two numerics. Pixel resolution for rasterized plots, passed
@@ -264,7 +274,7 @@ feature_plot_sc <- function(
   scale = FALSE,
   clip = NULL,
   modality = c("rna", "adt"),
-  point_size = 0.3,
+  point_size = NULL,
   raster = NULL,
   raster_dpi = c(512, 512),
   ...
@@ -273,6 +283,7 @@ feature_plot_sc <- function(
 
   checkmate::qassert(raster, c("0", "B1"))
   checkmate::qassert(raster_dpi, c("N2"))
+  checkmate::qassert(point_size, c("N1", "0"))
 
   dt <- bixverse::extract_feature_plot_data(
     object,
@@ -297,6 +308,8 @@ feature_plot_sc <- function(
   n_cells <- length(unique(dt$cell_id))
 
   raster <- raster %||% (n_cells > 1e5)
+  point_size <- point_size %||%
+    auto_point_size(n_samples = n_cells, raster = raster)
 
   if (raster) {
     message(paste(
