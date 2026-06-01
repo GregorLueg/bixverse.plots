@@ -44,6 +44,8 @@
 #' @return A \code{\link[ggplot2]{Scale}} object.
 #'
 #' @keywords internal
+#'
+#' @export
 scale_colour_single_cell <- function(discrete, ...) {
   if (discrete) {
     ggplot2::discrete_scale(
@@ -72,6 +74,8 @@ scale_colour_single_cell <- function(discrete, ...) {
 #' @return A \code{\link[ggplot2]{Scale}} object.
 #'
 #' @keywords internal
+#'
+#' @export
 scale_fill_single_cell <- function(discrete, ...) {
   if (discrete) {
     ggplot2::discrete_scale("fill", "austria", palette = .palette_austria, ...)

@@ -13,7 +13,8 @@
   point_alpha = 0.5,
   raster = FALSE,
   raster_dpi = c(512, 512),
-  ...
+  highlight = FALSE,
+  highlight_quantile = 0.25
 )
 }
 \arguments{
