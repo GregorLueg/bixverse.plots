@@ -130,7 +130,7 @@ helper_gse_dot_plot <- function(
     xlim(0, max_val) +
     xlab("Gene Ratio") +
     ylab("Geneset name") +
-    theme_bw() +
+    theme_bx() +
     scale_size_continuous(range = size_range) +
     labs(size = "GS size", fill = "FDR") +
     scale_fill_viridis_c(direction = direction, option = viridis_option)

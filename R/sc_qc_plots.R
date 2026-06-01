@@ -48,19 +48,19 @@
     aes(x = .data[[variable]], fill = .data[[grouping_column]])
   ) +
     geom_density(alpha = 0.2) +
-    geom_label(
+    ggrepel::geom_label_repel(
       data = outlier_groups,
       mapping = aes(
         x = .data[["group_median"]] + adjust_position_label,
         y = max_y,
         label = .data[["group_id"]],
-        fill = .data[["group_id"]]
+        color = .data[["group_id"]]
       ),
       alpha = 0.4,
       vjust = 1,
       inherit.aes = FALSE
     ) +
-    theme_classic() +
+    theme_bx() +
     theme(legend.position = "none") +
     labs(x = var_name, y = "Density", title = var_name)
 
@@ -122,7 +122,7 @@
     aes(x = .data[[grouping_column]], y = .data[[variable]])
   ) +
     geom_violin(alpha = 0.6) +
-    theme_classic() +
+    theme_bx() +
     theme(
       legend.position = "none",
       axis.text.x = element_text(angle = -45, hjust = 0)
@@ -199,7 +199,7 @@
     geom_point(alpha = 0) +
     geom_hex(bins = 80) +
     scale_fill_gradientn(colors = RColorBrewer::brewer.pal(9, "Blues")[4:9]) +
-    theme_classic() +
+    theme_bx() +
     theme(legend.position = "none") +
     labs(x = "Genes per cell (log10)", y = "UMIs per cell (log10)")
 

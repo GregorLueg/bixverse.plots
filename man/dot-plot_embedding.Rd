@@ -12,7 +12,8 @@
   point_size = 0.3,
   point_alpha = 0.5,
   raster = FALSE,
-  raster_dpi = c(512, 512)
+  raster_dpi = c(512, 512),
+  ...
 )
 }
 \arguments{

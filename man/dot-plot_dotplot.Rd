@@ -4,13 +4,17 @@
 \alias{.plot_dotplot}
 \title{Dot plot worker}
 \usage{
-.plot_dotplot(df, feature_labels = NULL)
+.plot_dotplot(df, feature_labels = NULL, cell_markers = NULL)
 }
 \arguments{
 \item{df}{data.table. Must contain \code{gene}, \code{group}, \code{pct_exp}, \code{scaled_exp}.}
 
 \item{feature_labels}{Optional named character vector mapping gene ids to
 display labels (default: NULL).}
+
+\item{cell_markers}{Optional named character vector mapping gene ids to
+cell type labels. If feature_labels is provided, the character vectors
+should contain the mapping of feature display labels to cell type. (default: NULL).}
 }
 \value{
 A \code{\link[ggplot2]{ggplot}} object.

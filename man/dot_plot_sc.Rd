@@ -9,6 +9,7 @@ dot_plot_sc(
   features,
   grouping_variable,
   feature_labels = NULL,
+  cell_markers = NULL,
   scale_exp = TRUE,
   modality = c("rna", "adt")
 )
@@ -22,6 +23,12 @@ dot_plot_sc(
 
 \item{feature_labels}{Optional named character vector mapping gene ids to
 display labels (default: NULL).}
+
+\item{cell_markers}{Optional named character vector mapping gene ids to
+cell type labels. If feature_labels is provided, the character vectors
+should contain the mapping of feature display labels to cell type. E.g.
+c(CD3E = "T cell", CD8A = "T cell", MS4A1 = "B cell", ...).
+(default: NULL).}
 
 \item{scale_exp}{Boolean. Whether to min-max scale mean expression per gene.}
 

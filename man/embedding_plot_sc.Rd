@@ -8,10 +8,15 @@ embedding_plot_sc(
   object,
   embedding,
   colour_by,
+  label_by = NULL,
   discrete = NULL,
   point_size = NULL,
+  point_alpha = 0.5,
   raster = NULL,
   raster_dpi = c(512, 512),
+  label_size = 3,
+  label_color = "black",
+  label_font = "bold",
   ...
 )
 }
@@ -22,6 +27,8 @@ embedding_plot_sc(
 
 \item{colour_by}{String. Obs column to colour by.}
 
+\item{label_by}{String. Optional obs column to label by. (default: NULL).}
+
 \item{discrete}{Optional boolean. Force a discrete scale by coercing
 \code{colour_by} to a factor. \code{NULL} (default) picks the scale from the column
 type.}
@@ -29,11 +36,19 @@ type.}
 \item{point_size}{Optional numeric. Defines the point size. If not provided,
 will be auto-determined.}
 
+\item{point_alpha}{Numeric. Defines the alpha.}
+
 \item{raster}{Optional boolean. Shall the plot be rasterised. If \code{NULL} and
 number of cells is larger than \code{1e5}, defaults to TRUE.}
 
 \item{raster_dpi}{Two numerics. Pixel resolution for rasterized plots, passed
 to geom_scattermore(). Default is \code{c(512, 512)}.}
+
+\item{label_size}{Numeric. Size of the labels}
+
+\item{label_color}{String. Color fo the labels.}
+
+\item{label_font}{String. Font of the labels.}
 
 \item{...}{Additional arguments forwarded to
 \code{\link[bixverse:extract_embedding_data]{bixverse::extract_embedding_data()}}.}
