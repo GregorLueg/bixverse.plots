@@ -65,14 +65,14 @@
           aes(x = dim_1, y = dim_2),
           colour = "lightgrey",
           pointsize = point_size,
-          pixels = raster_dpi
+          pixels = raster_dpi,
+          alpha = point_alpha
         ) +
         geom_point(
           data = fg,
           aes(x = dim_1, y = dim_2, colour = .data[[colour]]),
           # use the auto point detection here...
-          size = auto_point_size(n_samples = n_cells, raster = FALSE) * 2,
-          alpha = point_alpha
+          size = auto_point_size(n_samples = n_cells, raster = FALSE) * 2
         ) +
         theme_bw()
     } else {
@@ -87,8 +87,7 @@
         geom_point(
           data = fg,
           aes(x = dim_1, y = dim_2, colour = .data[[colour]]),
-          size = point_size + 1,
-          alpha = point_alpha
+          size = point_size + 1
         ) +
         theme_bw()
     }
@@ -102,7 +101,8 @@
         scattermore::geom_scattermore(
           mapping = aes(colour = .data[[colour]]),
           pointsize = point_size,
-          pixels = raster_dpi
+          pixels = raster_dpi,
+          alpha = point_alpha
         ) +
         theme_bw()
     } else {
