@@ -2,7 +2,7 @@
 % Please edit documentation in R/sc_qc_plots.R
 \name{joint_plot_sc.data.table}
 \alias{joint_plot_sc.data.table}
-\title{Joint QC plots from a data.table object}
+\title{Joint QC plot from a data.table}
 \usage{
 \method{joint_plot_sc}{data.table}(
   df,
@@ -13,38 +13,19 @@
 )
 }
 \arguments{
-\item{df}{data.table. Input data table containing QC metrics.}
+\item{df}{data.table. Input data containing the QC metrics.}
 
-\item{library_size}{Character. Column containing library size information per cell}
+\item{library_size}{Character. Column with the library size per cell.}
 
-\item{nb_features}{Character. Column containing information on number of features per cell}
+\item{nb_features}{Character. Column with the number of features per cell.}
 
-\item{log_scale}{Boolean. If TRUE, will log-scale the data. (Default: FALSE)}
+\item{log_scale}{Logical. Log10-transform both axes (default: FALSE).}
+
+\item{...}{Ignored.}
 }
 \value{
-A \code{ggExtraPlot} object with a hexbin center plot and marginal
-histograms on log10 axes.
+A \code{ggExtraPlot} object.
 }
 \description{
-Creates a joint hexbin plot of gene counts vs UMI counts per cell, with
-marginal histograms. Useful for visualizing cell quality and detecting
-outliers, doublets or empty droplets.
-}
-\examples{
-\dontrun{
-
-set.seed(42)
-n_cells <- 500
-df <- data.table(
-  donor_id = sample(paste0("D", 1:5), n_cells, replace = TRUE),
-  nnz      = rnbinom(n_cells, mu = 2000, size = 5),
-  lib_size      = rnbinom(n_cells, mu = 10000, size = 100),
-)
-joint_plot_sc(
-  df = df,
-  library_size = "lib_size",
-  nb_features = "nnz",
-  log_scale = TRUE
-)
-}
+Joint QC plot from a data.table
 }

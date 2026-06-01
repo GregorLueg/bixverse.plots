@@ -2,22 +2,19 @@
 % Please edit documentation in R/sc_qc_plots.R
 \name{violin_plot_sc.CellQc}
 \alias{violin_plot_sc.CellQc}
-\title{Plot per-cell QC violin plots from a CellQc object}
+\title{Per-metric violin plots from a CellQc object}
 \usage{
-\method{violin_plot_sc}{CellQc}(
-  x,
-  grouping_column = "grp",
-  variable,
-  group_name = NULL,
-  var_name = NULL,
-  log_scale = FALSE,
-  outlier_column = "global_outlier",
-  show_outlier = TRUE,
-  ...
-)
+\method{violin_plot_sc}{CellQc}(x, log_scale = FALSE, show_outlier = TRUE, raster = NULL, ...)
 }
 \arguments{
 \item{x}{A \code{CellQc} object.}
+
+\item{log_scale}{Logical. Apply a log10 y-axis (default: FALSE).}
+
+\item{show_outlier}{Logical. Overlay outlier points (default: TRUE).}
+
+\item{raster}{Optional boolean. Shall the plot be rasterised. If \code{NULL} and
+number of cells is larger than \code{1e5}, defaults to TRUE.}
 
 \item{...}{Ignored.}
 }
@@ -25,5 +22,5 @@
 A named list of ggplot objects, one per metric.
 }
 \description{
-Plot per-cell QC violin plots from a CellQc object
+Per-metric violin plots from a CellQc object
 }

@@ -2,56 +2,49 @@
 % Please edit documentation in R/sc_qc_plots.R
 \name{violin_plot_sc.data.table}
 \alias{violin_plot_sc.data.table}
-\title{Plot joint QC metrics}
+\title{Violin plot from a data.table}
 \usage{
 \method{violin_plot_sc}{data.table}(
   df,
   grouping_column,
   variable,
+  direction = c("twosided", "below", "above"),
+  threshold = 3,
   group_name = NULL,
   var_name = NULL,
   log_scale = TRUE,
   show_outlier = TRUE,
-  outlier_column = "global_outlier",
+  raster = NULL,
   ...
 )
 }
 \arguments{
-\item{df}{data.table Input data table containing QC metrics.}
+\item{df}{data.table. Input data containing the QC metric.}
 
-\item{log_scale}{Boolean. If TRUE, will log-scale the data. (Default: FALSE)}
+\item{grouping_column}{Character. Column used for the x-axis groups.}
 
-\item{library_size}{Character. Column containing library size information per cell}
+\item{variable}{Character. Numeric column to plot on the y-axis.}
 
-\item{nb_features}{Character. Column containing information on number of features per cell}
+\item{direction}{Character. One of \code{"twosided"}, \code{"below"}, \code{"above"}.}
+
+\item{threshold}{Numeric. Number of MADs for outlier detection (default: 3).}
+
+\item{group_name}{Character. x-axis label (default: NULL).}
+
+\item{var_name}{Character. y-axis label (default: NULL).}
+
+\item{log_scale}{Logical. Apply a log10 y-axis (default: TRUE).}
+
+\item{show_outlier}{Logical. Overlay outlier points (default: TRUE).}
+
+\item{raster}{Optional boolean. Shall the plot be rasterised. If \code{NULL} and
+number of cells is larger than \code{1e5}, defaults to TRUE.}
+
+\item{...}{Ignored.}
 }
 \value{
-A \code{ggExtraPlot} object with a hexbin center plot and marginal
-histograms on log10 axes.
+A \code{\link[ggplot2]{ggplot}} object.
 }
 \description{
-Creates a joint hexbin plot of gene counts vs UMI counts per cell, with
-marginal histograms. Useful for visualizing cell quality and detecting
-outliers, doublets or empty droplets.
-}
-\examples{
-\dontrun{
-
-set.seed(42)
-n_cells <- 500
-df <- data.table(
-  donor_id = sample(paste0("D", 1:5), n_cells, replace = TRUE),
-  nnz      = rnbinom(n_cells, mu = 2000, size = 5)
-)
-# Simulate a low-quality donor
-df[donor_id == "D5", nnz := rnbinom(.N, mu = 200, size = 5)]
-
-plot_violin_sc(
-  df = df,
-  grouping_column = "donor_id",
-  variable = "nnz",
-  var_name = "Number of non-zero genes",
-  show_outlier = FALSE
-)
-}
+Per-cell outliers are recomputed within each \code{grouping_column} group.
 }

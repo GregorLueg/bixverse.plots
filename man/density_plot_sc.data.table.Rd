@@ -2,58 +2,42 @@
 % Please edit documentation in R/sc_qc_plots.R
 \name{density_plot_sc.data.table}
 \alias{density_plot_sc.data.table}
-\title{Plot per-cell QC density plots from a data.table}
+\title{Density plot from a data.table}
 \usage{
 \method{density_plot_sc}{data.table}(
   df,
   grouping_column,
   variable,
+  direction = c("twosided", "below", "above"),
+  threshold = 3,
   var_name = NULL,
-  nmads = 3,
   log_scale = TRUE,
-  adjust_position_label = 0
+  adjust_position_label = 0,
+  ...
 )
 }
 \arguments{
-\item{df}{data.table. Input data table containing QC metrics.}
+\item{df}{data.table. Input data containing the QC metric.}
 
-\item{grouping_column}{Character. Name of the column used to group density plot}
+\item{grouping_column}{Character. Column used to group the densities.}
 
-\item{variable}{Character. Name of the numeric QC column to plot on the x-axis.}
+\item{variable}{Character. Numeric column to plot on the x-axis.}
 
-\item{var_name}{Character. Label for the y-axis (default: NULL).}
+\item{direction}{Character. One of \code{"twosided"}, \code{"below"}, \code{"above"}.}
 
-\item{log_scale}{Boolean. Log scale (default: TRUE)}
+\item{threshold}{Numeric. Number of MADs for outlier detection (default: 3).}
 
-\item{group_name}{Character. Label for the x-axis (default: NULL).}
+\item{var_name}{Character. x-axis label (default: NULL).}
 
-\item{show_outlier}{Boolean. Show the cells that are identified as outliers (default: TRUE)}
+\item{log_scale}{Logical. Apply a log10 x-axis (default: TRUE).}
 
-\item{outlier_column}{Character. Which column contains the cells identified as outliers}
+\item{adjust_position_label}{Numeric. x-offset for the labels (default: 0).}
+
+\item{...}{Ignored.}
 }
 \value{
-A named list of ggplot objects, one per metric.
+A \code{\link[ggplot2]{ggplot}} object.
 }
 \description{
-Plot per-cell QC density plots from a data.table
-}
-\examples{
-\dontrun{
-
-set.seed(42)
-n_cells <- 500
-df <- data.table(
-  donor_id = sample(paste0("D", 1:5), n_cells, replace = TRUE),
-  nnz      = rnbinom(n_cells, mu = 2000, size = 5)
-)
-# Simulate a low-quality donor
-df[donor_id == "D5", nnz := rnbinom(.N, mu = 200, size = 5)]
-
-plot_density_sc(
-  df = df,
-  grouping_column = "donor_id",
-  variable = "nnz",
-  var_name = "Number of non-zero genes"
-)
-}
+Group-level outliers are recomputed from per-group medians.
 }
