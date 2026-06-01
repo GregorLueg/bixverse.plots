@@ -128,7 +128,7 @@
     sprintf("%s %i", embedding, 1:2)
   }
 
-  p + labs(x = labels[1], y = labels[2], colour = colour)
+  p <- p + labs(x = labels[1], y = labels[2], colour = colour)
 }
 
 #' Label Centroids in Scatter Plots
@@ -160,7 +160,8 @@
 #' @importFrom S7 method "method<-" new_S3_class
 #' @export
 geom_label_centroids <- function(
-  label_by = NULL,
+  data = NULL,
+  label_by,
   colour = "black",
   size = 4,
   fontface = "bold",
@@ -168,6 +169,7 @@ geom_label_centroids <- function(
 ) {
   structure(
     list(
+      data = data,
       label_by = label_by,
       colour = colour,
       size = size,
@@ -181,29 +183,31 @@ geom_label_centroids <- function(
 #' @export
 method(update_ggplot, list(new_S3_class("label_centroids"), class_ggplot)) <-
   function(object, plot, ...) {
-    if (is.null(object$label_by) & is.null(plot@labels$colour)) {
-      stop("geom_label_centroids(): could not determine a label column.")
+    ## checks
+    if (is.null(object$data) & length(plot@data) == 0) {
+      stop(
+        "geom_label_centroids(): could not identify data object, please provide either dataframe or pass data directly
+      in ggplot(data = df)"
+      )
     }
-    colour_by <- plot@labels$colour
-    if (is.null(object$label_by) & is.numeric(plot@data[[colour_by]])) {
+    if (is.null(object$data)) {
+      dt <- data.table::as.data.table(plot@data)
+    } else {
+      dt <- data.table::as.data.table(object$data)
+    }
+    checkmate::assertNames(colnames(dt), must.include = object$label_by)
+    if (is.numeric(dt[[label_by]])) {
       stop("geom_label_centroids(): label_by is continuous.")
     }
-    if (!is.null(object$label_by)) {
-      checkmate::assertNames(
-        colnames(plot@data),
-        must.include = object$label_by
-      )
-    } else {
-      object$label_by <- colour_by
-    }
 
-    dt <- data.table::as.data.table(plot@data)
+    ## data
     centroids <- dt[,
       .(dim_1 = mean(dim_1, na.rm = TRUE), dim_2 = mean(dim_2, na.rm = TRUE)),
       by = c(object$label_by)
     ]
     setnames(centroids, object$label_by, "label")
 
+    ## add labels
     layer <- do.call(
       geom_text,
       c(
@@ -464,18 +468,17 @@ embedding_plot_sc <- function(
     point_size = point_size,
     point_alpha = point_alpha,
     raster = raster,
-    raster_dpi = raster_dpi,
-    ...
+    raster_dpi = raster_dpi
   )
 
   if (!is.null(label_by)) {
     plot <- plot +
       geom_label_centroids(
+        data = dt,
         label_by = label_by,
         colour = label_color,
         size = label_size,
-        fontface = label_font,
-        ...
+        fontface = label_font
       )
   }
   plot
@@ -495,6 +498,7 @@ embedding_plot_sc <- function(
 #' @param modality String. One of `c("rna", "adt")`.
 #' @param point_size Optional numeric. Defines the point size. If not provided,
 #' will be auto-determined.
+#' @param point_alpha Numeric. Defines the alpha.
 #' @param raster Optional boolean. Shall the plot be rasterised. If `NULL` and
 #' number of cells is larger than `1e5`, defaults to TRUE.
 #' @param raster_dpi Two numerics. Pixel resolution for rasterized plots, passed
@@ -518,6 +522,7 @@ feature_plot_sc <- function(
   clip = NULL,
   modality = c("rna", "adt"),
   point_size = NULL,
+  point_alpha = 0.5,
   raster = NULL,
   raster_dpi = c(512, 512),
   label_by = NULL,
@@ -534,6 +539,7 @@ feature_plot_sc <- function(
   checkmate::qassert(raster, c("0", "B1"))
   checkmate::qassert(raster_dpi, c("N2"))
   checkmate::qassert(point_size, c("N1", "0"))
+  checkmate::qassert(point_alpha, c("N1"))
   checkmate::qassert(label_size, c("N1"))
   checkmate::qassert(label_color, c("S1"))
   checkmate::qassert(label_font, c("S1"))
@@ -585,6 +591,7 @@ feature_plot_sc <- function(
     facet = "gene",
     embedding = embedding,
     point_size = point_size,
+    point_alpha = point_alpha,
     raster = raster,
     raster_dpi = raster_dpi,
     highlight = highlight_features
@@ -593,6 +600,7 @@ feature_plot_sc <- function(
   if (!is.null(label_by)) {
     plot <- plot +
       geom_label_centroids(
+        data = dt,
         label_by = label_by,
         colour = label_color,
         size = label_size,

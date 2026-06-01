@@ -5,7 +5,8 @@
 \title{Label Centroids in Scatter Plots}
 \usage{
 geom_label_centroids(
-  label_by = NULL,
+  data = NULL,
+  label_by,
   colour = "black",
   size = 4,
   fontface = "bold",
@@ -13,6 +14,9 @@ geom_label_centroids(
 )
 }
 \arguments{
+\item{data}{A \code{data.table} containing the scatter plot points.
+Must have columns matching x and y aesthetics, and \code{label_by}.}
+
 \item{label_by}{Character. Name of the column to label by and label.}
 
 \item{colour}{Text colour. Default: \code{"black"}.}
@@ -24,9 +28,6 @@ geom_label_centroids(
 \item{...}{Additional arguments passed to \code{\link[ggplot2]{geom_text}}.}
 
 \item{mapping}{Aesthetic mappings (inherited from parent plot).}
-
-\item{data}{A \code{data.table} containing the scatter plot points.
-Must have columns matching x and y aesthetics, and \code{label_by}.}
 }
 \value{
 A ggplot layer.

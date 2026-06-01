@@ -17,3 +17,4 @@ A vector of color hex codes
 \description{
 Official bixverse color palette
 }
+\keyword{internal}

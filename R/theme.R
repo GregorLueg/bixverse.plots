@@ -114,6 +114,8 @@ theme_bx <- function(
 #' @return A vector of color hex codes
 #' @export
 #'
+#' @keywords internal
+#'
 bx_colors <- function(palette = "main", reverse = FALSE) {
   # Define your company colors
   colors <- list(
@@ -250,6 +252,7 @@ scale_fill_bx_c <- function(palette = "sequential", reverse = FALSE, ...) {
 #' @return NULL (sets theme invisibly)
 #' @export
 #'
+#' @keywords internal
 #' @examples \dontrun{
 #' set_bx_theme()
 #' }

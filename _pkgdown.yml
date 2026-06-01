@@ -73,6 +73,16 @@ reference:
       - embedding_plot_sc
       - feature_plot_sc
       - stacked_violin_plot_sc
+      - geom_label_centroids
+  # Style
+  - title: Bixverse styling options
+    desc: Custom ggplot2 styling for Bixverse
+    contents:
+      - theme_bx
+      - scale_fill_bx
+      - scale_fill_bx_c
+      - scale_color_bx
+      - scale_color_bx_c
   # Other utils
   - title: Utility functions
     desc: General utilitys
