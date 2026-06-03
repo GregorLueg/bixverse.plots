@@ -380,16 +380,19 @@ method(update_ggplot, list(new_S3_class("label_centroids"), class_ggplot)) <-
   ggplot(df, aes(x = group, y = expression, fill = group)) +
     geom_violin(scale = scale_y, alpha = 0.5, linewidth = 0.2) +
     scale_fill_bx() +
-    facet_grid(~gene, scales = "free_y", switch = "y") +
+    facet_grid(gene ~ ., scales = "free_y", switch = "y") +
     theme_bx() +
     theme(
       legend.position = "none",
-      strip.text.x.top = element_text(size = 10),
-      strip.background = element_blank(),
+      strip.text.y.left = element_text(
+        size = 9,
+        margin = margin(t = 5, b = 5, l = 5, r = 5)
+      ),
+      strip.background = element_rect(fill = "white", color = "grey80"),
       axis.text.x = element_text(angle = -45, hjust = 0),
-      panel.spacing = unit(0, "lines")
+      panel.spacing = unit(1, "lines")
     ) +
-    labs(x = "Group", y = "Expression")
+    labs(x = "", y = "Expression")
 }
 
 ## plot functions --------------------------------------------------------------
@@ -456,6 +459,7 @@ embedding_plot_sc <- function(
 
   if (isTRUE(discrete)) {
     dt[, (colour_by) := as.factor(get(colour_by))]
+    dt[, (label_by) := as.factor(get(label_by))]
   }
 
   n_cells <- length(unique(dt$cell_id))

@@ -48,7 +48,7 @@
     aes(x = .data[[variable]], fill = .data[[grouping_column]])
   ) +
     geom_density(alpha = 0.2) +
-    ggrepel::geom_label_repel(
+    ggrepel::geom_text_repel(
       data = outlier_groups,
       mapping = aes(
         x = .data[["group_median"]] + adjust_position_label,
@@ -57,7 +57,9 @@
         color = .data[["group_id"]]
       ),
       alpha = 0.4,
+      force = 10,
       vjust = 1,
+      size = 3,
       inherit.aes = FALSE
     ) +
     theme_bx() +
