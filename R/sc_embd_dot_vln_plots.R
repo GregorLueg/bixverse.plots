@@ -92,7 +92,7 @@
         theme_bw()
     }
 
-    p <- p + bixverse.plots:::scale_colour_single_cell(discrete = FALSE)
+    p <- p + scale_color_bx_c()
   } else {
     p <- ggplot(df, aes(x = dim_1, y = dim_2))
 
@@ -115,7 +115,11 @@
         theme_bw()
     }
 
-    p <- p + bixverse.plots:::scale_colour_single_cell(discrete = discrete)
+    if (discrete) {
+      p <- p + scale_color_bx()
+    } else {
+      p <- p + scale_color_bx_c()
+    }
   }
 
   if (!is.null(facet)) {
@@ -137,7 +141,6 @@
 #' Computes group centroids using data.table for efficient summarization.
 #' Useful for labeling cluster centers in embedding or dimensionality reduction plots.
 #'
-#' @param mapping Aesthetic mappings (inherited from parent plot).
 #' @param data A \code{data.table} containing the scatter plot points.
 #'   Must have columns matching x and y aesthetics, and \code{label_by}.
 #' @param label_by Character. Name of the column to label by and label.
@@ -196,7 +199,7 @@ method(update_ggplot, list(new_S3_class("label_centroids"), class_ggplot)) <-
       dt <- data.table::as.data.table(object$data)
     }
     checkmate::assertNames(colnames(dt), must.include = object$label_by)
-    if (is.numeric(dt[[label_by]])) {
+    if (is.numeric(dt[[object$label_by]])) {
       stop("geom_label_centroids(): label_by is continuous.")
     }
 
@@ -231,9 +234,13 @@ method(update_ggplot, list(new_S3_class("label_centroids"), class_ggplot)) <-
 #' @param df data.table. Must contain `gene`, `group`, `pct_exp`, `scaled_exp`.
 #' @param feature_labels Optional named character vector mapping gene ids to
 #' display labels (default: NULL).
-#' @param cell_markers Optional named character vector mapping gene ids to
-#' cell type labels. If feature_labels is provided, the character vectors
-#' should contain the mapping of feature display labels to cell type. (default: NULL).
+#' @param feature_grouping Optional named character vector mapping gene ids to
+#' grouping labels, e.g. cell type labels. If feature_labels is provided,
+#' the character vectors should contain the mapping of feature display labels to
+#' their respecitve groups (e.g. c(CD3E = "T cell", CD8A = "T cell",
+#' MS4A1 = "B cell", ...). (default: NULL).
+#' @param cluster_groups Boolean. Use hierarchical clustering on the grouping variable
+#' to re-order the group labels based on expression similarity.
 #'
 #' @return A \code{\link[ggplot2]{ggplot}} object.
 #'
@@ -241,16 +248,18 @@ method(update_ggplot, list(new_S3_class("label_centroids"), class_ggplot)) <-
 .plot_dotplot <- function(
   df,
   feature_labels = NULL,
-  cell_markers = NULL
+  feature_grouping = NULL,
+  cluster_groups = TRUE
 ) {
   ## Checkmate
   checkmate::assertDataTable(df)
+  checkmate::assertFlag(cluster_groups)
   checkmate::assertNames(
     names(df),
     must.include = c("gene", "group", "pct_exp", "scaled_exp")
   )
-  if (!is.null(cell_markers)) {
-    checkmate::assertCharacter(cell_markers)
+  if (!is.null(feature_grouping)) {
+    checkmate::assertCharacter(feature_grouping)
   }
   if (!is.null(feature_labels)) {
     ## does this always return a factor
@@ -259,15 +268,15 @@ method(update_ggplot, list(new_S3_class("label_centroids"), class_ggplot)) <-
       subset.of = names(feature_labels)
     )
   }
-  if (is.null(feature_labels) & !is.null(cell_markers)) {
+  if (is.null(feature_labels) & !is.null(feature_grouping)) {
     checkmate::assertNames(
       as.character(unique(df$gene)),
-      subset.of = names(cell_markers)
+      subset.of = names(feature_grouping)
     )
-  } else if (!is.null(feature_labels) & !is.null(cell_markers)) {
+  } else if (!is.null(feature_labels) & !is.null(feature_grouping)) {
     checkmate::assertNames(
       as.character(unique(feature_labels)),
-      subset.of = names(cell_markers)
+      subset.of = names(feature_grouping)
     )
   }
 
@@ -286,28 +295,30 @@ method(update_ggplot, list(new_S3_class("label_centroids"), class_ggplot)) <-
   }
 
   # Hierarchical clustering of groups on their expression profiles
-  wide <- data.table::dcast(
-    df,
-    group ~ gene,
-    value.var = "scaled_exp",
-    fill = 0
-  )
-  mat <- as.matrix(wide[, -1L, with = FALSE])
-  rownames(mat) <- as.character(wide$group)
+  if (cluster_groups) {
+    wide <- data.table::dcast(
+      df,
+      group ~ gene,
+      value.var = "scaled_exp",
+      fill = 0
+    )
+    mat <- as.matrix(wide[, -1L, with = FALSE])
+    rownames(mat) <- as.character(wide$group)
 
-  hc <- stats::hclust(stats::dist(mat))
-  df[, group := factor(as.character(group), levels = hc$labels[hc$order])]
+    hc <- stats::hclust(stats::dist(mat))
+    df[, group := factor(as.character(group), levels = hc$labels[hc$order])]
+  }
 
   # Reverse gene order so the first feature sits at the top
   df[, gene := factor(gene, levels = rev(gene_levels))]
 
   # Add cell marker group labels
-  if (!is.null(cell_markers)) {
-    facet_levels <- unique(cell_markers[rev(gene_levels)]) # respect display order
+  if (!is.null(feature_grouping)) {
+    facet_levels <- unique(feature_grouping[rev(gene_levels)]) # respect display order
     facet_levels <- facet_levels[!is.na(facet_levels)]
     df[,
       .gene_group := factor(
-        cell_markers[as.character(gene)],
+        feature_grouping[as.character(gene)],
         levels = facet_levels
       )
     ]
@@ -316,7 +327,7 @@ method(update_ggplot, list(new_S3_class("label_centroids"), class_ggplot)) <-
   # Base plot
   p <- ggplot(df, aes(x = group, y = gene)) +
     geom_point(aes(size = pct_exp, colour = scaled_exp)) +
-    scale_colour_single_cell(discrete = FALSE) +
+    scale_color_bx_c() +
     scale_size_continuous(range = c(0, 3)) +
     theme_bx(base_size = 10) +
     labs(
@@ -326,7 +337,7 @@ method(update_ggplot, list(new_S3_class("label_centroids"), class_ggplot)) <-
       y = ""
     )
   # Add optional cell type grouping
-  if (!is.null(cell_markers)) {
+  if (!is.null(feature_grouping)) {
     p <- p +
       facet_grid(.gene_group ~ ., scales = "free_y", space = "free_y") +
       theme(strip.text.y = element_text(angle = 0, hjust = 0))
@@ -367,13 +378,13 @@ method(update_ggplot, list(new_S3_class("label_centroids"), class_ggplot)) <-
   }
 
   ggplot(df, aes(x = group, y = expression, fill = group)) +
-    geom_violin(scale = scale_y, alpha = 0.8, linewidth = 0.2) +
-    scale_fill_single_cell(discrete = TRUE) +
-    facet_grid(gene ~ ., scales = "free_y", switch = "y") +
+    geom_violin(scale = scale_y, alpha = 0.5, linewidth = 0.2) +
+    scale_fill_bx() +
+    facet_grid(~gene, scales = "free_y", switch = "y") +
     theme_bx() +
     theme(
       legend.position = "none",
-      strip.text.y.left = element_text(angle = 0),
+      strip.text.x.top = element_text(size = 10),
       strip.background = element_blank(),
       axis.text.x = element_text(angle = -45, hjust = 0),
       panel.spacing = unit(0, "lines")
@@ -404,7 +415,6 @@ method(update_ggplot, list(new_S3_class("label_centroids"), class_ggplot)) <-
 #' @param label_size Numeric. Size of the labels
 #' @param label_color String. Color fo the labels.
 #' @param label_font String. Font of the labels.
-#' @param ... Additional arguments forwarded to
 #' [bixverse::extract_embedding_data()].
 #'
 #' @return A \code{\link[ggplot2]{ggplot}} object.
@@ -423,8 +433,7 @@ embedding_plot_sc <- function(
   raster_dpi = c(512, 512),
   label_size = 3,
   label_color = "black",
-  label_font = "bold",
-  ...
+  label_font = "bold"
 ) {
   checkmate::qassert(colour_by, "S1")
   checkmate::qassert(label_by, c("S1", "0"))
@@ -506,6 +515,10 @@ embedding_plot_sc <- function(
 #' @param highlight_features Boolean. Shall the features be more strongly
 #' highlighted. Useful for sparsely expressed genes.
 #' @param highlight_quantile Numeric between `[0, 1]`. Defines the threshold.
+#' @param label_by String. Optional obs column to label by. (default: NULL).
+#' @param label_size Numeric. Size of the labels
+#' @param label_color String. Color fo the labels.
+#' @param label_font String. Font of the labels.
 #' @param ... Additional arguments forwarded to
 #' [bixverse::extract_embedding_data()].
 #'
@@ -558,7 +571,8 @@ feature_plot_sc <- function(
     scale = scale,
     clip = clip,
     modality = modality,
-    obs_cols = c_names
+    obs_cols = c_names,
+    ...
   )
 
   data.table::setorder(dt, expression)
@@ -619,13 +633,15 @@ feature_plot_sc <- function(
 #' @param grouping_variable String. Obs column to group by.
 #' @param feature_labels Optional named character vector mapping gene ids to
 #' display labels (default: NULL).
-#' @param cell_markers Optional named character vector mapping gene ids to
-#' cell type labels. If feature_labels is provided, the character vectors
-#' should contain the mapping of feature display labels to cell type. E.g.
-#' c(CD3E = "T cell", CD8A = "T cell", MS4A1 = "B cell", ...).
-#' (default: NULL).
+#' @param feature_grouping Optional named character vector mapping gene ids to
+#' grouping labels, e.g. cell type labels. If feature_labels is provided,
+#' the character vectors should contain the mapping of feature display labels to
+#' their respecitve groups (e.g. c(CD3E = "T cell", CD8A = "T cell",
+#' MS4A1 = "B cell", ...). (default: NULL).
 #' @param scale_exp Boolean. Whether to min-max scale mean expression per gene.
 #' @param modality String. One of `c("rna", "adt")`.
+#' @param cluster_groups Boolean. Use hierarchical clustering on the grouping variable
+#' to re-order the group labels based on expression similarity.
 #'
 #' @return A \code{\link[ggplot2]{ggplot}} object.
 #'
@@ -636,9 +652,10 @@ dot_plot_sc <- function(
   features,
   grouping_variable,
   feature_labels = NULL,
-  cell_markers = NULL,
+  feature_grouping = NULL,
   scale_exp = TRUE,
-  modality = c("rna", "adt")
+  modality = c("rna", "adt"),
+  cluster_groups = TRUE
 ) {
   modality <- match.arg(modality)
 
@@ -653,7 +670,8 @@ dot_plot_sc <- function(
   .plot_dotplot(
     df = dt,
     feature_labels = feature_labels,
-    cell_markers = cell_markers
+    feature_grouping = feature_grouping,
+    cluster_groups = cluster_groups
   )
 }
 

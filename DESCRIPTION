@@ -38,7 +38,8 @@ Imports:
     scattermore,
     stringr,
     visNetwork,
-    zeallot
+    zeallot, 
+    rlang
 Suggests: 
     hexbin,
     ggExtra,

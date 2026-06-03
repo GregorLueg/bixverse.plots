@@ -89,18 +89,7 @@ theme_bx <- function(
         size = base_size,
         face = "bold",
         margin = margin(t = base_size * 0.3, b = base_size * 0.3)
-      ),
-
-      # Panel spacing
-      panel.spacing = unit(1, "lines"),
-
-      # # Plot margins
-      # plot.margin = margin(
-      #   t = base_size * 0.5,
-      #   r = base_size * 0.5,
-      #   b = base_size * 0.5,
-      #   l = base_size * 0.5
-      # )
+      )
     )
 }
 
@@ -109,6 +98,7 @@ theme_bx <- function(
 #' Official bixverse color palette
 #'
 #' @param palette Palette name: "main", "diverging", "sequential"
+#' @param n Integer, number of colours to return.
 #' @param reverse Logical, reverse the color order? (default: FALSE)
 #'
 #' @return A vector of color hex codes
@@ -116,61 +106,17 @@ theme_bx <- function(
 #'
 #' @keywords internal
 #'
-bx_colors <- function(palette = "main", reverse = FALSE) {
+bx_colors <- function(palette = "main", reverse = FALSE, n = 20, ...) {
   # Define your company colors
   colors <- list(
     # Main brand colors
-    main = c(
-      "#0086ab", #  1  brand teal
-      "#c43800", #  2  burnt orange
-      "#7200c4", #  3  purple
-      "#2d9600", #  4  forest green
-      "#003ec4", #  5  royal blue
-      "#c49400", #  6  golden
-      "#c4006a", #  7  raspberry
-      "#009652", #  8  emerald
-      "#0066c4", #  9  cobalt
-      "#c47200", # 10  amber
-      "#b84ec4", # 11  orchid
-      "#4ac84a", # 12  lime green
-      "#6b46d6", # 13  violet
-      "#c4d400", # 14  acid yellow
-      "#e04848", # 15  coral red
-      "#48c8b8", # 16  aqua
-      "#2818b8", # 17  indigo
-      "#b8a818", # 18  olive gold
-      "#b81870", # 19  hot pink
-      "#18b87a" # 20  green teal
-    ),
+    main = MetBrewer::met.brewer("Austria", n)[1:n],
 
     # SEQUENTIAL PALETTE (9 colors)
-
-    sequential = c(
-      "#e4eef0", #  1  lightest
-      "#badde7", #  2
-      "#84cee4", #  3
-      "#42c2e8", #  4
-      "#00a8d6", #  5  mid
-      "#0086ab", #  6  brand
-      "#006b88", #  7
-      "#005066", #  8
-      "#003344" #  9  darkest
-    ),
+    sequential = MetBrewer::met.brewer("Benedictus", 10)[6:10],
 
     # DIVERGING PALETTE (11 colors)
-    diverging = c(
-      "#84380a", #  1  dark warm
-      "#ae5010", #  2
-      "#d67228", #  3
-      "#e8a06a", #  4
-      "#f0ccae", #  5  light warm
-      "#f4f4f4", #  6  neutral midpoint
-      "#b8dce6", #  7  light cool
-      "#72bcd8", #  8
-      "#2898c8", #  9
-      "#0072a4", # 10
-      "#004e72" # 11  dark cool
-    )
+    diverging = MetBrewer::met.brewer("Hiroshige", 10)[1:10]
   )
 
   pal <- colors[[palette]]
@@ -192,8 +138,13 @@ bx_colors <- function(palette = "main", reverse = FALSE) {
 #' @export
 #'
 scale_color_bx <- function(palette = "main", reverse = FALSE, ...) {
-  pal <- bx_colors(palette, reverse)
-  ggplot2::scale_color_manual(values = pal, ...)
+  pal_fn <- function(n) bx_colors(palette = palette, reverse = reverse, n = n)
+
+  ggplot2::discrete_scale(
+    aesthetics = "color",
+    palette = pal_fn,
+    ...
+  )
 }
 
 #' Bixverse Fill Scale (Discrete)
@@ -206,8 +157,13 @@ scale_color_bx <- function(palette = "main", reverse = FALSE, ...) {
 #' @export
 #'
 scale_fill_bx <- function(palette = "main", reverse = FALSE, ...) {
-  pal <- bx_colors(palette, reverse)
-  ggplot2::scale_fill_manual(values = pal, ...)
+  pal_fn <- function(n) bx_colors(palette = palette, reverse = reverse, n = n)
+
+  ggplot2::discrete_scale(
+    aesthetics = "fill",
+    palette = pal_fn,
+    ...
+  )
 }
 
 #' Bixverse Color Scale (Continuous)
@@ -224,7 +180,7 @@ scale_color_bx_c <- function(
   reverse = FALSE,
   ...
 ) {
-  pal <- bx_colors(palette, reverse)
+  pal <- bx_colors(palette, reverse, ...)
   ggplot2::scale_color_gradientn(colors = pal, ...)
 }
 
@@ -258,7 +214,7 @@ scale_fill_bx_c <- function(palette = "sequential", reverse = FALSE, ...) {
 #' }
 #'
 set_bx_theme <- function(base_size = 12, base_family = "Helvetica") {
-  ggplot2::theme_set(theme_muna(
+  ggplot2::theme_set(theme_bx(
     base_size = base_size,
     base_family = base_family
   ))

@@ -62,6 +62,8 @@
     ) +
     theme_bx() +
     theme(legend.position = "none") +
+    scale_fill_bx() +
+    scale_color_bx() +
     labs(x = var_name, y = "Density", title = var_name)
 
   if (log_scale) {
@@ -140,6 +142,7 @@
         mapping = aes(colour = .data[[outlier_column]]),
         position = position_jitter(width = 0.05),
         pointsize = 1,
+        alpha = 0.5,
         show.legend = FALSE
       )
     } else {
@@ -154,6 +157,27 @@
     p <- p +
       jitter_layer +
       scale_colour_manual(values = outlier_colours)
+  } else {
+    jitter_layer <- if (raster) {
+      scattermore::geom_scattermore(
+        mapping = aes(colour = .data[[grouping_column]]),
+        position = position_jitter(width = 0.05),
+        pointsize = 1,
+        alpha = 0.5,
+        show.legend = FALSE
+      )
+    } else {
+      geom_jitter(
+        mapping = aes(colour = .data[[grouping_column]]),
+        width = 0.05,
+        size = 0.4,
+        alpha = 0.5,
+        show.legend = FALSE
+      )
+    }
+    p <- p +
+      jitter_layer +
+      scale_color_bx()
   }
 
   return(p)
@@ -418,7 +442,7 @@ density_plot_sc.data.table <- function(
     .(group_median = median(.SD[[variable]])),
     by = grouping_column
   ]
-  res <- per_cell_qc_outlier(
+  res <- bixverse:::per_cell_qc_outlier(
     metric = medians$group_median,
     threshold = threshold,
     direction = direction

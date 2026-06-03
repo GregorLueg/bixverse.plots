@@ -26,8 +26,6 @@ Must have columns matching x and y aesthetics, and \code{label_by}.}
 \item{fontface}{Font face. Default: \code{"bold"}.}
 
 \item{...}{Additional arguments passed to \code{\link[ggplot2]{geom_text}}.}
-
-\item{mapping}{Aesthetic mappings (inherited from parent plot).}
 }
 \value{
 A ggplot layer.

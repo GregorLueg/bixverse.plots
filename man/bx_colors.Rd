@@ -4,12 +4,14 @@
 \alias{bx_colors}
 \title{Bixverse Color Palette}
 \usage{
-bx_colors(palette = "main", reverse = FALSE)
+bx_colors(palette = "main", reverse = FALSE, n = 20, ...)
 }
 \arguments{
 \item{palette}{Palette name: "main", "diverging", "sequential"}
 
 \item{reverse}{Logical, reverse the color order? (default: FALSE)}
+
+\item{n}{Integer, number of colours to return.}
 }
 \value{
 A vector of color hex codes

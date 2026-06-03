@@ -16,8 +16,7 @@ embedding_plot_sc(
   raster_dpi = c(512, 512),
   label_size = 3,
   label_color = "black",
-  label_font = "bold",
-  ...
+  label_font = "bold"
 )
 }
 \arguments{
@@ -48,9 +47,7 @@ to geom_scattermore(). Default is \code{c(512, 512)}.}
 
 \item{label_color}{String. Color fo the labels.}
 
-\item{label_font}{String. Font of the labels.}
-
-\item{...}{Additional arguments forwarded to
+\item{label_font}{String. Font of the labels.
 \code{\link[bixverse:extract_embedding_data]{bixverse::extract_embedding_data()}}.}
 }
 \value{
