@@ -234,6 +234,8 @@
 #' @param discrete Optional boolean. Force a discrete scale by coercing
 #' `colour_by` to a factor. `NULL` (default) picks the scale from the column
 #' type.
+#' @param embd_modality String. Modality the embedding is pulled from. One of
+#' `c("rna", "adt", "wnn")`. Use `"wnn"` for WNN-derived embeddings.
 #' @param point_size Optional numeric. Defines the point size. If not provided,
 #' will be auto-determined.
 #' @param raster Optional boolean. Shall the plot be rasterised. If `NULL` and
@@ -252,11 +254,13 @@ embedding_plot_sc <- function(
   embedding,
   colour_by,
   discrete = NULL,
+  embd_modality = c("rna", "adt", "wnn"),
   point_size = NULL,
   raster = NULL,
   raster_dpi = c(512, 512),
   ...
 ) {
+  embd_modality <- match.arg(embd_modality)
   checkmate::qassert(colour_by, "S1")
   checkmate::qassert(discrete, c("0", "B1"))
   checkmate::qassert(raster, c("0", "B1"))
@@ -267,6 +271,7 @@ embedding_plot_sc <- function(
     object,
     embedding = embedding,
     obs_cols = colour_by,
+    modality = embd_modality,
     ...
   )
 
@@ -301,13 +306,17 @@ embedding_plot_sc <- function(
 #' Faceted feature plot over an embedding
 #'
 #' @param object A single cell class.
-#' @param features Character vector. Gene IDs to plot.
+#' @param features Character vector. Gene/feature IDs to plot, taken from
+#' `expr_modality`.
 #' @param embedding String. Name of the embedding.
 #' @param feature_labels Optional named character vector mapping gene ids to
 #' display labels (default: NULL).
 #' @param scale Boolean. Whether to z-score the expression values.
 #' @param clip Optional numeric. Clip z-scores if `scale = TRUE`.
-#' @param modality String. One of `c("rna", "adt")`.
+#' @param expr_modality String. Modality the expression is pulled from. One of
+#' `c("rna", "adt")`.
+#' @param embd_modality String. Modality the embedding is pulled from. One of
+#' `c("rna", "adt", "wnn")`. Use `"wnn"` for WNN-derived embeddings.
 #' @param point_size Optional numeric. Defines the point size. If not provided,
 #' will be auto-determined.
 #' @param raster Optional boolean. Shall the plot be rasterised. If `NULL` and
@@ -318,7 +327,8 @@ embedding_plot_sc <- function(
 #' highlighted. Useful for sparsely expressed genes.
 #' @param highlight_quantile Numeric between `[0, 1]`. Defines the threshold.
 #' @param ... Additional arguments forwarded to
-#' [bixverse::extract_embedding_data()].
+#' [bixverse::extract_feature_plot_data()] and onward to [get_embedding()]. Do
+#' not pass `modality` here; use `embd_modality` instead.
 #'
 #' @return A \code{\link[ggplot2]{ggplot}} object.
 #'
@@ -331,7 +341,8 @@ feature_plot_sc <- function(
   feature_labels = NULL,
   scale = FALSE,
   clip = NULL,
-  modality = c("rna", "adt"),
+  expr_modality = c("rna", "adt"),
+  embd_modality = c("rna", "adt", "wnn"),
   point_size = NULL,
   raster = NULL,
   raster_dpi = c(512, 512),
@@ -339,7 +350,8 @@ feature_plot_sc <- function(
   highlight_quantile = 0.25,
   ...
 ) {
-  modality <- match.arg(modality)
+  expr_modality <- match.arg(expr_modality)
+  embd_modality <- match.arg(embd_modality)
 
   checkmate::qassert(raster, c("0", "B1"))
   checkmate::qassert(raster_dpi, c("N2"))
@@ -353,7 +365,8 @@ feature_plot_sc <- function(
     embedding = embedding,
     scale = scale,
     clip = clip,
-    modality = modality,
+    expr_modality = expr_modality,
+    embd_modality = embd_modality,
     ...
   )
 
