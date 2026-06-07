@@ -339,7 +339,7 @@ violin_plot_sc.data.table <- function(
   if (show_outlier) {
     df <- data.table::copy(df)
     df[,
-      .qc_outlier := per_cell_qc_outlier(
+      .qc_outlier := bixverse:::per_cell_qc_outlier(
         metric = get(variable),
         threshold = threshold,
         direction = direction

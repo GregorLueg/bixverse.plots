@@ -212,7 +212,7 @@ method(update_ggplot, list(new_S3_class("label_centroids"), class_ggplot)) <-
 
     ## add labels
     layer <- do.call(
-      geom_text,
+      geom_label,
       c(
         list(
           data = centroids,
