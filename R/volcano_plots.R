@@ -89,7 +89,7 @@ volcano_plot <- function(
     geom_vline(xintercept = 0, linewidth = 0.25, linetype = "dashed") +
     xlab(x_lab) +
     ylab(y_lab) +
-    theme_bw() +
+    theme_bx() +
     theme(legend.position = "none")
 
   if (do_labels) {

@@ -4,13 +4,27 @@
 \alias{.plot_dotplot}
 \title{Dot plot worker}
 \usage{
-.plot_dotplot(df, feature_labels = NULL)
+.plot_dotplot(
+  df,
+  feature_labels = NULL,
+  feature_grouping = NULL,
+  cluster_groups = TRUE
+)
 }
 \arguments{
 \item{df}{data.table. Must contain \code{gene}, \code{group}, \code{pct_exp}, \code{scaled_exp}.}
 
 \item{feature_labels}{Optional named character vector mapping gene ids to
 display labels (default: NULL).}
+
+\item{feature_grouping}{Optional named character vector mapping gene ids to
+grouping labels, e.g. cell type labels. If feature_labels is provided,
+the character vectors should contain the mapping of feature display labels to
+their respecitve groups (e.g. c(CD3E = "T cell", CD8A = "T cell",
+MS4A1 = "B cell", ...). (default: NULL).}
+
+\item{cluster_groups}{Boolean. Use hierarchical clustering on the grouping variable
+to re-order the group labels based on expression similarity.}
 }
 \value{
 A \code{\link[ggplot2]{ggplot}} object.

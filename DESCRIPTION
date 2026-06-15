@@ -1,6 +1,6 @@
 Package: bixverse.plots
 Title: Plotting functions for bixverse
-Version: 0.0.1.1
+Version: 0.0.1.2
 Authors@R: 
     c(
       person(
@@ -26,18 +26,20 @@ Imports:
     bixverse (>= 0.0.2.1),
     checkmate,
     data.table,
-    ggplot2,
+    ggplot2 (>= 4.0.0),
     ggraph,
     ggrepel,
     igraph,
     magrittr,
     MetBrewer,
     purrr,
+    S7,
     scales,
     scattermore,
     stringr,
     visNetwork,
-    zeallot
+    zeallot, 
+    rlang
 Suggests: 
     hexbin,
     ggExtra,

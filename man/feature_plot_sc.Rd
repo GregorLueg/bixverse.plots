@@ -13,8 +13,13 @@ feature_plot_sc(
   clip = NULL,
   modality = c("rna", "adt"),
   point_size = NULL,
+  point_alpha = 0.5,
   raster = NULL,
   raster_dpi = c(512, 512),
+  label_by = NULL,
+  label_size = 3,
+  label_color = "black",
+  label_font = "bold",
   highlight_features = FALSE,
   highlight_quantile = 0.25,
   ...
@@ -39,11 +44,21 @@ display labels (default: NULL).}
 \item{point_size}{Optional numeric. Defines the point size. If not provided,
 will be auto-determined.}
 
+\item{point_alpha}{Numeric. Defines the alpha.}
+
 \item{raster}{Optional boolean. Shall the plot be rasterised. If \code{NULL} and
 number of cells is larger than \code{1e5}, defaults to TRUE.}
 
 \item{raster_dpi}{Two numerics. Pixel resolution for rasterized plots, passed
 to geom_scattermore(). Default is \code{c(512, 512)}.}
+
+\item{label_by}{String. Optional obs column to label by. (default: NULL).}
+
+\item{label_size}{Numeric. Size of the labels}
+
+\item{label_color}{String. Color fo the labels.}
+
+\item{label_font}{String. Font of the labels.}
 
 \item{highlight_features}{Boolean. Shall the features be more strongly
 highlighted. Useful for sparsely expressed genes.}

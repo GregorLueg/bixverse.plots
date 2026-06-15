@@ -48,20 +48,24 @@
     aes(x = .data[[variable]], fill = .data[[grouping_column]])
   ) +
     geom_density(alpha = 0.2) +
-    geom_label(
+    ggrepel::geom_text_repel(
       data = outlier_groups,
       mapping = aes(
         x = .data[["group_median"]] + adjust_position_label,
         y = max_y,
         label = .data[["group_id"]],
-        fill = .data[["group_id"]]
+        color = .data[["group_id"]]
       ),
       alpha = 0.4,
+      force = 10,
       vjust = 1,
+      size = 3,
       inherit.aes = FALSE
     ) +
-    theme_classic() +
+    theme_bx() +
     theme(legend.position = "none") +
+    scale_fill_bx() +
+    scale_color_bx() +
     labs(x = var_name, y = "Density", title = var_name)
 
   if (log_scale) {
@@ -122,7 +126,7 @@
     aes(x = .data[[grouping_column]], y = .data[[variable]])
   ) +
     geom_violin(alpha = 0.6) +
-    theme_classic() +
+    theme_bx() +
     theme(
       legend.position = "none",
       axis.text.x = element_text(angle = -45, hjust = 0)
@@ -140,6 +144,7 @@
         mapping = aes(colour = .data[[outlier_column]]),
         position = position_jitter(width = 0.05),
         pointsize = 1,
+        alpha = 0.5,
         show.legend = FALSE
       )
     } else {
@@ -154,6 +159,27 @@
     p <- p +
       jitter_layer +
       scale_colour_manual(values = outlier_colours)
+  } else {
+    jitter_layer <- if (raster) {
+      scattermore::geom_scattermore(
+        mapping = aes(colour = .data[[grouping_column]]),
+        position = position_jitter(width = 0.05),
+        pointsize = 1,
+        alpha = 0.5,
+        show.legend = FALSE
+      )
+    } else {
+      geom_jitter(
+        mapping = aes(colour = .data[[grouping_column]]),
+        width = 0.05,
+        size = 0.4,
+        alpha = 0.5,
+        show.legend = FALSE
+      )
+    }
+    p <- p +
+      jitter_layer +
+      scale_color_bx()
   }
 
   return(p)
@@ -199,7 +225,7 @@
     geom_point(alpha = 0) +
     geom_hex(bins = 80) +
     scale_fill_gradientn(colors = RColorBrewer::brewer.pal(9, "Blues")[4:9]) +
-    theme_classic() +
+    theme_bx() +
     theme(legend.position = "none") +
     labs(x = "Genes per cell (log10)", y = "UMIs per cell (log10)")
 
@@ -313,7 +339,7 @@ violin_plot_sc.data.table <- function(
   if (show_outlier) {
     df <- data.table::copy(df)
     df[,
-      .qc_outlier := per_cell_qc_outlier(
+      .qc_outlier := bixverse:::per_cell_qc_outlier(
         metric = get(variable),
         threshold = threshold,
         direction = direction
@@ -418,7 +444,7 @@ density_plot_sc.data.table <- function(
     .(group_median = median(.SD[[variable]])),
     by = grouping_column
   ]
-  res <- per_cell_qc_outlier(
+  res <- bixverse:::per_cell_qc_outlier(
     metric = medians$group_median,
     threshold = threshold,
     direction = direction

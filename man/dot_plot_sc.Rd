@@ -9,8 +9,10 @@ dot_plot_sc(
   features,
   grouping_variable,
   feature_labels = NULL,
+  feature_grouping = NULL,
   scale_exp = TRUE,
-  modality = c("rna", "adt")
+  modality = c("rna", "adt"),
+  cluster_groups = TRUE
 )
 }
 \arguments{
@@ -23,9 +25,18 @@ dot_plot_sc(
 \item{feature_labels}{Optional named character vector mapping gene ids to
 display labels (default: NULL).}
 
+\item{feature_grouping}{Optional named character vector mapping gene ids to
+grouping labels, e.g. cell type labels. If feature_labels is provided,
+the character vectors should contain the mapping of feature display labels to
+their respecitve groups (e.g. c(CD3E = "T cell", CD8A = "T cell",
+MS4A1 = "B cell", ...). (default: NULL).}
+
 \item{scale_exp}{Boolean. Whether to min-max scale mean expression per gene.}
 
 \item{modality}{String. One of \code{c("rna", "adt")}.}
+
+\item{cluster_groups}{Boolean. Use hierarchical clustering on the grouping variable
+to re-order the group labels based on expression similarity.}
 }
 \value{
 A \code{\link[ggplot2]{ggplot}} object.
