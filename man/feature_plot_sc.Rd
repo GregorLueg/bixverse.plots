@@ -11,7 +11,8 @@ feature_plot_sc(
   feature_labels = NULL,
   scale = FALSE,
   clip = NULL,
-  modality = c("rna", "adt"),
+  expr_modality = c("rna", "adt"),
+  embd_modality = c("rna", "adt", "wnn"),
   point_size = NULL,
   point_alpha = 0.5,
   raster = NULL,
@@ -28,7 +29,8 @@ feature_plot_sc(
 \arguments{
 \item{object}{A single cell class.}
 
-\item{features}{Character vector. Gene IDs to plot.}
+\item{features}{Character vector. Gene/feature IDs to plot, taken from
+\code{expr_modality}.}
 
 \item{embedding}{String. Name of the embedding.}
 
@@ -39,7 +41,11 @@ display labels (default: NULL).}
 
 \item{clip}{Optional numeric. Clip z-scores if \code{scale = TRUE}.}
 
-\item{modality}{String. One of \code{c("rna", "adt")}.}
+\item{expr_modality}{String. Modality the expression is pulled from. One of
+\code{c("rna", "adt")}.}
+
+\item{embd_modality}{String. Modality the embedding is pulled from. One of
+\code{c("rna", "adt", "wnn")}. Use \code{"wnn"} for WNN-derived embeddings.}
 
 \item{point_size}{Optional numeric. Defines the point size. If not provided,
 will be auto-determined.}
@@ -66,7 +72,8 @@ highlighted. Useful for sparsely expressed genes.}
 \item{highlight_quantile}{Numeric between \verb{[0, 1]}. Defines the threshold.}
 
 \item{...}{Additional arguments forwarded to
-\code{\link[bixverse:extract_embedding_data]{bixverse::extract_embedding_data()}}.}
+\code{\link[bixverse:extract_feature_plot_data]{bixverse::extract_feature_plot_data()}} and onward to \code{\link[bixverse:get_embedding]{get_embedding()}}. Do
+not pass \code{modality} here; use \code{embd_modality} instead.}
 }
 \value{
 A \code{\link[ggplot2]{ggplot}} object.

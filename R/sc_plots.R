@@ -425,6 +425,8 @@
 #' @param discrete Optional boolean. Force a discrete scale by coercing
 #' `colour_by` to a factor. `NULL` (default) picks the scale from the column
 #' type.
+#' @param embd_modality String. Modality the embedding is pulled from. One of
+#' `c("rna", "adt", "wnn")`. Use `"wnn"` for WNN-derived embeddings.
 #' @param point_size Optional numeric. Defines the point size. If not provided,
 #' will be auto-determined.
 #' @param point_alpha Numeric. Defines the alpha.
@@ -447,6 +449,7 @@ embedding_plot_sc <- function(
   colour_by,
   label_by = NULL,
   discrete = NULL,
+  embd_modality = c("rna", "adt", "wnn"),
   point_size = NULL,
   point_alpha = 0.5,
   raster = NULL,
@@ -455,6 +458,7 @@ embedding_plot_sc <- function(
   label_color = "black",
   label_font = "bold"
 ) {
+  embd_modality <- match.arg(embd_modality)
   checkmate::qassert(colour_by, "S1")
   checkmate::qassert(label_by, c("S1", "0"))
   checkmate::qassert(discrete, c("0", "B1"))
@@ -471,7 +475,9 @@ embedding_plot_sc <- function(
   dt <- bixverse::extract_embedding_data(
     object,
     embedding = embedding,
-    obs_cols = c_names
+    obs_cols = c_names,
+    modality = embd_modality,
+    ...
   )
 
   if (isTRUE(discrete)) {
@@ -521,13 +527,17 @@ embedding_plot_sc <- function(
 #' Faceted feature plot over an embedding
 #'
 #' @param object A single cell class.
-#' @param features Character vector. Gene IDs to plot.
+#' @param features Character vector. Gene/feature IDs to plot, taken from
+#' `expr_modality`.
 #' @param embedding String. Name of the embedding.
 #' @param feature_labels Optional named character vector mapping gene ids to
 #' display labels (default: NULL).
 #' @param scale Boolean. Whether to z-score the expression values.
 #' @param clip Optional numeric. Clip z-scores if `scale = TRUE`.
-#' @param modality String. One of `c("rna", "adt")`.
+#' @param expr_modality String. Modality the expression is pulled from. One of
+#' `c("rna", "adt")`.
+#' @param embd_modality String. Modality the embedding is pulled from. One of
+#' `c("rna", "adt", "wnn")`. Use `"wnn"` for WNN-derived embeddings.
 #' @param point_size Optional numeric. Defines the point size. If not provided,
 #' will be auto-determined.
 #' @param point_alpha Numeric. Defines the alpha.
@@ -543,7 +553,8 @@ embedding_plot_sc <- function(
 #' @param label_color String. Color fo the labels.
 #' @param label_font String. Font of the labels.
 #' @param ... Additional arguments forwarded to
-#' [bixverse::extract_embedding_data()].
+#' [bixverse::extract_feature_plot_data()] and onward to [get_embedding()]. Do
+#' not pass `modality` here; use `embd_modality` instead.
 #'
 #' @return A \code{\link[ggplot2]{ggplot}} object.
 #'
@@ -556,7 +567,8 @@ feature_plot_sc <- function(
   feature_labels = NULL,
   scale = FALSE,
   clip = NULL,
-  modality = c("rna", "adt"),
+  expr_modality = c("rna", "adt"),
+  embd_modality = c("rna", "adt", "wnn"),
   point_size = NULL,
   point_alpha = 0.5,
   raster = NULL,
@@ -569,7 +581,8 @@ feature_plot_sc <- function(
   highlight_quantile = 0.25,
   ...
 ) {
-  modality <- match.arg(modality)
+  expr_modality <- match.arg(expr_modality)
+  embd_modality <- match.arg(embd_modality)
 
   checkmate::qassert(label_by, c("S1", "0"))
   checkmate::qassert(raster, c("0", "B1"))
@@ -593,8 +606,9 @@ feature_plot_sc <- function(
     embedding = embedding,
     scale = scale,
     clip = clip,
-    modality = modality,
-    obs_cols = c_names,
+    obs_col = c_names,
+    expr_modality = expr_modality,
+    embd_modality = embd_modality,
     ...
   )
 

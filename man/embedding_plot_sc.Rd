@@ -10,6 +10,7 @@ embedding_plot_sc(
   colour_by,
   label_by = NULL,
   discrete = NULL,
+  embd_modality = c("rna", "adt", "wnn"),
   point_size = NULL,
   point_alpha = 0.5,
   raster = NULL,
@@ -31,6 +32,9 @@ embedding_plot_sc(
 \item{discrete}{Optional boolean. Force a discrete scale by coercing
 \code{colour_by} to a factor. \code{NULL} (default) picks the scale from the column
 type.}
+
+\item{embd_modality}{String. Modality the embedding is pulled from. One of
+\code{c("rna", "adt", "wnn")}. Use \code{"wnn"} for WNN-derived embeddings.}
 
 \item{point_size}{Optional numeric. Defines the point size. If not provided,
 will be auto-determined.}
