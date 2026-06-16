@@ -135,100 +135,6 @@
   p <- p + labs(x = labels[1], y = labels[2], colour = colour)
 }
 
-#' Label Centroids in Scatter Plots
-#'
-#' Adds text labels at the centroid position for each group in a scatter plot.
-#' Computes group centroids using data.table for efficient summarization.
-#' Useful for labeling cluster centers in embedding or dimensionality reduction plots.
-#'
-#' @param data A \code{data.table} containing the scatter plot points.
-#'   Must have columns matching x and y aesthetics, and \code{label_by}.
-#' @param label_by Character. Name of the column to label by and label.
-#' @param colour Text colour. Default: \code{"black"}.
-#' @param size Text size in mm. Default: \code{4}.
-#' @param fontface Font face. Default: \code{"bold"}.
-#' @param ... Additional arguments passed to \code{\link[ggplot2]{geom_text}}.
-#'
-#' @return A ggplot layer.
-#'
-#' @examples
-#' \dontrun{
-#' embedding_plot_sc(object = sc_object, embedding = "umap", colour_by = "donor_id") +
-#'   geom_label_centroids()
-#' }
-#'
-#' @importFrom rlang .data
-#' @importFrom data.table `:=`
-#' @importFrom ggplot2 update_ggplot class_ggplot aes geom_text
-#' @importFrom S7 method "method<-" new_S3_class
-#' @export
-geom_label_centroids <- function(
-  data = NULL,
-  label_by,
-  colour = "black",
-  size = 4,
-  fontface = "bold",
-  ...
-) {
-  structure(
-    list(
-      data = data,
-      label_by = label_by,
-      colour = colour,
-      size = size,
-      fontface = fontface,
-      extra = list(...)
-    ),
-    class = "label_centroids"
-  )
-}
-
-#' @export
-method(update_ggplot, list(new_S3_class("label_centroids"), class_ggplot)) <-
-  function(object, plot, ...) {
-    ## checks
-    if (is.null(object$data) & length(plot@data) == 0) {
-      stop(
-        "geom_label_centroids(): could not identify data object, please provide either dataframe or pass data directly
-      in ggplot(data = df)"
-      )
-    }
-    if (is.null(object$data)) {
-      dt <- data.table::as.data.table(plot@data)
-    } else {
-      dt <- data.table::as.data.table(object$data)
-    }
-    checkmate::assertNames(colnames(dt), must.include = object$label_by)
-    if (is.numeric(dt[[object$label_by]])) {
-      stop("geom_label_centroids(): label_by is continuous.")
-    }
-
-    ## data
-    centroids <- dt[,
-      .(dim_1 = mean(dim_1, na.rm = TRUE), dim_2 = mean(dim_2, na.rm = TRUE)),
-      by = c(object$label_by)
-    ]
-    setnames(centroids, object$label_by, "label")
-
-    ## add labels
-    layer <- do.call(
-      geom_label,
-      c(
-        list(
-          data = centroids,
-          mapping = aes(x = dim_1, y = dim_2, label = label),
-          colour = object$colour,
-          size = object$size,
-          fontface = object$fontface,
-          inherit.aes = FALSE
-        ),
-        object$extra
-      )
-    )
-
-    plot + layer
-  }
-
 #' Dot plot worker
 #'
 #' @param df data.table. Must contain `gene`, `group`, `pct_exp`, `scaled_exp`.
@@ -393,6 +299,117 @@ method(update_ggplot, list(new_S3_class("label_centroids"), class_ggplot)) <-
       panel.spacing = unit(1, "lines")
     ) +
     labs(x = "", y = "Expression")
+}
+
+#' Compute per-point 2D kernel density
+#'
+#' @param x Numeric. X coordinates.
+#' @param y Numeric. Y coordinates.
+#' @param smoothness Numeric. Bandwidth multiplier of the per-axis standard
+#' deviation, passed to [MASS::kde2d()].
+#'
+#' @return Numeric vector of density values, one per `(x, y)` pair.
+#'
+#' @keywords internal
+.compute_point_density <- function(x, y, smoothness = 10) {
+  checkmate::qassert(x, "N+")
+  checkmate::qassert(y, "N+")
+  checkmate::assertTRUE(length(x) == length(y))
+  checkmate::qassert(smoothness, "N1")
+
+  coords <- cbind(x, y)
+  dens <- MASS::kde2d(
+    coords[, 1],
+    coords[, 2],
+    n = 100,
+    h = c(sd(coords[, 1]) * smoothness, sd(coords[, 2]) * smoothness)
+  )
+  fields::interp.surface(dens, coords)
+}
+
+#' Feature-pair scatter / hex plot worker
+#'
+#' @param df data.table. Must contain `feature_1` and `feature_2`.
+#' @param features Optional length-2 character vector with axis labels
+#' (default: NULL, falls back to column names).
+#' @param geom Character. One of `c("density", "hex")`. `"density"` colours
+#' each point by 2D KDE; `"hex"` bins points into hexagons.
+#' @param smoothness Numeric. Bandwidth multiplier for the KDE
+#' (default: 10). Only used for `geom = "density"`.
+#' @param bins Numeric. Number of hex bins (default: 60). Only used for
+#' `geom = "hex"`.
+#' @param point_size Numeric. Point size for density plots (default: 2.5).
+#' @param point_alpha Numeric. Alpha for density plots (default: 0.5).
+#' @param raster Boolean. Use [scattermore::geom_scattermore()] for the
+#' density variant.
+#' @param raster_dpi Two numerics. Pixel resolution for rasterised plots.
+#'
+#' @return A \code{\link[ggplot2]{ggplot}} object.
+#'
+#' @keywords internal
+.plot_feature_pair <- function(
+  df,
+  features = NULL,
+  geom = c("density", "hex"),
+  smoothness = 10,
+  bins = 60,
+  point_size = 2.5,
+  point_alpha = 0.5,
+  raster = FALSE,
+  raster_dpi = c(512, 512)
+) {
+  geom <- match.arg(geom)
+
+  checkmate::assertDataTable(df)
+  checkmate::assertNames(names(df), must.include = c("feature_1", "feature_2"))
+  checkmate::qassert(features, c("0", "S2"))
+  checkmate::qassert(smoothness, "N1")
+  checkmate::qassert(bins, "N1")
+  checkmate::qassert(point_size, "N1")
+  checkmate::qassert(point_alpha, "N1")
+  checkmate::qassert(raster, "B1")
+  checkmate::qassert(raster_dpi, "N2")
+
+  labels <- features %||% c("feature_1", "feature_2")
+
+  if (geom == "density") {
+    df <- data.table::copy(df)
+    df[,
+      density := .compute_point_density(feature_1, feature_2, smoothness)
+    ]
+
+    if (raster) {
+      p <- ggplot(df, aes(x = feature_1, y = feature_2)) +
+        scattermore::geom_scattermore(
+          mapping = aes(colour = density),
+          pointsize = point_size,
+          pixels = raster_dpi,
+          alpha = point_alpha
+        ) +
+        scale_colour_single_cell(discrete = FALSE) +
+        labs(colour = "Density")
+    } else {
+      p <- ggplot(df, aes(x = feature_1, y = feature_2)) +
+        geom_point(
+          aes(fill = density),
+          size = point_size,
+          shape = 21,
+          stroke = 0,
+          alpha = point_alpha
+        ) +
+        scale_fill_single_cell(discrete = FALSE) +
+        labs(fill = "Density")
+    }
+  } else {
+    p <- ggplot(df, aes(x = feature_1, y = feature_2)) +
+      geom_hex(bins = bins) +
+      scale_fill_single_cell(discrete = FALSE) +
+      labs(fill = "Count")
+  }
+
+  p +
+    theme_bw() +
+    labs(x = labels[1], y = labels[2])
 }
 
 ## plot functions --------------------------------------------------------------
@@ -717,4 +734,94 @@ stacked_violin_plot_sc <- function(
   )
 
   .plot_stacked_violin(df = dt, feature_labels = feature_labels)
+}
+
+### scatter plot ---------------------------------------------------------------
+
+#' Scatter / hex plot of two features against each other
+#'
+#' @description
+#' Plots two features against each other (typical use case: protein vs mRNA
+#' on ADT/RNA data). Each feature may carry a `_rna` or `_adt` suffix to
+#' select its modality independently; unsuffixed features fall back to
+#' `modality`. With `geom = "density"` points are coloured by 2D KDE, with
+#' `geom = "hex"` cells are binned into hexagons.
+#'
+#' @param object A single cell class.
+#' @param feature_1 String. First feature (x-axis), optionally `_rna` / `_adt`
+#' suffixed.
+#' @param feature_2 String. Second feature (y-axis), optionally `_rna` / `_adt`
+#' suffixed.
+#' @param geom String. `"density"` or `"hex"` (default: `"density"`).
+#' @param remove_zeros Boolean. Drop cells where both features are zero
+#' (default: TRUE).
+#' @param smoothness Numeric. Bandwidth multiplier for the KDE (default: 10).
+#' Only used for `geom = "density"`.
+#' @param bins Numeric. Number of hex bins (default: 60). Only used for
+#' `geom = "hex"`.
+#' @param modality String. Fallback modality for unsuffixed features. One
+#' of `c("rna", "adt")`.
+#' @param point_size Numeric. Point size for density plots (default: 2.5).
+#' @param point_alpha Numeric. Alpha for density plots (default: 0.5).
+#' @param raster Optional boolean. Shall the plot be rasterised. If `NULL`
+#' and `n_cells > 1e5`, defaults to TRUE. Only applies to
+#' `geom = "density"`.
+#' @param raster_dpi Two numerics. Pixel resolution for rasterised plots
+#' (default: `c(512, 512)`).
+#'
+#' @return A \code{\link[ggplot2]{ggplot}} object.
+#'
+#' @export
+#' @import ggplot2
+feature_scatter_plot_sc <- function(
+  object,
+  feature_1,
+  feature_2,
+  geom = c("density", "hex"),
+  remove_zeros = TRUE,
+  smoothness = 10,
+  bins = 60,
+  modality = c("rna", "adt"),
+  point_size = 2.5,
+  point_alpha = 0.5,
+  raster = NULL,
+  raster_dpi = c(512, 512)
+) {
+  geom <- match.arg(geom)
+  modality <- match.arg(modality)
+
+  checkmate::qassert(remove_zeros, "B1")
+  checkmate::qassert(raster, c("0", "B1"))
+  checkmate::qassert(raster_dpi, "N2")
+
+  dt <- bixverse::extract_feature_pair(
+    object,
+    feature_1 = feature_1,
+    feature_2 = feature_2,
+    modality = modality
+  )
+
+  if (remove_zeros) {
+    dt <- dt[feature_1 > 0 | feature_2 > 0]
+  }
+
+  features <- attr(dt, "features")
+  n_cells <- nrow(dt)
+  raster <- raster %||% (n_cells > 1e5)
+
+  if (raster && geom == "density") {
+    message("Raster was set to TRUE or n_cells > 1e5 -> Rasterising the plot")
+  }
+
+  .plot_feature_pair(
+    df = dt,
+    features = features,
+    geom = geom,
+    smoothness = smoothness,
+    bins = bins,
+    point_size = point_size,
+    point_alpha = point_alpha,
+    raster = raster && geom == "density",
+    raster_dpi = raster_dpi
+  )
 }

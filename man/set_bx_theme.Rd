@@ -19,8 +19,7 @@ Sets the Bixverse theme as the default for all ggplot2 plots in the session
 }
 \examples{
 \dontrun{
-set_bx_theme()
+ set_bx_theme()
 }
-
 }
 \keyword{internal}

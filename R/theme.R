@@ -1,6 +1,11 @@
-#' Muna Custom ggplot2 Theme
+# themes and colours -----------------------------------------------------------
+
+## theme -----------------------------------------------------------------------
+
+#' Bixverse ggplot2 Theme
 #'
-#' A custom theme for company visualizations with branded colors and typography
+#' A custom theme for the bixverse ecosystem based on the
+#' [ggplot2::theme_minimal()]
 #'
 #' @param base_size Base font size (default: 12)
 #' @param base_family Base font family (default: "Helvetica")
@@ -8,6 +13,7 @@
 #' @param base_rect_size Base rectangle size (default: 0.5)
 #'
 #' @return A ggplot2 theme object
+#'
 #' @export
 #'
 #' @examples
@@ -17,14 +23,13 @@
 #'   geom_point() +
 #'   theme_bx()
 #' }
-#'
 theme_bx <- function(
   base_size = 12,
   base_family = "Helvetica",
   base_line_size = 0.5,
   base_rect_size = 0.5
 ) {
-  # Start with a base theme (theme_minimal or theme_bw are good starting points)
+  # base theme
   theme_minimal(
     base_size = base_size,
     base_family = base_family,
@@ -93,6 +98,31 @@ theme_bx <- function(
     )
 }
 
+#' Set Bixverse Theme as Default
+#'
+#' Sets the Bixverse theme as the default for all ggplot2 plots in the session
+#'
+#' @param base_size Base font size (default: 12)
+#' @param base_family Base font family (default: "Arial")
+#'
+#' @return NULL (sets theme invisibly)
+#' @export
+#'
+#' @keywords internal
+#'
+#' @examples \dontrun{
+#'  set_bx_theme()
+#' }
+set_bx_theme <- function(base_size = 12, base_family = "Helvetica") {
+  ggplot2::theme_set(theme_bx(
+    base_size = base_size,
+    base_family = base_family
+  ))
+  invisible()
+}
+
+## colours ---------------------------------------------------------------------
+
 #' Bixverse Color Palette
 #'
 #' Official bixverse color palette
@@ -102,24 +132,22 @@ theme_bx <- function(
 #' @param reverse Logical, reverse the color order? (default: FALSE)
 #'
 #' @return A vector of color hex codes
+#'
 #' @export
 #'
 #' @keywords internal
-#'
 bx_colors <- function(palette = "main", reverse = FALSE, n = 20, ...) {
-  # Define your company colors
-  colors <- list(
-    # Main brand colors
+  checkmate::qassert(palette, "S1")
+  checkmate::qassert(reverse, "B1")
+  checkmate::assertCount(n, positive = TRUE)
+
+  pal <- switch(
+    palette,
     main = MetBrewer::met.brewer("Austria", n)[1:n],
-
-    # SEQUENTIAL PALETTE (9 colors)
     sequential = MetBrewer::met.brewer("Benedictus", 10)[6:10],
-
-    # DIVERGING PALETTE (11 colors)
-    diverging = MetBrewer::met.brewer("Hiroshige", 10)[1:10]
+    diverging = MetBrewer::met.brewer("Hiroshige", 10)[1:10],
+    stop(sprintf("Unknown palette: '%s'", palette))
   )
-
-  pal <- colors[[palette]]
 
   if (reverse) {
     pal <- rev(pal)
@@ -196,27 +224,4 @@ scale_color_bx_c <- function(
 scale_fill_bx_c <- function(palette = "sequential", reverse = FALSE, ...) {
   pal <- bx_colors(palette, reverse)
   ggplot2::scale_fill_gradientn(colors = pal, ...)
-}
-
-#' Set Bixverse Theme as Default
-#'
-#' Sets the Bixverse theme as the default for all ggplot2 plots in the session
-#'
-#' @param base_size Base font size (default: 12)
-#' @param base_family Base font family (default: "Arial")
-#'
-#' @return NULL (sets theme invisibly)
-#' @export
-#'
-#' @keywords internal
-#' @examples \dontrun{
-#' set_bx_theme()
-#' }
-#'
-set_bx_theme <- function(base_size = 12, base_family = "Helvetica") {
-  ggplot2::theme_set(theme_bx(
-    base_size = base_size,
-    base_family = base_family
-  ))
-  invisible()
 }
