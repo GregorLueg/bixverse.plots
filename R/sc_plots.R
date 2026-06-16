@@ -386,7 +386,7 @@
           pixels = raster_dpi,
           alpha = point_alpha
         ) +
-        scale_colour_single_cell(discrete = FALSE) +
+        scale_fill_bx_c(palette = "viridis") +
         labs(colour = "Density")
     } else {
       p <- ggplot(df, aes(x = feature_1, y = feature_2)) +
@@ -397,13 +397,13 @@
           stroke = 0,
           alpha = point_alpha
         ) +
-        scale_fill_single_cell(discrete = FALSE) +
+        scale_fill_bx_c(palette = "viridis") +
         labs(fill = "Density")
     }
   } else {
     p <- ggplot(df, aes(x = feature_1, y = feature_2)) +
       geom_hex(bins = bins) +
-      scale_fill_single_cell(discrete = FALSE) +
+      scale_fill_bx_c(palette = "viridis") +
       labs(fill = "Count")
   }
 
@@ -476,8 +476,7 @@ embedding_plot_sc <- function(
     object,
     embedding = embedding,
     obs_cols = c_names,
-    modality = embd_modality,
-    ...
+    modality = embd_modality
   )
 
   if (isTRUE(discrete)) {
@@ -511,7 +510,7 @@ embedding_plot_sc <- function(
 
   if (!is.null(label_by)) {
     plot <- plot +
-      geom_label_centroids(
+      label_centroids(
         data = dt,
         label_by = label_by,
         colour = label_color,
@@ -650,7 +649,7 @@ feature_plot_sc <- function(
 
   if (!is.null(label_by)) {
     plot <- plot +
-      geom_label_centroids(
+      label_centroids(
         data = dt,
         label_by = label_by,
         colour = label_color,

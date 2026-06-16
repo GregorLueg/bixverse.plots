@@ -146,6 +146,7 @@ bx_colors <- function(palette = "main", reverse = FALSE, n = 20, ...) {
     main = MetBrewer::met.brewer("Austria", n)[1:n],
     sequential = MetBrewer::met.brewer("Benedictus", 10)[6:10],
     diverging = MetBrewer::met.brewer("Hiroshige", 10)[1:10],
+    viridis = viridis::viridis(n = n),
     stop(sprintf("Unknown palette: '%s'", palette))
   )
 
