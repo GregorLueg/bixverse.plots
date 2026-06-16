@@ -73,7 +73,12 @@ reference:
       - embedding_plot_sc
       - feature_plot_sc
       - stacked_violin_plot_sc
-      - geom_label_centroids
+      - feature_scatter_plot_sc
+  # Geom extensions
+  - title: Geom extensions
+    desc: Extensions around the ggplot2 universe
+    contents:
+      - label_centroids
   # Style
   - title: Bixverse styling options
     desc: Custom ggplot2 styling for Bixverse
