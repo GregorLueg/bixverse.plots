@@ -476,7 +476,9 @@ embedding_plot_sc <- function(
 
   if (isTRUE(discrete)) {
     dt[, (colour_by) := as.factor(get(colour_by))]
-    dt[, (label_by) := as.factor(get(label_by))]
+    if (!is.null(label_by)) {
+      dt[, (label_by) := as.factor(get(label_by))]
+    }
   }
 
   n_cells <- length(unique(dt$cell_id))
