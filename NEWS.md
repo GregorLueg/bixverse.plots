@@ -1,7 +1,14 @@
-# bixverse.plots 0.0.1.1
+# bixverse.plots 0.2.0
 
-* Single cell plotting helpers.
+Major release:
+
+* Single cell plotting helpers for the single cell `bixverse` suite.
+  - Embedding helpers
+  - Dot plots
+  - Violin plots
+  - Scatter plots
 * Improved enrichment map.
+* Geom extension to label centroids on scatter plots, see `label_centroids()`.
 
 # bixverse.plots 0.0.1.0
 

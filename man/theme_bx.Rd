@@ -2,7 +2,7 @@
 % Please edit documentation in R/theme.R
 \name{theme_bx}
 \alias{theme_bx}
-\title{Muna Custom ggplot2 Theme}
+\title{Bixverse ggplot2 Theme}
 \usage{
 theme_bx(
   base_size = 12,
@@ -24,7 +24,8 @@ theme_bx(
 A ggplot2 theme object
 }
 \description{
-A custom theme for company visualizations with branded colors and typography
+A custom theme for the bixverse ecosystem based on the
+\code{\link[ggplot2:theme_minimal]{ggplot2::theme_minimal()}}
 }
 \examples{
 \dontrun{
@@ -33,5 +34,4 @@ ggplot(mtcars, aes(x = wt, y = mpg)) +
   geom_point() +
   theme_bx()
 }
-
 }
