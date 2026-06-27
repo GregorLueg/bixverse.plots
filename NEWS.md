@@ -7,6 +7,7 @@ Major release:
   - Dot plots
   - Violin plots
   - Scatter plots
+  - Helpers for QC plots
 * Improved enrichment map.
 * Geom extension to label centroids on scatter plots, see `label_centroids()`.
 

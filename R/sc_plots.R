@@ -145,8 +145,8 @@
 #' the character vectors should contain the mapping of feature display labels to
 #' their respecitve groups (e.g. c(CD3E = "T cell", CD8A = "T cell",
 #' MS4A1 = "B cell", ...). (default: NULL).
-#' @param cluster_groups Boolean. Use hierarchical clustering on the grouping variable
-#' to re-order the group labels based on expression similarity.
+#' @param cluster_groups Boolean. Use hierarchical clustering on the grouping
+#' variable to re-order the group labels based on expression similarity.
 #'
 #' @return A \code{\link[ggplot2]{ggplot}} object.
 #'

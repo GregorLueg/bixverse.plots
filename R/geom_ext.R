@@ -87,17 +87,26 @@ method(
     if (is.null(object$data)) plot@data else object$data
   )
 
-  ## resolve x/y from parent plot mapping
-  if (is.null(plot@mapping$x) || is.null(plot@mapping$y)) {
+  ## resolve x/y from parent plot mapping, fall back to layer mappings
+  x_mapping <- plot@mapping$x
+  y_mapping <- plot@mapping$y
+  for (layer in plot@layers) {
+    if (!is.null(x_mapping) && !is.null(y_mapping)) {
+      break
+    }
+    x_mapping <- x_mapping %||% layer$mapping$x
+    y_mapping <- y_mapping %||% layer$mapping$y
+  }
+  if (is.null(x_mapping) || is.null(y_mapping)) {
     stop(
       paste(
-        "label_centroids(): x/y aesthetics not found in parent plot mapping.",
-        "Set them via ggplot(aes(x = ..., y = ...))."
+        "label_centroids(): x/y aesthetics not found in plot or layer mappings.",
+        "Set them via ggplot(aes(x = ..., y = ...)) or geom_*(aes(x = ..., y = ...))."
       )
     )
   }
-  x_var <- as_name(plot@mapping$x)
-  y_var <- as_name(plot@mapping$y)
+  x_var <- as_name(x_mapping)
+  y_var <- as_name(y_mapping)
 
   ## checks
   checkmate::assertNames(
