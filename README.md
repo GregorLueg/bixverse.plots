@@ -14,15 +14,17 @@
 ## Intro
 
 This package contains a lot of additional plotting helpers for the
-[bixverse](https://github.com/GregorLueg/bixverse) package. As that one is
-already becoming a large(!) package, this one is the companion package with
-various plotting helpers.
+[bixverse](https://github.com/GregorLueg/bixverse) package. It combines 
+especially well with `"0.4.0"` of `bixverse` as it supports all of the new, cool
+single cell functionality. The idea is to not overload the parent package, as
+this one has already A LOT of code in it.
 
 ## *Release notes*
 
-Official release of the package with **0.0.1.0**. In this version, we have
-the following features:
-
+Official release of the package with **0.2.0**. In this version, we have 
+introduced a huge number of plotting helpers for single cell, please refer to
+this vignette [here](https://gregorlueg.github.io/bixverse/articles/single_cell_visualisations.html) 
+for more details.
 
 ## Installation
 
@@ -34,4 +36,4 @@ Rust-accelerated functions are being used here.
 
 Provide additional plotting capabilities to `bixverse`. 
 
-*Last update to the read-me: 20.03.2026*
+*Last update to the read-me: 27.06.2026*

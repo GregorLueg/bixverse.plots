@@ -1,4 +1,5 @@
-# sc plotting -----------------------------------------------------------------
+# sc plotting ------------------------------------------------------------------
+
 library(bixverse)
 
 ## data ------------------------------------------------------------------------
@@ -13,6 +14,7 @@ df <- data.table::data.table(
 df[donor_id == "D5", nnz := rnbinom(.N, mu = 200, size = 5)]
 
 ## test ------------------------------------------------------------------------
+
 ## Violin plot
 p <- violin_plot_sc(
   df = df,
@@ -80,7 +82,7 @@ no_pcs <- 10L
 
 ## synthetic test data ---------------------------------------------------------
 
-single_cell_test_data <- bixverse::generate_single_cell_test_data()
+single_cell_test_data <- generate_single_cell_test_data()
 
 genes_pass <- which(
   Matrix::colSums(single_cell_test_data$counts != 0) >= min_cells_exp
@@ -95,14 +97,14 @@ cells_pass <- which(
 
 ## underlying class ------------------------------------------------------------
 
-sc_object <- bixverse::SingleCells(dir_data = test_temp_dir)
+sc_object <- SingleCells(dir_data = test_temp_dir)
 
-sc_object <- bixverse::load_r_data(
+sc_object <- load_r_data(
   object = sc_object,
   counts = single_cell_test_data$counts,
   obs = single_cell_test_data$obs,
   var = single_cell_test_data$var,
-  sc_qc_param = bixverse::params_sc_min_quality(
+  sc_qc_param = params_sc_min_quality(
     min_unique_genes = min_genes_exp,
     min_lib_size = min_lib_size,
     min_cells = min_cells_exp
