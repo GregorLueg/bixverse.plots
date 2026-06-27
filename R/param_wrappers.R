@@ -46,3 +46,44 @@ params_plots <- function(
     create_dir = create_dir
   ))
 }
+
+## volcano plot params ---------------------------------------------------------
+
+#' Wrapper function for volcano plot parameters
+#'
+#' @param x_axis String. Column holding the effect size (e.g. `"log2FC"`).
+#' @param y_axis String. Column holding the raw significance values (e.g.
+#' `"FDR"`, `"fdr"`, `"q_value"`). The function applies `-log10()` internally.
+#' @param colour String or `NULL`. Column to colour points by (continuous
+#' gradient). If `NULL`, points are coloured by `x_axis`. Defaults to `NULL`.
+#' @param label_column String or `NULL`. Column holding feature labels. Required
+#' if `top_features_to_label` is set. Defaults to `NULL`.
+#' @param top_features_to_label Integer or `NULL`. Number of features to label,
+#' ranked by `y_axis` ascending (most significant first). Defaults to `NULL`.
+#'
+#' @returns A list with the parameters for usage in subsequent functions.
+#'
+#' @export
+params_volcano <- function(
+  x_axis = "log2FC",
+  y_axis = "FDR",
+  colour = NULL,
+  label_column = NULL,
+  top_features_to_label = NULL
+) {
+  # checks
+  checkmate::qassert(x_axis, "S1")
+  checkmate::qassert(y_axis, "S1")
+  checkmate::assertString(colour, null.ok = TRUE)
+  checkmate::assertString(label_column, null.ok = TRUE)
+  checkmate::assertInt(top_features_to_label, lower = 1, null.ok = TRUE)
+
+  # return
+  return(list(
+    x_axis = x_axis,
+    y_axis = y_axis,
+    colour = colour,
+    label_column = label_column,
+    top_features_to_label = top_features_to_label
+  ))
+}

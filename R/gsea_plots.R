@@ -93,6 +93,7 @@ plot_gsea_enrichment <- function(
           linetype = "dashed"
         ) +
         geom_hline(yintercept = 0, colour = "black") +
+        theme_bx() +
         theme(
           panel.background = element_blank(),
           panel.grid.major = element_line(color = "grey92")

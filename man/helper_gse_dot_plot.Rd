@@ -19,7 +19,7 @@ helper_gse_dot_plot(
 dots in the plot.}
 
 \item{viridis_option}{String. The option to forward to
-\code{\link[ggplot2:scale_viridis]{ggplot2::scale_fill_viridis_c()}}.}
+\code{\link[ggplot2:scale_fill_viridis_c]{ggplot2::scale_fill_viridis_c()}}.}
 
 \item{direction}{\code{1} or \code{-1}. The direction in the colour palette.}
 }
@@ -29,3 +29,4 @@ The GSE dot plot.
 \description{
 Helper to generate a GSE dot plot
 }
+\keyword{internal}

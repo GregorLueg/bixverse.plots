@@ -13,7 +13,11 @@ wrap_and_truncate(text, width = 40L, max_lines = 2L, whitespace_only = TRUE)
 
 \item{max_lines}{Integer. Maximum lines before truncating.}
 
-\item{whitespace_only}{Boolean}
+\item{whitespace_only}{Boolean. Shall the string wrapping happen only around
+whitespaces.}
+}
+\value{
+The string wrapped and/or truncated.
 }
 \description{
 Helper function to wrap and truncate text

@@ -7,12 +7,14 @@
 plot_enrichment_map_ggraph(
   g,
   label_nodes = "adaptive",
+  labels_to_include = NULL,
   adaptive_thresholds = c(`15` = 3, `5` = 2, `2` = 1, `1` = 0),
-  font_size = 4
+  font_size = 4,
+  ...
 )
 }
 \arguments{
-\item{g}{igraph. Output from \code{\link[=enrichment_map_oae]{enrichment_map_oae()}}.}
+\item{g}{igraph. Output from enrichment_map functions.}
 
 \item{label_nodes}{String. Controls which nodes to label. Options:
 \itemize{
@@ -22,17 +24,24 @@ plot_enrichment_map_ggraph(
 \item Integer: Label top N nodes by size
 }}
 
+\item{labels_to_include}{Optional string. These are labels you want to
+include no matter what.}
+
 \item{adaptive_thresholds}{Named numeric. The names indicate the community
 size and the values how many pathways per community to show. An example would
 be \verb{c(15 = 3, 5 = 2, 2 = 1, 1 = 0)}}
 
 \item{font_size}{Numeric. Font size of the labels on top of the enrichment
 map.}
+
+\item{...}{Other parameters you wish to forward to
+\code{\link[ggraph:geom_node_text]{ggraph::geom_node_text()}}.}
 }
 \value{
 A ggplot2 object with the enrichment map
 }
 \description{
-Takes in the output from \code{\link[=enrichment_map_oae]{enrichment_map_oae()}} and generates
-a ggraph object for subsequent saving, etc.
+Takes in the output from \code{\link[=enrichment_map_oae]{enrichment_map_oae()}} or
+\code{\link[=enrichment_map_gsea]{enrichment_map_gsea()}} and generates a ggraph object for
+subsequent saving, etc.
 }

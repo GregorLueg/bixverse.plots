@@ -7,12 +7,13 @@
 plot_enrichment_map_visnetwork(g)
 }
 \arguments{
-\item{g}{igraph. Output from \code{\link[=enrichment_map_oae]{enrichment_map_oae()}}.}
+\item{g}{igraph. Output from enrichment_map functions.}
 }
 \value{
 The interactive visnetwork
 }
 \description{
-Takes in the output from \code{\link[=enrichment_map_oae]{enrichment_map_oae()}} and generates
-an interactive VisNetwork widget.
+Takes in the output from \code{\link[=enrichment_map_oae]{enrichment_map_oae()}} or
+\code{\link[=enrichment_map_gsea]{enrichment_map_gsea()}} and generates an interactive
+VisNetwork widget.
 }
