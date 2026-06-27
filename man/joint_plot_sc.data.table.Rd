@@ -5,7 +5,7 @@
 \title{Joint QC plot from a data.table}
 \usage{
 \method{joint_plot_sc}{data.table}(
-  df,
+  x,
   library_size = "lib_size",
   nb_features = "nnz",
   log_scale = FALSE,
@@ -13,7 +13,7 @@
 )
 }
 \arguments{
-\item{df}{data.table. Input data containing the QC metrics.}
+\item{x}{data.table. Input data containing the QC metrics.}
 
 \item{library_size}{Character. Column with the library size per cell.}
 

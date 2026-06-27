@@ -2,14 +2,7 @@
 
 ## general ones ----------------------------------------------------------------
 
-#' Null coalescence
-#'
-#' @param a R object a
-#' @param b R object b
-#'
-#' @returns If `a` is not `NULL`, a; otherwise b.
-#'
-#' @keywords internal
+#' @noRd
 `%||%` <- function(a, b) {
   if (!is.null(a)) {
     return(a)

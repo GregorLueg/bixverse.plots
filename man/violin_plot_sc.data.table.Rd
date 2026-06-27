@@ -5,7 +5,7 @@
 \title{Violin plot from a data.table}
 \usage{
 \method{violin_plot_sc}{data.table}(
-  df,
+  x,
   grouping_column,
   variable,
   direction = c("twosided", "below", "above"),
@@ -19,7 +19,7 @@
 )
 }
 \arguments{
-\item{df}{data.table. Input data containing the QC metric.}
+\item{x}{data.table. Input data containing the QC metric.}
 
 \item{grouping_column}{Character. Column used for the x-axis groups.}
 

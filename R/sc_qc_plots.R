@@ -292,7 +292,7 @@ violin_plot_sc.CellQc <- function(
 #'
 #' Per-cell outliers are recomputed within each `grouping_column` group.
 #'
-#' @param df data.table. Input data containing the QC metric.
+#' @param x data.table. Input data containing the QC metric.
 #' @param grouping_column Character. Column used for the x-axis groups.
 #' @param variable Character. Numeric column to plot on the y-axis.
 #' @param direction Character. One of `"twosided"`, `"below"`, `"above"`.
@@ -311,7 +311,7 @@ violin_plot_sc.CellQc <- function(
 #'
 #' @import ggplot2
 violin_plot_sc.data.table <- function(
-  df,
+  x,
   grouping_column,
   variable,
   direction = c("twosided", "below", "above"),
@@ -324,21 +324,21 @@ violin_plot_sc.data.table <- function(
   ...
 ) {
   direction <- match.arg(direction)
-  checkmate::assertDataTable(df)
+  checkmate::assertDataTable(x)
   checkmate::assertNames(
-    colnames(df),
+    colnames(x),
     must.include = c(grouping_column, variable)
   )
   checkmate::qassert(threshold, "N1")
   checkmate::qassert(show_outlier, "B1")
 
-  n_cells <- nrow(df)
+  n_cells <- nrow(x)
   raster <- raster %||% (n_cells > 1e5)
 
   outlier_column <- NULL
   if (show_outlier) {
-    df <- data.table::copy(df)
-    df[,
+    x <- data.table::copy(x)
+    x[,
       .qc_outlier := bixverse:::per_cell_qc_outlier(
         metric = get(variable),
         threshold = threshold,
@@ -350,7 +350,7 @@ violin_plot_sc.data.table <- function(
   }
 
   .plot_violin(
-    df = df,
+    df = x,
     grouping_column = grouping_column,
     variable = variable,
     outlier_column = outlier_column,
@@ -406,7 +406,7 @@ density_plot_sc.CellQc <- function(x, adjust_position_label = 0, ...) {
 #'
 #' Group-level outliers are recomputed from per-group medians.
 #'
-#' @param df data.table. Input data containing the QC metric.
+#' @param x data.table. Input data containing the QC metric.
 #' @param grouping_column Character. Column used to group the densities.
 #' @param variable Character. Numeric column to plot on the x-axis.
 #' @param direction Character. One of `"twosided"`, `"below"`, `"above"`.
@@ -422,7 +422,7 @@ density_plot_sc.CellQc <- function(x, adjust_position_label = 0, ...) {
 #'
 #' @import ggplot2
 density_plot_sc.data.table <- function(
-  df,
+  x,
   grouping_column,
   variable,
   direction = c("twosided", "below", "above"),
@@ -433,14 +433,14 @@ density_plot_sc.data.table <- function(
   ...
 ) {
   direction <- match.arg(direction)
-  checkmate::assertDataTable(df)
+  checkmate::assertDataTable(x)
   checkmate::assertNames(
-    colnames(df),
+    colnames(x),
     must.include = c(grouping_column, variable)
   )
   checkmate::qassert(threshold, "N1")
 
-  medians <- df[,
+  medians <- x[,
     .(group_median = median(.SD[[variable]])),
     by = grouping_column
   ]
@@ -456,7 +456,7 @@ density_plot_sc.data.table <- function(
   ]
 
   .plot_density(
-    df = df,
+    df = x,
     grouping_column = grouping_column,
     variable = variable,
     outlier_groups = outlier_groups,
@@ -499,7 +499,7 @@ joint_plot_sc.CellQc <- function(
 
 #' Joint QC plot from a data.table
 #'
-#' @param df data.table. Input data containing the QC metrics.
+#' @param x data.table. Input data containing the QC metrics.
 #' @param library_size Character. Column with the library size per cell.
 #' @param nb_features Character. Column with the number of features per cell.
 #' @param log_scale Logical. Log10-transform both axes (default: FALSE).
@@ -510,14 +510,14 @@ joint_plot_sc.CellQc <- function(
 #' @export
 #' @import ggplot2
 joint_plot_sc.data.table <- function(
-  df,
+  x,
   library_size = "lib_size",
   nb_features = "nnz",
   log_scale = FALSE,
   ...
 ) {
   .plot_joint(
-    df = df,
+    df = x,
     library_size = library_size,
     nb_features = nb_features,
     log_scale = log_scale
