@@ -1,0 +1,109 @@
+# Package index
+
+## Saving plots
+
+Utilities to save plots to PNG or PDF
+
+- [`save_plot()`](https://gregorlueg.github.io/bixverse.plots/reference/save_plot.md)
+  : General helper to save all types of plots to file
+- [`save_plot_ls()`](https://gregorlueg.github.io/bixverse.plots/reference/save_plot_ls.md)
+  : Save a list of plots
+- [`params_plots()`](https://gregorlueg.github.io/bixverse.plots/reference/params_plots.md)
+  : Wrapper function for standard plot parameters
+
+## Gene set enrichment plots
+
+Utilities to save plots to PNG or PDF
+
+- [`get_gsea_enrichment_data()`](https://gregorlueg.github.io/bixverse.plots/reference/get_gsea_enrichment_data.md)
+  : Helper function to get the plot data for GSEA plots
+- [`plot_gse_dotplot()`](https://gregorlueg.github.io/bixverse.plots/reference/plot_gse_dotplot.md)
+  : Generate GSE dotplots
+- [`plot_gsea_enrichment()`](https://gregorlueg.github.io/bixverse.plots/reference/plot_gsea_enrichment.md)
+  : Plot GSEA enrichment results
+
+## Enrichment map plotting
+
+Generate enrichment map plots
+
+- [`enrichment_map_gsea()`](https://gregorlueg.github.io/bixverse.plots/reference/enrichment_map_gsea.md)
+  : Generate enrichment map igraph (for GSEA)
+- [`enrichment_map_oae()`](https://gregorlueg.github.io/bixverse.plots/reference/enrichment_map_oae.md)
+  : Generate enrichment map igraph (for overenrichment tests)
+- [`plot_enrichment_map_ggraph()`](https://gregorlueg.github.io/bixverse.plots/reference/plot_enrichment_map_ggraph.md)
+  : igraph enrichment map to ggraph plot
+- [`plot_enrichment_map_visnetwork()`](https://gregorlueg.github.io/bixverse.plots/reference/plot_enrichment_map_visnetwork.md)
+  : igraph enrichment map to VisNetwork interactive network
+
+## Other useful plots
+
+Other plotting helpers like for volcano plots, etc.
+
+- [`volcano_plot()`](https://gregorlueg.github.io/bixverse.plots/reference/volcano_plot.md)
+  : Create a volcano plot
+- [`params_volcano()`](https://gregorlueg.github.io/bixverse.plots/reference/params_volcano.md)
+  : Wrapper function for volcano plot parameters
+
+## Single cell plotting functions
+
+Generate different single cell plots
+
+- [`violin_plot_sc()`](https://gregorlueg.github.io/bixverse.plots/reference/violin_plot_sc.md)
+  : Generic violin plot function
+- [`violin_plot_sc(`*`<CellQc>`*`)`](https://gregorlueg.github.io/bixverse.plots/reference/violin_plot_sc.CellQc.md)
+  : Per-metric violin plots from a CellQc object
+- [`violin_plot_sc(`*`<data.table>`*`)`](https://gregorlueg.github.io/bixverse.plots/reference/violin_plot_sc.data.table.md)
+  : Violin plot from a data.table
+- [`density_plot_sc()`](https://gregorlueg.github.io/bixverse.plots/reference/density_plot_sc.md)
+  : Generic density plot function
+- [`density_plot_sc(`*`<CellQc>`*`)`](https://gregorlueg.github.io/bixverse.plots/reference/density_plot_sc.CellQc.md)
+  : Per-metric density plots from a CellQc object
+- [`density_plot_sc(`*`<data.table>`*`)`](https://gregorlueg.github.io/bixverse.plots/reference/density_plot_sc.data.table.md)
+  : Density plot from a data.table
+- [`joint_plot_sc()`](https://gregorlueg.github.io/bixverse.plots/reference/joint_plot_sc.md)
+  : Generic joint plot function
+- [`joint_plot_sc(`*`<CellQc>`*`)`](https://gregorlueg.github.io/bixverse.plots/reference/joint_plot_sc.CellQc.md)
+  : Joint QC plot from a CellQc object
+- [`joint_plot_sc(`*`<data.table>`*`)`](https://gregorlueg.github.io/bixverse.plots/reference/joint_plot_sc.data.table.md)
+  : Joint QC plot from a data.table
+- [`dot_plot_sc()`](https://gregorlueg.github.io/bixverse.plots/reference/dot_plot_sc.md)
+  : Dot plot of marker gene expression across groups
+- [`embedding_plot_sc()`](https://gregorlueg.github.io/bixverse.plots/reference/embedding_plot_sc.md)
+  : Embedding plot coloured by an obs column
+- [`feature_plot_sc()`](https://gregorlueg.github.io/bixverse.plots/reference/feature_plot_sc.md)
+  : Faceted feature plot over an embedding
+- [`stacked_violin_plot_sc()`](https://gregorlueg.github.io/bixverse.plots/reference/stacked_violin_plot_sc.md)
+  : Stacked violin plot of gene expression across groups
+- [`feature_scatter_plot_sc()`](https://gregorlueg.github.io/bixverse.plots/reference/feature_scatter_plot_sc.md)
+  : Scatter / hex plot of two features against each other
+
+## Geom extensions
+
+Extensions around the ggplot2 universe
+
+- [`label_centroids()`](https://gregorlueg.github.io/bixverse.plots/reference/label_centroids.md)
+  : Label Centroids in Scatter Plots
+
+## Bixverse styling options
+
+Custom ggplot2 styling for Bixverse
+
+- [`theme_bx()`](https://gregorlueg.github.io/bixverse.plots/reference/theme_bx.md)
+  : Bixverse ggplot2 Theme
+- [`scale_fill_bx()`](https://gregorlueg.github.io/bixverse.plots/reference/scale_fill_bx.md)
+  : Bixverse Fill Scale (Discrete)
+- [`scale_fill_bx_c()`](https://gregorlueg.github.io/bixverse.plots/reference/scale_fill_bx_c.md)
+  : Bixverse Fill Scale (Continuous)
+- [`scale_color_bx()`](https://gregorlueg.github.io/bixverse.plots/reference/scale_color_bx.md)
+  : Bixverse Color Scale (Discrete)
+- [`scale_color_bx_c()`](https://gregorlueg.github.io/bixverse.plots/reference/scale_color_bx_c.md)
+  : Bixverse Color Scale (Continuous)
+
+## Utility functions
+
+General utilitys
+
+- [`wrap_and_truncate()`](https://gregorlueg.github.io/bixverse.plots/reference/wrap_and_truncate.md)
+  : Helper function to wrap and truncate text
+- [`prepare_mitch_scores()`](https://gregorlueg.github.io/bixverse.plots/reference/prepare_mitch_scores.md)
+  : Generate adjusted scores for plotting mitch results
