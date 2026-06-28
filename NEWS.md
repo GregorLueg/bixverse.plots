@@ -1,3 +1,9 @@
+# bixverse.plots 0.2.2
+
+**Fix:**
+
+- `hexbin` added properly to dependencies.
+
 # bixverse.plots 0.2.1
 
 **Fix:**

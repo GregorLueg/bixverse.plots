@@ -1,6 +1,6 @@
 Package: bixverse.plots
 Title: Plotting functions for bixverse
-Version: 0.2.1
+Version: 0.2.2
 Authors@R: 
     c(
       person(
@@ -31,6 +31,7 @@ Imports:
     ggplot2 (>= 4.0.0),
     ggraph,
     ggrepel,
+    hexbin,
     igraph,
     magrittr,
     MASS,
@@ -47,7 +48,6 @@ Imports:
     rlang
 Suggests: 
     ComplexHeatmap,
-    hexbin,
     manifoldsR,
     pheatmap,
     UpSetR,
