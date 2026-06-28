@@ -1,6 +1,6 @@
 # *bixverse.plots package*
 
-![r_package](https://img.shields.io/badge/R_package-0.2.0-orange)[![CI](https://github.com/GregorLueg/bixverse.plots/actions/workflows/R-cmd-check.yml/badge.svg)](https://github.com/GregorLueg/bixverse.plots/actions/workflows/R-cmd-check.yml)
+![r_package](https://img.shields.io/badge/R_package-0.2.1-orange)[![CI](https://github.com/GregorLueg/bixverse.plots/actions/workflows/R-cmd-check.yml/badge.svg)](https://github.com/GregorLueg/bixverse.plots/actions/workflows/R-cmd-check.yml)
 [![License:
 MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![pkgdown](https://img.shields.io/badge/pkgdown-website-1b5e9f?logo=github)](https://gregorlueg.github.io/bixverse.plots/)
@@ -17,7 +17,7 @@ parent package, as this one has already A LOT of code in it.
 
 ## *Release notes*
 
-Official release of the package with **0.2.0**. In this version, we have
+Official release of the package with **0.2.1**. In this version, we have
 introduced a huge number of plotting helpers for single cell, please
 refer to this vignette
 [here](https://gregorlueg.github.io/bixverse/articles/single_cell_visualisations.html)
