@@ -40,6 +40,17 @@ jobs:
         with:
           toolchain: stable
 
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: stable
+
+      - name: Cache Rust
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: "src/rust -> target"
+          shared-key: rmdcheck
+
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: |
