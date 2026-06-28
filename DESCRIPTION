@@ -1,6 +1,6 @@
 Package: bixverse.plots
 Title: Plotting functions for bixverse
-Version: 0.2.0
+Version: 0.2.1
 Authors@R: 
     c(
       person(
@@ -27,6 +27,7 @@ Imports:
     checkmate,
     data.table,
     fields,
+    ggExtra,
     ggplot2 (>= 4.0.0),
     ggraph,
     ggrepel,
@@ -46,7 +47,6 @@ Imports:
     rlang
 Suggests: 
     ComplexHeatmap,
-    ggExtra,
     hexbin,
     manifoldsR,
     pheatmap,
@@ -57,4 +57,3 @@ Remotes:
     GregorLueg/manifoldsR
 Config/roxygen2/version: 8.0.0
 URL: https://gregorlueg.github.io/bixverse.plots/
-RoxygenNote: 7.3.3

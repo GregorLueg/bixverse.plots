@@ -1,3 +1,9 @@
+# bixverse.plots 0.2.1
+
+**Fix:**
+
+- `ggExtra` added properly to dependencies.
+
 # bixverse.plots 0.2.0
 
 Major release:
