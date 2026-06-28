@@ -20,7 +20,7 @@ parent package, as this one has already A LOT of code in it.
 Official release of the package with **0.2.1**. In this version, we have
 introduced a huge number of plotting helpers for single cell, please
 refer to this vignette
-[here](https://gregorlueg.github.io/bixverse/articles/single_cell_visualisations.html)
+[here](https://gregorlueg.github.io/bixverse/articles/single_cell_visualisation.html)
 for more details.
 
 ## Installation
