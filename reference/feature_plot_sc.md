@@ -113,9 +113,9 @@ feature_plot_sc(
 - ...:
 
   Additional arguments forwarded to
-  [`bixverse::extract_feature_plot_data()`](https://rdrr.io/pkg/bixverse/man/extract_feature_plot_data.html)
+  [`bixverse::extract_feature_plot_data()`](https://gregorlueg.github.io/bixverse/reference/extract_feature_plot_data.html)
   and onward to
-  [`get_embedding()`](https://rdrr.io/pkg/bixverse/man/get_embedding.html).
+  [`get_embedding()`](https://gregorlueg.github.io/bixverse/reference/get_embedding.html).
   Do not pass `modality` here; use `embd_modality` instead.
 
 ## Value

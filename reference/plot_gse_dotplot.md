@@ -1,9 +1,9 @@
 # Generate GSE dotplots
 
 This function can take in the output of
-[`bixverse::gse_hypergeometric()`](https://rdrr.io/pkg/bixverse/man/gse_hypergeometric.html)
+[`bixverse::gse_hypergeometric()`](https://gregorlueg.github.io/bixverse/reference/gse_hypergeometric.html)
 or
-[`bixverse::gse_hypergeometric_list()`](https://rdrr.io/pkg/bixverse/man/gse_hypergeometric_list.html)
+[`bixverse::gse_hypergeometric_list()`](https://gregorlueg.github.io/bixverse/reference/gse_hypergeometric_list.html)
 and generates in the former case a single plot and in the latter case a
 list of plots per target set.
 
@@ -47,6 +47,6 @@ plot_gse_dotplot(
 ## Value
 
 If the output of
-[`bixverse::gse_hypergeometric_list()`](https://rdrr.io/pkg/bixverse/man/gse_hypergeometric_list.html)
+[`bixverse::gse_hypergeometric_list()`](https://gregorlueg.github.io/bixverse/reference/gse_hypergeometric_list.html)
 was provided, a list of dotplots per target gene set. Otherwise, a
 single GSE OAE dot plot.

@@ -1,7 +1,7 @@
 # Generate adjusted scores for plotting mitch results
 
 Function that takes results from
-[`bixverse::calc_mitch()`](https://rdrr.io/pkg/bixverse/man/calc_mitch.html),
+[`bixverse::calc_mitch()`](https://gregorlueg.github.io/bixverse/reference/calc_mitch.html),
 extracts the individual scores and p-values for each contrast, runs an
 FDR correction on top of the p-values and sets scores above the provided
 FDR threshold to 0.
@@ -17,7 +17,7 @@ prepare_mitch_scores(res, fdr_threshold = 0.05)
 - res:
 
   data.table. Output of
-  [`bixverse::calc_mitch()`](https://rdrr.io/pkg/bixverse/man/calc_mitch.html).
+  [`bixverse::calc_mitch()`](https://gregorlueg.github.io/bixverse/reference/calc_mitch.html).
 
 - fdr_threshold:
 

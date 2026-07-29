@@ -80,7 +80,7 @@ embedding_plot_sc(
 - label_font:
 
   String. Font of the labels.
-  [`bixverse::extract_embedding_data()`](https://rdrr.io/pkg/bixverse/man/extract_embedding_data.html).
+  [`bixverse::extract_embedding_data()`](https://gregorlueg.github.io/bixverse/reference/extract_embedding_data.html).
 
 ## Value
 
