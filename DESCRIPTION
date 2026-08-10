@@ -36,6 +36,7 @@ Imports:
     magrittr,
     MASS,
     MetBrewer,
+    patchwork,
     purrr,
     RColorBrewer,
     S7,
@@ -55,5 +56,5 @@ Suggests:
 Remotes: 
     GregorLueg/bixverse,
     GregorLueg/manifoldsR
-Config/roxygen2/version: 8.0.0
+Config/roxygen2/version: 8.1.0
 URL: https://gregorlueg.github.io/bixverse.plots/

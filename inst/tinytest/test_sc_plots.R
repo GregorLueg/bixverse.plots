@@ -220,7 +220,7 @@ expect_true(
   info = "feature_plot (single): correct class"
 )
 
-# multi-feature faceting
+# multi-feature, free scales (default)
 features_multi <- c("gene_001", "gene_050", "gene_100")
 p <- feature_plot_sc(
   object = sc_object,
@@ -228,13 +228,42 @@ p <- feature_plot_sc(
   embedding = "umap"
 )
 expect_true(
+  checkmate::checkClass(p, c("patchwork")),
+  info = "feature_plot (multi, free): correct class"
+)
+expect_equal(
+  current = length(p$patches$plots) + 1L,
+  target = length(features_multi),
+  info = "feature_plot (multi, free): one plot per feature"
+)
+
+# multi-feature, shared scale
+p <- feature_plot_sc(
+  object = sc_object,
+  features = features_multi,
+  embedding = "umap",
+  scale_mode = "shared"
+)
+expect_true(
   checkmate::checkClass(p, c("ggplot")),
-  info = "feature_plot (multi): correct class"
+  info = "feature_plot (multi, shared): correct class"
 )
 expect_equal(
   current = length(unique(ggplot2::ggplot_build(p)$data[[1]]$PANEL)),
   target = length(features_multi),
-  info = "feature_plot (multi): one panel per feature"
+  info = "feature_plot (multi, shared): one panel per feature"
+)
+
+# spectral palette
+p <- feature_plot_sc(
+  object = sc_object,
+  features = features_multi,
+  embedding = "umap",
+  palette = "spectral"
+)
+expect_true(
+  checkmate::checkClass(p, c("patchwork")),
+  info = "feature_plot (spectral): correct class"
 )
 
 # highlight branch (sparse-gene path in .plot_embedding)

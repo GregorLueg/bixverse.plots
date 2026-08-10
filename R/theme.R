@@ -123,13 +123,28 @@ set_bx_theme <- function(base_size = 12, base_family = "Helvetica") {
 
 ## colours ---------------------------------------------------------------------
 
+#' Available bixverse palettes
+#'
+#' @keywords internal
+#' @noRd
+BX_PALETTES <- c(
+  "main",
+  "sequential",
+  "diverging",
+  "viridis",
+  "spectral"
+)
+
 #' Bixverse Color Palette
 #'
 #' Official bixverse color palette
 #'
-#' @param palette Palette name: "main", "diverging", "sequential"
+#' @param palette Palette name. One of `"main"`, `"sequential"`, `"diverging"`,
+#' `"viridis"` or `"spectral"`. The latter is a reversed RColorBrewer Spectral,
+#' i.e. dark indigo for low and dark red for high values.
 #' @param n Integer, number of colours to return.
 #' @param reverse Logical, reverse the color order? (default: FALSE)
+#' @param ... Ignored. Present for backwards compatibility.
 #'
 #' @return A vector of color hex codes
 #'
@@ -140,6 +155,7 @@ bx_colors <- function(palette = "main", reverse = FALSE, n = 20, ...) {
   checkmate::qassert(palette, "S1")
   checkmate::qassert(reverse, "B1")
   checkmate::assertCount(n, positive = TRUE)
+  checkmate::assertChoice(palette, BX_PALETTES)
 
   pal <- switch(
     palette,
@@ -147,6 +163,7 @@ bx_colors <- function(palette = "main", reverse = FALSE, n = 20, ...) {
     sequential = MetBrewer::met.brewer("Benedictus", 10)[6:10],
     diverging = MetBrewer::met.brewer("Hiroshige", 10)[1:10],
     viridis = viridis::viridis(n = n),
+    spectral = rev(RColorBrewer::brewer.pal(11, "Spectral")),
     stop(sprintf("Unknown palette: '%s'", palette))
   )
 
@@ -199,6 +216,8 @@ scale_fill_bx <- function(palette = "main", reverse = FALSE, ...) {
 #'
 #' @param palette Palette name (default: "sequential")
 #' @param reverse Reverse colors? (default: FALSE)
+#' @param n Integer. Number of colours to interpolate over (default: 20). Only
+#' has an effect on palettes that respect `n`, see [bx_colors()].
 #' @param ... Additional arguments passed to scale_color_gradientn
 #'
 #' @return A ggplot2 scale object
@@ -207,22 +226,27 @@ scale_fill_bx <- function(palette = "main", reverse = FALSE, ...) {
 scale_color_bx_c <- function(
   palette = "sequential",
   reverse = FALSE,
+  n = 20,
   ...
 ) {
-  pal <- bx_colors(palette, reverse, ...)
+  pal <- bx_colors(palette = palette, reverse = reverse, n = n)
   ggplot2::scale_color_gradientn(colors = pal, ...)
 }
 
 #' Bixverse Fill Scale (Continuous)
 #'
-#' @param palette Palette name (default: "sequential")
-#' @param reverse Reverse colors? (default: FALSE)
+#' @inheritParams scale_color_bx_c
 #' @param ... Additional arguments passed to scale_fill_gradientn
 #'
 #' @return A ggplot2 scale object
 #' @export
 #'
-scale_fill_bx_c <- function(palette = "sequential", reverse = FALSE, ...) {
-  pal <- bx_colors(palette, reverse)
+scale_fill_bx_c <- function(
+  palette = "sequential",
+  reverse = FALSE,
+  n = 20,
+  ...
+) {
+  pal <- bx_colors(palette = palette, reverse = reverse, n = n)
   ggplot2::scale_fill_gradientn(colors = pal, ...)
 }

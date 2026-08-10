@@ -40,14 +40,20 @@ export(volcano_plot)
 export(wrap_and_truncate)
 import(data.table)
 import(ggplot2)
-importFrom(S7,"method<-")
-importFrom(S7,method)
-importFrom(S7,new_S3_class)
-importFrom(ggplot2,aes)
-importFrom(ggplot2,class_ggplot)
-importFrom(ggplot2,geom_label)
-importFrom(ggplot2,update_ggplot)
+importFrom(S7,
+  "method<-",
+  method,
+  new_S3_class
+)
+importFrom(ggplot2,
+  aes,
+  class_ggplot,
+  geom_label,
+  update_ggplot
+)
 importFrom(magrittr,`%>%`)
-importFrom(rlang,.data)
-importFrom(rlang,as_name)
+importFrom(rlang,
+  .data,
+  as_name
+)
 importFrom(zeallot,`%<-%`)

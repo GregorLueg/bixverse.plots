@@ -14,6 +14,12 @@
 #' @param raster Boolean. Shall [scattermore::geom_scattermore()] be used.
 #' @param raster_dpi Two numerics. Pixel resolution for rasterized plots, passed
 #' to geom_scattermore(). Default is `c(512, 512)`.
+#' @param highlight Boolean. Shall the high values be more strongly highlighted.
+#' Only has an effect on continuous colour columns.
+#' @param highlight_quantile Numeric between `[0, 1]`. Quantile below which
+#' points are pushed into the grey background layer. Calculated per `facet`
+#' group if `facet` is supplied.
+#' @param palette String. Continuous palette to use, see [bx_colors()].
 #'
 #' @return A \code{\link[ggplot2]{ggplot}} object.
 #'
@@ -28,7 +34,8 @@
   raster = FALSE,
   raster_dpi = c(512, 512),
   highlight = FALSE,
-  highlight_quantile = 0.25
+  highlight_quantile = 0.25,
+  palette = "sequential"
 ) {
   checkmate::assertDataTable(df)
   checkmate::qassert(colour, "S1")
@@ -39,8 +46,8 @@
   checkmate::qassert(raster_dpi, "N2")
   checkmate::qassert(highlight, "B1")
   checkmate::assertNames(names(df), must.include = c("dim_1", "dim_2", colour))
-  checkmate::qassert(highlight, "B1")
-  checkmate::qassert(highlight_quantile, "N[0,1]")
+  checkmate::qassert(highlight_quantile, "N1[0,1]")
+  checkmate::assertChoice(palette, BX_PALETTES)
 
   discrete <- is.factor(df[[colour]]) ||
     is.character(df[[colour]]) ||
@@ -49,14 +56,19 @@
   n_cells <- length(unique(df$cell_id))
 
   if (highlight && !discrete) {
-    # path to strongly highlight rare genes
-    threshold <- quantile(
-      df[[colour]],
-      probs = highlight_quantile,
-      na.rm = TRUE
-    )
-    bg <- df[df[[colour]] <= threshold, ]
-    fg <- df[df[[colour]] > threshold, ]
+    # path to strongly highlight rare genes. threshold is per facet group,
+    # otherwise a weakly expressed gene disappears into the background layer
+    df <- data.table::copy(df)
+    df[,
+      .thr := stats::quantile(
+        get(colour),
+        probs = highlight_quantile,
+        na.rm = TRUE
+      ),
+      by = facet
+    ]
+    bg <- df[get(colour) <= .thr]
+    fg <- df[get(colour) > .thr]
 
     if (raster) {
       p <- ggplot() +
@@ -92,7 +104,7 @@
         theme_bw()
     }
 
-    p <- p + scale_color_bx_c()
+    p <- p + scale_color_bx_c(palette = palette)
   } else {
     p <- ggplot(df, aes(x = dim_1, y = dim_2))
 
@@ -118,7 +130,7 @@
     if (discrete) {
       p <- p + scale_color_bx()
     } else {
-      p <- p + scale_color_bx_c()
+      p <- p + scale_color_bx_c(palette = palette)
     }
   }
 
@@ -523,7 +535,15 @@ embedding_plot_sc <- function(
 
 ### embedding with feature -----------------------------------------------------
 
-#' Faceted feature plot over an embedding
+#' Feature plot over an embedding
+#'
+#' @description
+#' Plots the expression of one or more features over an embedding. By default
+#' every feature gets its own panel and its own colour bar
+#' (`scale_mode = "free"`), so a weakly expressed gene is not flattened by
+#' whatever the loudest gene in the set happens to be. Use
+#' `scale_mode = "shared"` for a single faceted plot with one colour bar across
+#' all features.
 #'
 #' @param object A single cell class.
 #' @param features Character vector. Gene/feature IDs to plot, taken from
@@ -551,11 +571,20 @@ embedding_plot_sc <- function(
 #' @param label_size Numeric. Size of the labels
 #' @param label_color String. Color fo the labels.
 #' @param label_font String. Font of the labels.
+#' @param scale_mode String. One of `c("free", "shared")`. With `"free"` each
+#' feature is drawn as its own plot with its own colour bar and the panels are
+#' combined with [patchwork::wrap_plots()]. With `"shared"` all features go into
+#' one faceted plot with a single colour bar fitted to the pooled expression.
+#' @param palette String. Continuous palette for the expression values. One of
+#' `c("sequential", "spectral", "viridis", "diverging")`, see [bx_colors()].
+#' @param ncol Optional integer. Number of columns of the panel grid. Only has
+#' an effect if `scale_mode = "free"`. If `NULL`, patchwork picks the layout.
 #' @param ... Additional arguments forwarded to
 #' [bixverse::extract_feature_plot_data()] and onward to [get_embedding()]. Do
 #' not pass `modality` here; use `embd_modality` instead.
 #'
-#' @return A \code{\link[ggplot2]{ggplot}} object.
+#' @return A \code{\link[patchwork]{patchwork}} object if
+#' `scale_mode = "free"`, otherwise a \code{\link[ggplot2]{ggplot}} object.
 #'
 #' @export
 #' @import ggplot2
@@ -578,10 +607,15 @@ feature_plot_sc <- function(
   label_font = "bold",
   highlight_features = FALSE,
   highlight_quantile = 0.25,
+  scale_mode = c("free", "shared"),
+  palette = c("sequential", "spectral", "viridis", "diverging"),
+  ncol = NULL,
   ...
 ) {
   expr_modality <- match.arg(expr_modality)
   embd_modality <- match.arg(embd_modality)
+  scale_mode <- match.arg(scale_mode)
+  palette <- match.arg(palette)
 
   checkmate::qassert(label_by, c("S1", "0"))
   checkmate::qassert(raster, c("0", "B1"))
@@ -593,6 +627,9 @@ feature_plot_sc <- function(
   checkmate::qassert(label_font, c("S1"))
   checkmate::qassert(highlight_features, "B1")
   checkmate::qassert(highlight_quantile, "N1[0,1]")
+  checkmate::assertChoice(scale_mode, c("free", "shared"))
+  checkmate::assertChoice(palette, BX_PALETTES)
+  checkmate::assertInt(ncol, lower = 1, null.ok = TRUE)
 
   if (!is.null(label_by)) {
     c_names <- c(label_by)
@@ -635,29 +672,61 @@ feature_plot_sc <- function(
     ))
   }
 
-  plot <- .plot_embedding(
-    df = dt,
-    colour = "expression",
-    facet = "gene",
-    embedding = embedding,
-    point_size = point_size,
-    point_alpha = point_alpha,
-    raster = raster,
-    raster_dpi = raster_dpi,
-    highlight = highlight_features
-  )
-
-  if (!is.null(label_by)) {
-    plot <- plot +
+  add_labels <- function(p, data) {
+    if (is.null(label_by)) {
+      return(p)
+    }
+    p +
       label_centroids(
-        data = dt,
+        data = data,
         label_by = label_by,
         colour = label_color,
         size = label_size,
         fontface = label_font
       )
   }
-  plot
+
+  if (scale_mode == "shared") {
+    plot <- .plot_embedding(
+      df = dt,
+      colour = "expression",
+      facet = "gene",
+      embedding = embedding,
+      point_size = point_size,
+      point_alpha = point_alpha,
+      raster = raster,
+      raster_dpi = raster_dpi,
+      highlight = highlight_features,
+      highlight_quantile = highlight_quantile,
+      palette = palette
+    )
+
+    return(add_labels(plot, dt))
+  }
+
+  # free scales: one plot with its own colour bar per feature
+  gene_levels <- levels(droplevels(dt$gene))
+
+  plots <- purrr::map(gene_levels, \(gene_lvl) {
+    sub_dt <- dt[gene == gene_lvl]
+    p <- .plot_embedding(
+      df = sub_dt,
+      colour = "expression",
+      embedding = embedding,
+      point_size = point_size,
+      point_alpha = point_alpha,
+      raster = raster,
+      raster_dpi = raster_dpi,
+      highlight = highlight_features,
+      highlight_quantile = highlight_quantile,
+      palette = palette
+    ) +
+      labs(title = gene_lvl, colour = NULL)
+
+    add_labels(p, sub_dt)
+  })
+
+  patchwork::wrap_plots(plots, ncol = ncol)
 }
 
 ### dot plot -------------------------------------------------------------------
