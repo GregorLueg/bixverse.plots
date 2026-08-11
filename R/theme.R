@@ -142,7 +142,9 @@ BX_PALETTES <- c(
 #' @param palette Palette name. One of `"main"`, `"sequential"`, `"diverging"`,
 #' `"viridis"` or `"spectral"`. The latter is a reversed RColorBrewer Spectral,
 #' i.e. dark indigo for low and dark red for high values.
-#' @param n Integer, number of colours to return.
+#' @param n Integer, number of colours to return. Palettes shorter than `n`
+#' (`"sequential"`, `"diverging"`, `"spectral"`) are ramped up to `n` colours
+#' with [grDevices::colorRampPalette()].
 #' @param reverse Logical, reverse the color order? (default: FALSE)
 #' @param ... Ignored. Present for backwards compatibility.
 #'
@@ -166,6 +168,13 @@ bx_colors <- function(palette = "main", reverse = FALSE, n = 20, ...) {
     spectral = rev(RColorBrewer::brewer.pal(11, "Spectral")),
     stop(sprintf("Unknown palette: '%s'", palette))
   )
+
+  # some palettes are of fixed length and would otherwise blow up discrete
+  # scales with more levels than colours. Lab keeps the ramp on the same curve
+  # the continuous scales interpolate along.
+  if (n > length(pal)) {
+    pal <- grDevices::colorRampPalette(pal, space = "Lab")(n)
+  }
 
   if (reverse) {
     pal <- rev(pal)
@@ -216,8 +225,8 @@ scale_fill_bx <- function(palette = "main", reverse = FALSE, ...) {
 #'
 #' @param palette Palette name (default: "sequential")
 #' @param reverse Reverse colors? (default: FALSE)
-#' @param n Integer. Number of colours to interpolate over (default: 20). Only
-#' has an effect on palettes that respect `n`, see [bx_colors()].
+#' @param n Integer. Number of colours to interpolate over (default: 20), see
+#' [bx_colors()].
 #' @param ... Additional arguments passed to scale_color_gradientn
 #'
 #' @return A ggplot2 scale object

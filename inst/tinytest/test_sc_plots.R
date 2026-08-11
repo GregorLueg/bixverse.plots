@@ -600,6 +600,304 @@ expect_true(
   info = "feature_scatter (rna vs adt, hex): correct class"
 )
 
+## palette selection -----------------------------------------------------------
+
+### helpers --------------------------------------------------------------------
+
+# ggplot hands back #RRGGBBAA where alpha is baked in, bx_colors() only #RRGGBB
+norm_col <- \(x) toupper(substr(x, 1L, 7L))
+
+# colours a discrete bx scale ends up drawing for `n` levels. The fixed-length
+# palettes return more colours than asked for when `n` is below their length,
+# and discrete_scale() then takes the first `n`
+expected_discrete <- \(palette, n) {
+  sort(norm_col(bx_colors(palette = palette, n = n)[seq_len(n)]))
+}
+
+drawn_discrete <- \(p, aes_col = "colour", layer = 1L) {
+  sort(unique(norm_col(ggplot2::ggplot_build(p)$data[[layer]][[aes_col]])))
+}
+
+# both ends of the continuous scale actually attached to the plot
+scale_ends <- \(p, aes_name = "colour") {
+  norm_col(p$scales$get_scales(aes_name)$palette(c(0, 1)))
+}
+
+expected_ends <- \(palette, n = 20) {
+  pal <- norm_col(bx_colors(palette = palette, n = n))
+  pal[c(1L, length(pal))]
+}
+
+n_grp <- length(unique(qc_df$cell_grp))
+n_donor <- length(unique(df$donor_id))
+dot_features <- c("gene_001", "gene_002", "gene_097", "gene_100")
+
+### bx_colors ramp -------------------------------------------------------------
+
+expect_equal(
+  current = length(bx_colors("spectral", n = 30)),
+  target = 30L,
+  info = "bx_colors: fixed-length palette is ramped up to n"
+)
+expect_equal(
+  current = length(bx_colors("main", n = 8)),
+  target = 8L,
+  info = "bx_colors: palettes that already respect n are unaffected"
+)
+
+# every palette must survive a discrete scale with more levels than it has
+# colours, which is what the ramp exists for
+many_levels <- data.table::data.table(
+  x = runif(300),
+  y = runif(300),
+  g = factor(sample(paste0("c", 1:30), 300, replace = TRUE))
+)
+for (pal in c("main", "sequential", "diverging", "viridis", "spectral")) {
+  p <- ggplot2::ggplot(many_levels, ggplot2::aes(x, y, colour = g)) +
+    ggplot2::geom_point() +
+    scale_color_bx(palette = pal)
+  expect_equal(
+    current = length(drawn_discrete(p)),
+    target = 30L,
+    info = sprintf("scale_color_bx (%s): 30 levels get 30 colours", pal)
+  )
+}
+
+### embedding plot -------------------------------------------------------------
+
+p <- embedding_plot_sc(sc_object, "umap", colour_by = "cell_grp")
+expect_equal(
+  current = drawn_discrete(p),
+  target = expected_discrete("main", n_grp),
+  info = "embedding_plot (discrete): defaults to the main palette"
+)
+
+p <- embedding_plot_sc(
+  sc_object,
+  "umap",
+  colour_by = "cell_grp",
+  palette = "spectral"
+)
+expect_equal(
+  current = drawn_discrete(p),
+  target = expected_discrete("spectral", n_grp),
+  info = "embedding_plot (discrete): honours palette"
+)
+
+p <- embedding_plot_sc(sc_object, "umap", colour_by = "lib_size")
+expect_equal(
+  current = scale_ends(p),
+  target = expected_ends("sequential"),
+  info = "embedding_plot (continuous): defaults to the sequential palette"
+)
+
+p <- embedding_plot_sc(
+  sc_object,
+  "umap",
+  colour_by = "lib_size",
+  palette = "viridis"
+)
+expect_equal(
+  current = scale_ends(p),
+  target = expected_ends("viridis"),
+  info = "embedding_plot (continuous): honours palette"
+)
+
+expect_error(
+  current = embedding_plot_sc(
+    sc_object,
+    "umap",
+    colour_by = "cell_grp",
+    palette = "not_a_palette"
+  ),
+  info = "embedding_plot: rejects an unknown palette"
+)
+
+### dot plot -------------------------------------------------------------------
+
+p <- dot_plot_sc(sc_object, dot_features, "cell_grp")
+expect_equal(
+  current = scale_ends(p),
+  target = expected_ends("sequential"),
+  info = "dot_plot: defaults to the sequential palette"
+)
+
+p <- dot_plot_sc(sc_object, dot_features, "cell_grp", palette = "diverging")
+expect_equal(
+  current = scale_ends(p),
+  target = expected_ends("diverging"),
+  info = "dot_plot: honours palette"
+)
+
+expect_error(
+  current = dot_plot_sc(sc_object, dot_features, "cell_grp", palette = "main"),
+  info = "dot_plot: rejects a discrete-only palette"
+)
+
+### stacked violin -------------------------------------------------------------
+
+vln_features <- c("gene_001", "gene_100")
+
+p <- stacked_violin_plot_sc(sc_object, vln_features, "cell_grp")
+expect_equal(
+  current = drawn_discrete(p, aes_col = "fill"),
+  target = expected_discrete("main", n_grp),
+  info = "stacked_violin: defaults to the main palette"
+)
+
+p <- stacked_violin_plot_sc(
+  sc_object,
+  vln_features,
+  "cell_grp",
+  palette = "spectral"
+)
+expect_equal(
+  current = drawn_discrete(p, aes_col = "fill"),
+  target = expected_discrete("spectral", n_grp),
+  info = "stacked_violin: honours palette"
+)
+
+### feature scatter ------------------------------------------------------------
+
+p <- feature_scatter_plot_sc(sc_object, "gene_001", "gene_002")
+expect_equal(
+  current = scale_ends(p, "fill"),
+  target = expected_ends("viridis"),
+  info = "feature_scatter (density): defaults to the viridis palette"
+)
+
+p <- feature_scatter_plot_sc(
+  sc_object,
+  "gene_001",
+  "gene_002",
+  palette = "sequential"
+)
+expect_equal(
+  current = scale_ends(p, "fill"),
+  target = expected_ends("sequential"),
+  info = "feature_scatter (density): honours palette"
+)
+
+p <- feature_scatter_plot_sc(
+  sc_object,
+  "gene_001",
+  "gene_002",
+  geom = "hex",
+  bins = 30,
+  palette = "spectral"
+)
+expect_equal(
+  current = scale_ends(p, "fill"),
+  target = expected_ends("spectral"),
+  info = "feature_scatter (hex): honours palette"
+)
+
+# the raster branch maps colour, not fill. It used to get a fill scale and so
+# no colour scale at all
+p <- suppressMessages(feature_scatter_plot_sc(
+  sc_object,
+  "gene_001",
+  "gene_002",
+  raster = TRUE,
+  palette = "spectral"
+))
+expect_equal(
+  current = scale_ends(p, "colour"),
+  target = expected_ends("spectral"),
+  info = "feature_scatter (raster): colour scale is set and honours palette"
+)
+
+### qc plots -------------------------------------------------------------------
+
+p <- violin_plot_sc(
+  x = df,
+  grouping_column = "donor_id",
+  variable = "nnz",
+  show_outlier = FALSE,
+  palette = "diverging"
+)
+expect_equal(
+  current = drawn_discrete(p, layer = 2L),
+  target = expected_discrete("diverging", n_donor),
+  info = "violin_plot.dt (no outlier): honours palette"
+)
+
+# the outlier jitter is coloured by outlier status, which is semantic and must
+# stay clear of the palette
+p <- violin_plot_sc(
+  x = df,
+  grouping_column = "donor_id",
+  variable = "nnz",
+  show_outlier = TRUE,
+  palette = "spectral"
+)
+expect_false(
+  current = any(
+    drawn_discrete(p, layer = 2L) %in% expected_discrete("spectral", n_donor)
+  ),
+  info = "violin_plot.dt (outlier): outlier colours are not palette-driven"
+)
+
+p <- density_plot_sc(
+  x = df,
+  grouping_column = "donor_id",
+  variable = "nnz",
+  palette = "spectral"
+)
+expect_equal(
+  current = drawn_discrete(p, aes_col = "fill"),
+  target = expected_discrete("spectral", n_donor),
+  info = "density_plot.dt: honours palette"
+)
+
+p <- joint_plot_sc(
+  x = df,
+  library_size = "lib_size",
+  nb_features = "nnz",
+  palette = "spectral"
+)
+expect_true(
+  checkmate::checkClass(
+    p,
+    c("ggExtraPlot", "gtable", "gTree", "grob", "gDesc")
+  ),
+  info = "joint_plot.dt (spectral): correct class"
+)
+expect_error(
+  current = joint_plot_sc(
+    x = df,
+    library_size = "lib_size",
+    nb_features = "nnz",
+    palette = "main"
+  ),
+  info = "joint_plot.dt: rejects a discrete-only palette"
+)
+
+### CellQc methods -------------------------------------------------------------
+
+plots <- violin_plot_sc(qc, show_outlier = FALSE, palette = "spectral")
+expect_equal(
+  current = drawn_discrete(plots[[1]], layer = 2L),
+  target = expected_discrete("spectral", n_grp),
+  info = "violin_plot.CellQc: honours palette"
+)
+
+plots <- density_plot_sc(qc, palette = "diverging")
+expect_equal(
+  current = drawn_discrete(plots[[1]], aes_col = "fill"),
+  target = expected_discrete("diverging", n_grp),
+  info = "density_plot.CellQc: honours palette"
+)
+
+p <- joint_plot_sc(qc, palette = "viridis")
+expect_true(
+  checkmate::checkClass(
+    p,
+    c("ggExtraPlot", "gtable", "gTree", "grob", "gDesc")
+  ),
+  info = "joint_plot.CellQc (viridis): correct class"
+)
+
 ## cleanup ---------------------------------------------------------------------
 
 on.exit(

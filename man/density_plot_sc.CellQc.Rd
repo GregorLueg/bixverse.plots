@@ -4,12 +4,16 @@
 \alias{density_plot_sc.CellQc}
 \title{Per-metric density plots from a CellQc object}
 \usage{
-\method{density_plot_sc}{CellQc}(x, adjust_position_label = 0, ...)
+\method{density_plot_sc}{CellQc}(x, adjust_position_label = 0, palette = BX_PALETTES, ...)
 }
 \arguments{
 \item{x}{A \code{CellQc} object.}
 
 \item{adjust_position_label}{Numeric. x-offset for the labels (default: 0).}
+
+\item{palette}{String. Discrete palette for the group fills and labels. One
+of \code{c("main", "sequential", "diverging", "viridis", "spectral")}, see
+\code{\link[=bx_colors]{bx_colors()}}.}
 
 \item{...}{Ignored.}
 }

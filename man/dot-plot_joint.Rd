@@ -8,7 +8,8 @@
   df,
   library_size = "lib_size",
   nb_features = "nnz",
-  log_scale = FALSE
+  log_scale = FALSE,
+  palette = "sequential"
 )
 }
 \arguments{
@@ -19,6 +20,9 @@
 \item{nb_features}{Character. Column with the number of features per cell.}
 
 \item{log_scale}{Logical. Log10-transform both axes (default: FALSE).}
+
+\item{palette}{String. Continuous palette for the hexbin fill, see
+\code{\link[=bx_colors]{bx_colors()}}. The marginal histograms take the palette's mid colour.}
 }
 \value{
 A \code{ggExtraPlot} object.

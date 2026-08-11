@@ -13,6 +13,7 @@
   var_name = NULL,
   log_scale = TRUE,
   adjust_position_label = 0,
+  palette = BX_PALETTES,
   ...
 )
 }
@@ -32,6 +33,10 @@
 \item{log_scale}{Logical. Apply a log10 x-axis (default: TRUE).}
 
 \item{adjust_position_label}{Numeric. x-offset for the labels (default: 0).}
+
+\item{palette}{String. Discrete palette for the group fills and labels. One
+of \code{c("main", "sequential", "diverging", "viridis", "spectral")}, see
+\code{\link[=bx_colors]{bx_colors()}}.}
 
 \item{...}{Ignored.}
 }

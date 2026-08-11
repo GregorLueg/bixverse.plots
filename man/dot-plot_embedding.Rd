@@ -15,7 +15,7 @@
   raster_dpi = c(512, 512),
   highlight = FALSE,
   highlight_quantile = 0.25,
-  palette = "sequential"
+  palette = NULL
 )
 }
 \arguments{
@@ -44,7 +44,9 @@ Only has an effect on continuous colour columns.}
 points are pushed into the grey background layer. Calculated per \code{facet}
 group if \code{facet} is supplied.}
 
-\item{palette}{String. Continuous palette to use, see \code{\link[=bx_colors]{bx_colors()}}.}
+\item{palette}{Optional string. Palette to use, see \code{\link[=bx_colors]{bx_colors()}}. \code{NULL}
+(default) resolves to \code{"main"} for discrete and \code{"sequential"} for continuous
+colour columns.}
 }
 \value{
 A \code{\link[ggplot2]{ggplot}} object.

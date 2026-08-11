@@ -15,6 +15,7 @@ embedding_plot_sc(
   point_alpha = 0.5,
   raster = NULL,
   raster_dpi = c(512, 512),
+  palette = NULL,
   label_size = 3,
   label_color = "black",
   label_font = "bold"
@@ -46,6 +47,10 @@ number of cells is larger than \code{1e5}, defaults to TRUE.}
 
 \item{raster_dpi}{Two numerics. Pixel resolution for rasterized plots, passed
 to geom_scattermore(). Default is \code{c(512, 512)}.}
+
+\item{palette}{Optional string. Palette for the colour scale, see
+\code{\link[=bx_colors]{bx_colors()}}. \code{NULL} (default) resolves to \code{"main"} if \code{colour_by} is
+discrete and \code{"sequential"} if it is continuous.}
 
 \item{label_size}{Numeric. Size of the labels}
 

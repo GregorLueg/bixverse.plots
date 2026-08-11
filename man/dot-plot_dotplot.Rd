@@ -8,7 +8,8 @@
   df,
   feature_labels = NULL,
   feature_grouping = NULL,
-  cluster_groups = TRUE
+  cluster_groups = TRUE,
+  palette = "sequential"
 )
 }
 \arguments{
@@ -25,6 +26,8 @@ MS4A1 = "B cell", ...). (default: NULL).}
 
 \item{cluster_groups}{Boolean. Use hierarchical clustering on the grouping
 variable to re-order the group labels based on expression similarity.}
+
+\item{palette}{String. Continuous palette to use, see \code{\link[=bx_colors]{bx_colors()}}.}
 }
 \value{
 A \code{\link[ggplot2]{ggplot}} object.

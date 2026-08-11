@@ -11,8 +11,8 @@ scale_fill_bx_c(palette = "sequential", reverse = FALSE, n = 20, ...)
 
 \item{reverse}{Reverse colors? (default: FALSE)}
 
-\item{n}{Integer. Number of colours to interpolate over (default: 20). Only
-has an effect on palettes that respect \code{n}, see \code{\link[=bx_colors]{bx_colors()}}.}
+\item{n}{Integer. Number of colours to interpolate over (default: 20), see
+\code{\link[=bx_colors]{bx_colors()}}.}
 
 \item{...}{Additional arguments passed to scale_fill_gradientn}
 }

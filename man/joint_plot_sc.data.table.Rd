@@ -9,6 +9,7 @@
   library_size = "lib_size",
   nb_features = "nnz",
   log_scale = FALSE,
+  palette = c("sequential", "spectral", "viridis", "diverging"),
   ...
 )
 }
@@ -20,6 +21,9 @@
 \item{nb_features}{Character. Column with the number of features per cell.}
 
 \item{log_scale}{Logical. Log10-transform both axes (default: FALSE).}
+
+\item{palette}{String. Continuous palette for the hexbin fill. One of
+\code{c("sequential", "spectral", "viridis", "diverging")}, see \code{\link[=bx_colors]{bx_colors()}}.}
 
 \item{...}{Ignored.}
 }
