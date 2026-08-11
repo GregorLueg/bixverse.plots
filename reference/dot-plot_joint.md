@@ -9,7 +9,8 @@ Joint hexbin plot worker
   df,
   library_size = "lib_size",
   nb_features = "nnz",
-  log_scale = FALSE
+  log_scale = FALSE,
+  palette = "sequential"
 )
 ```
 
@@ -30,6 +31,12 @@ Joint hexbin plot worker
 - log_scale:
 
   Logical. Log10-transform both axes (default: FALSE).
+
+- palette:
+
+  String. Continuous palette for the hexbin fill, see
+  [`bx_colors()`](https://gregorlueg.github.io/bixverse.plots/reference/bx_colors.md).
+  The marginal histograms take the palette's mid colour.
 
 ## Value
 

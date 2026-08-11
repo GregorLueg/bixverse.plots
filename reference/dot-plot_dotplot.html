@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">bixverse.plots</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -49,7 +49,8 @@
 <span>  <span class="va">df</span>,</span>
 <span>  feature_labels <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  feature_grouping <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  cluster_groups <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  cluster_groups <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  palette <span class="op">=</span> <span class="st">"sequential"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -77,6 +78,10 @@ MS4A1 = "B cell", ...). (default: NULL).</p></dd>
 <dt id="arg-cluster-groups">cluster_groups<a class="anchor" aria-label="anchor" href="#arg-cluster-groups"></a></dt>
 <dd><p>Boolean. Use hierarchical clustering on the grouping
 variable to re-order the group labels based on expression similarity.</p></dd>
+
+
+<dt id="arg-palette">palette<a class="anchor" aria-label="anchor" href="#arg-palette"></a></dt>
+<dd><p>String. Continuous palette to use, see <code><a href="bx_colors.html">bx_colors()</a></code>.</p></dd>
 
 </dl></div>
     <div class="section level2">

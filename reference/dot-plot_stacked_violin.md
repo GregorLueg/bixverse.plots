@@ -5,7 +5,12 @@ Stacked violin plot worker
 ## Usage
 
 ``` r
-.plot_stacked_violin(df, feature_labels = NULL, scale_y = "width")
+.plot_stacked_violin(
+  df,
+  feature_labels = NULL,
+  scale_y = "width",
+  palette = "main"
+)
 ```
 
 ## Arguments
@@ -24,6 +29,11 @@ Stacked violin plot worker
 
   Character. `geom_violin` scaling, passed as `scale` (default:
   "width").
+
+- palette:
+
+  String. Discrete palette for the group fills, see
+  [`bx_colors()`](https://gregorlueg.github.io/bixverse.plots/reference/bx_colors.md).
 
 ## Value
 

@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">bixverse.plots</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -49,7 +49,8 @@
 <span>  <span class="va">df</span>,</span>
 <span>  library_size <span class="op">=</span> <span class="st">"lib_size"</span>,</span>
 <span>  nb_features <span class="op">=</span> <span class="st">"nnz"</span>,</span>
-<span>  log_scale <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  log_scale <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  palette <span class="op">=</span> <span class="st">"sequential"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -71,6 +72,11 @@
 
 <dt id="arg-log-scale">log_scale<a class="anchor" aria-label="anchor" href="#arg-log-scale"></a></dt>
 <dd><p>Logical. Log10-transform both axes (default: FALSE).</p></dd>
+
+
+<dt id="arg-palette">palette<a class="anchor" aria-label="anchor" href="#arg-palette"></a></dt>
+<dd><p>String. Continuous palette for the hexbin fill, see
+<code><a href="bx_colors.html">bx_colors()</a></code>. The marginal histograms take the palette's mid colour.</p></dd>
 
 </dl></div>
     <div class="section level2">

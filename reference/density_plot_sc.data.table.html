@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">bixverse.plots</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -55,6 +55,7 @@
 <span>  var_name <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  log_scale <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  adjust_position_label <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  palette <span class="op">=</span> <span class="va">BX_PALETTES</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -93,6 +94,12 @@
 
 <dt id="arg-adjust-position-label">adjust_position_label<a class="anchor" aria-label="anchor" href="#arg-adjust-position-label"></a></dt>
 <dd><p>Numeric. x-offset for the labels (default: 0).</p></dd>
+
+
+<dt id="arg-palette">palette<a class="anchor" aria-label="anchor" href="#arg-palette"></a></dt>
+<dd><p>String. Discrete palette for the group fills and labels. One
+of <code>c("main", "sequential", "diverging", "viridis", "spectral")</code>, see
+<code><a href="bx_colors.html">bx_colors()</a></code>.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>

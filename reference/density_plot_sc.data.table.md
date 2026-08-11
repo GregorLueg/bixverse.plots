@@ -15,6 +15,7 @@ density_plot_sc(
   var_name = NULL,
   log_scale = TRUE,
   adjust_position_label = 0,
+  palette = BX_PALETTES,
   ...
 )
 ```
@@ -52,6 +53,12 @@ density_plot_sc(
 - adjust_position_label:
 
   Numeric. x-offset for the labels (default: 0).
+
+- palette:
+
+  String. Discrete palette for the group fills and labels. One of
+  `c("main", "sequential", "diverging", "viridis", "spectral")`, see
+  [`bx_colors()`](https://gregorlueg.github.io/bixverse.plots/reference/bx_colors.md).
 
 - ...:
 

@@ -15,7 +15,7 @@ geom = "hex" cells are binned into hexagons.'></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">bixverse.plots</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -69,7 +69,8 @@ select its modality independently; unsuffixed features fall back to
 <span>  point_size <span class="op">=</span> <span class="fl">2.5</span>,</span>
 <span>  point_alpha <span class="op">=</span> <span class="fl">0.5</span>,</span>
 <span>  raster <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  raster_dpi <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">512</span>, <span class="fl">512</span><span class="op">)</span></span>
+<span>  raster_dpi <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">512</span>, <span class="fl">512</span><span class="op">)</span>,</span>
+<span>  palette <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"viridis"</span>, <span class="st">"sequential"</span>, <span class="st">"spectral"</span>, <span class="st">"diverging"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -132,6 +133,11 @@ and <code>n_cells &gt; 1e5</code>, defaults to TRUE. Only applies to
 <dt id="arg-raster-dpi">raster_dpi<a class="anchor" aria-label="anchor" href="#arg-raster-dpi"></a></dt>
 <dd><p>Two numerics. Pixel resolution for rasterised plots
 (default: <code>c(512, 512)</code>).</p></dd>
+
+
+<dt id="arg-palette">palette<a class="anchor" aria-label="anchor" href="#arg-palette"></a></dt>
+<dd><p>String. Continuous palette for the density / count scale. One
+of <code>c("viridis", "sequential", "spectral", "diverging")</code>, see <code><a href="bx_colors.html">bx_colors()</a></code>.</p></dd>
 
 </dl></div>
     <div class="section level2">

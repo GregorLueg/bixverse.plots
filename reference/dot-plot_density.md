@@ -12,7 +12,8 @@ Density plot worker
   outlier_groups,
   var_name = NULL,
   log_scale = FALSE,
-  adjust_position_label = 0
+  adjust_position_label = 0,
+  palette = "main"
 )
 ```
 
@@ -46,6 +47,11 @@ Density plot worker
 - adjust_position_label:
 
   Numeric. x-offset for the labels (default: 0).
+
+- palette:
+
+  String. Discrete palette for the group fills and labels, see
+  [`bx_colors()`](https://gregorlueg.github.io/bixverse.plots/reference/bx_colors.md).
 
 ## Value
 

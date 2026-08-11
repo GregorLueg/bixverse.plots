@@ -12,7 +12,8 @@ stacked_violin_plot_sc(
   feature_labels = NULL,
   scale = FALSE,
   clip = NULL,
-  modality = c("rna", "adt")
+  modality = c("rna", "adt"),
+  palette = BX_PALETTES
 )
 ```
 
@@ -46,6 +47,12 @@ stacked_violin_plot_sc(
 - modality:
 
   String. One of `c("rna", "adt")`.
+
+- palette:
+
+  String. Discrete palette for the group fills. One of
+  `c("main", "sequential", "diverging", "viridis", "spectral")`, see
+  [`bx_colors()`](https://gregorlueg.github.io/bixverse.plots/reference/bx_colors.md).
 
 ## Value
 

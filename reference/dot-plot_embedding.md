@@ -15,7 +15,8 @@ Scatter plot worker for embeddings
   raster = FALSE,
   raster_dpi = c(512, 512),
   highlight = FALSE,
-  highlight_quantile = 0.25
+  highlight_quantile = 0.25,
+  palette = NULL
 )
 ```
 
@@ -56,6 +57,24 @@ Scatter plot worker for embeddings
 
   Two numerics. Pixel resolution for rasterized plots, passed to
   geom_scattermore(). Default is `c(512, 512)`.
+
+- highlight:
+
+  Boolean. Shall the high values be more strongly highlighted. Only has
+  an effect on continuous colour columns.
+
+- highlight_quantile:
+
+  Numeric between `[0, 1]`. Quantile below which points are pushed into
+  the grey background layer. Calculated per `facet` group if `facet` is
+  supplied.
+
+- palette:
+
+  Optional string. Palette to use, see
+  [`bx_colors()`](https://gregorlueg.github.io/bixverse.plots/reference/bx_colors.md).
+  `NULL` (default) resolves to `"main"` for discrete and `"sequential"`
+  for continuous colour columns.
 
 ## Value
 

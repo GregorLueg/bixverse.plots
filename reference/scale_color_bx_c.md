@@ -5,7 +5,7 @@ Bixverse Color Scale (Continuous)
 ## Usage
 
 ``` r
-scale_color_bx_c(palette = "sequential", reverse = FALSE, ...)
+scale_color_bx_c(palette = "sequential", reverse = FALSE, n = 20, ...)
 ```
 
 ## Arguments
@@ -17,6 +17,11 @@ scale_color_bx_c(palette = "sequential", reverse = FALSE, ...)
 - reverse:
 
   Reverse colors? (default: FALSE)
+
+- n:
+
+  Integer. Number of colours to interpolate over (default: 20), see
+  [`bx_colors()`](https://gregorlueg.github.io/bixverse.plots/reference/bx_colors.md).
 
 - ...:
 

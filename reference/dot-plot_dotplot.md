@@ -9,7 +9,8 @@ Dot plot worker
   df,
   feature_labels = NULL,
   feature_grouping = NULL,
-  cluster_groups = TRUE
+  cluster_groups = TRUE,
+  palette = "sequential"
 )
 ```
 
@@ -36,6 +37,11 @@ Dot plot worker
 
   Boolean. Use hierarchical clustering on the grouping variable to
   re-order the group labels based on expression similarity.
+
+- palette:
+
+  String. Continuous palette to use, see
+  [`bx_colors()`](https://gregorlueg.github.io/bixverse.plots/reference/bx_colors.md).
 
 ## Value
 

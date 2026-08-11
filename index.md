@@ -1,6 +1,6 @@
 # *bixverse.plots package*
 
-![r_package](https://img.shields.io/badge/R_package-0.2.2-orange)[![CI](https://github.com/GregorLueg/bixverse.plots/actions/workflows/R-cmd-check.yml/badge.svg)](https://github.com/GregorLueg/bixverse.plots/actions/workflows/R-cmd-check.yml)
+![r_package](https://img.shields.io/badge/R_package-0.2.3-orange)[![CI](https://github.com/GregorLueg/bixverse.plots/actions/workflows/R-cmd-check.yml/badge.svg)](https://github.com/GregorLueg/bixverse.plots/actions/workflows/R-cmd-check.yml)
 [![License:
 MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![pkgdown](https://img.shields.io/badge/pkgdown-website-1b5e9f?logo=github)](https://gregorlueg.github.io/bixverse.plots/)
@@ -34,4 +34,4 @@ functions are being used here.
 
 Provide additional plotting capabilities to `bixverse`.
 
-*Last update to the read-me: 27.06.2026*
+*Last update to the read-me: 11.08.2026*

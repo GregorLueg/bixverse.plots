@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">bixverse.plots</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -56,6 +56,7 @@
 <span>  point_alpha <span class="op">=</span> <span class="fl">0.5</span>,</span>
 <span>  raster <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  raster_dpi <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">512</span>, <span class="fl">512</span><span class="op">)</span>,</span>
+<span>  palette <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  label_size <span class="op">=</span> <span class="fl">3</span>,</span>
 <span>  label_color <span class="op">=</span> <span class="st">"black"</span>,</span>
 <span>  label_font <span class="op">=</span> <span class="st">"bold"</span></span>
@@ -110,6 +111,12 @@ number of cells is larger than <code>1e5</code>, defaults to TRUE.</p></dd>
 <dt id="arg-raster-dpi">raster_dpi<a class="anchor" aria-label="anchor" href="#arg-raster-dpi"></a></dt>
 <dd><p>Two numerics. Pixel resolution for rasterized plots, passed
 to geom_scattermore(). Default is <code>c(512, 512)</code>.</p></dd>
+
+
+<dt id="arg-palette">palette<a class="anchor" aria-label="anchor" href="#arg-palette"></a></dt>
+<dd><p>Optional string. Palette for the colour scale, see
+<code><a href="bx_colors.html">bx_colors()</a></code>. <code>NULL</code> (default) resolves to <code>"main"</code> if <code>colour_by</code> is
+discrete and <code>"sequential"</code> if it is continuous.</p></dd>
 
 
 <dt id="arg-label-size">label_size<a class="anchor" aria-label="anchor" href="#arg-label-size"></a></dt>

@@ -14,7 +14,8 @@ Feature-pair scatter / hex plot worker
   point_size = 2.5,
   point_alpha = 0.5,
   raster = FALSE,
-  raster_dpi = c(512, 512)
+  raster_dpi = c(512, 512),
+  palette = "viridis"
 )
 ```
 
@@ -61,6 +62,11 @@ Feature-pair scatter / hex plot worker
 - raster_dpi:
 
   Two numerics. Pixel resolution for rasterised plots.
+
+- palette:
+
+  String. Continuous palette to use, see
+  [`bx_colors()`](https://gregorlueg.github.io/bixverse.plots/reference/bx_colors.md).
 
 ## Value
 

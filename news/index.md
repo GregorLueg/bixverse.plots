@@ -1,5 +1,14 @@
 # Changelog
 
+## bixverse.plots 0.2.3
+
+**Features:**
+
+- New palette `"spectral"` for the single cell continuous values.
+- Improved
+  [`feature_plot_sc()`](https://gregorlueg.github.io/bixverse.plots/reference/feature_plot_sc.md)
+  that puts every feature on its own scale.
+
 ## bixverse.plots 0.2.2
 
 **Fix:**

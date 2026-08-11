@@ -21,7 +21,8 @@ feature_scatter_plot_sc(
   point_size = 2.5,
   point_alpha = 0.5,
   raster = NULL,
-  raster_dpi = c(512, 512)
+  raster_dpi = c(512, 512),
+  palette = c("viridis", "sequential", "spectral", "diverging")
 )
 ```
 
@@ -79,6 +80,12 @@ feature_scatter_plot_sc(
 
   Two numerics. Pixel resolution for rasterised plots (default:
   `c(512, 512)`).
+
+- palette:
+
+  String. Continuous palette for the density / count scale. One of
+  `c("viridis", "sequential", "spectral", "diverging")`, see
+  [`bx_colors()`](https://gregorlueg.github.io/bixverse.plots/reference/bx_colors.md).
 
 ## Value
 

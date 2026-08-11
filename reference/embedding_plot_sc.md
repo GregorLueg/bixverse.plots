@@ -16,6 +16,7 @@ embedding_plot_sc(
   point_alpha = 0.5,
   raster = NULL,
   raster_dpi = c(512, 512),
+  palette = NULL,
   label_size = 3,
   label_color = "black",
   label_font = "bold"
@@ -68,6 +69,13 @@ embedding_plot_sc(
 
   Two numerics. Pixel resolution for rasterized plots, passed to
   geom_scattermore(). Default is `c(512, 512)`.
+
+- palette:
+
+  Optional string. Palette for the colour scale, see
+  [`bx_colors()`](https://gregorlueg.github.io/bixverse.plots/reference/bx_colors.md).
+  `NULL` (default) resolves to `"main"` if `colour_by` is discrete and
+  `"sequential"` if it is continuous.
 
 - label_size:
 

@@ -14,7 +14,8 @@ Violin plot worker
   var_name = NULL,
   log_scale = TRUE,
   show_outlier = TRUE,
-  raster = FALSE
+  raster = FALSE,
+  palette = "main"
 )
 ```
 
@@ -58,6 +59,13 @@ Violin plot worker
   Boolean. Shall
   [`scattermore::geom_scattermore()`](https://rdrr.io/pkg/scattermore/man/geom_scattermore.html)
   be used.
+
+- palette:
+
+  String. Discrete palette for the group colours, see
+  [`bx_colors()`](https://gregorlueg.github.io/bixverse.plots/reference/bx_colors.md).
+  Ignored when `show_outlier = TRUE`, where the jitter is coloured by
+  outlier status instead.
 
 ## Value
 

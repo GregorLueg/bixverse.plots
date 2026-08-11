@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">bixverse.plots</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -57,6 +57,7 @@
 <span>  log_scale <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  show_outlier <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  raster <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  palette <span class="op">=</span> <span class="va">BX_PALETTES</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -104,6 +105,12 @@
 <dt id="arg-raster">raster<a class="anchor" aria-label="anchor" href="#arg-raster"></a></dt>
 <dd><p>Optional boolean. Shall the plot be rasterised. If <code>NULL</code> and
 number of cells is larger than <code>1e5</code>, defaults to TRUE.</p></dd>
+
+
+<dt id="arg-palette">palette<a class="anchor" aria-label="anchor" href="#arg-palette"></a></dt>
+<dd><p>String. Discrete palette for the group colours. One of
+<code>c("main", "sequential", "diverging", "viridis", "spectral")</code>, see
+<code><a href="bx_colors.html">bx_colors()</a></code>. Ignored when <code>show_outlier = TRUE</code>.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>

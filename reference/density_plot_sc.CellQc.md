@@ -6,7 +6,7 @@ Requires grouped data; outlier groups are read from `per_group_stats`.
 
 ``` r
 # S3 method for class 'CellQc'
-density_plot_sc(x, adjust_position_label = 0, ...)
+density_plot_sc(x, adjust_position_label = 0, palette = BX_PALETTES, ...)
 ```
 
 ## Arguments
@@ -18,6 +18,12 @@ density_plot_sc(x, adjust_position_label = 0, ...)
 - adjust_position_label:
 
   Numeric. x-offset for the labels (default: 0).
+
+- palette:
+
+  String. Discrete palette for the group fills and labels. One of
+  `c("main", "sequential", "diverging", "viridis", "spectral")`, see
+  [`bx_colors()`](https://gregorlueg.github.io/bixverse.plots/reference/bx_colors.md).
 
 - ...:
 

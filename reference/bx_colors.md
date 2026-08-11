@@ -12,7 +12,9 @@ bx_colors(palette = "main", reverse = FALSE, n = 20, ...)
 
 - palette:
 
-  Palette name: "main", "diverging", "sequential"
+  Palette name. One of `"main"`, `"sequential"`, `"diverging"`,
+  `"viridis"` or `"spectral"`. The latter is a reversed RColorBrewer
+  Spectral, i.e. dark indigo for low and dark red for high values.
 
 - reverse:
 
@@ -20,7 +22,14 @@ bx_colors(palette = "main", reverse = FALSE, n = 20, ...)
 
 - n:
 
-  Integer, number of colours to return.
+  Integer, number of colours to return. Palettes shorter than `n`
+  (`"sequential"`, `"diverging"`, `"spectral"`) are ramped up to `n`
+  colours with
+  [`grDevices::colorRampPalette()`](https://rdrr.io/r/grDevices/colorRamp.html).
+
+- ...:
+
+  Ignored. Present for backwards compatibility.
 
 ## Value
 

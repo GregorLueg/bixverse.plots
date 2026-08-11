@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">bixverse.plots</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -53,7 +53,9 @@
 
 
 <dl><dt id="arg-palette">palette<a class="anchor" aria-label="anchor" href="#arg-palette"></a></dt>
-<dd><p>Palette name: "main", "diverging", "sequential"</p></dd>
+<dd><p>Palette name. One of <code>"main"</code>, <code>"sequential"</code>, <code>"diverging"</code>,
+<code>"viridis"</code> or <code>"spectral"</code>. The latter is a reversed RColorBrewer Spectral,
+i.e. dark indigo for low and dark red for high values.</p></dd>
 
 
 <dt id="arg-reverse">reverse<a class="anchor" aria-label="anchor" href="#arg-reverse"></a></dt>
@@ -61,7 +63,13 @@
 
 
 <dt id="arg-n">n<a class="anchor" aria-label="anchor" href="#arg-n"></a></dt>
-<dd><p>Integer, number of colours to return.</p></dd>
+<dd><p>Integer, number of colours to return. Palettes shorter than <code>n</code>
+(<code>"sequential"</code>, <code>"diverging"</code>, <code>"spectral"</code>) are ramped up to <code>n</code> colours
+with <code><a href="https://rdrr.io/r/grDevices/colorRamp.html" class="external-link">grDevices::colorRampPalette()</a></code>.</p></dd>
+
+
+<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
+<dd><p>Ignored. Present for backwards compatibility.</p></dd>
 
 </dl></div>
     <div class="section level2">

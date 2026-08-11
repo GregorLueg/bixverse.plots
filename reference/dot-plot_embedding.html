@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">bixverse.plots</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -55,7 +55,8 @@
 <span>  raster <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  raster_dpi <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">512</span>, <span class="fl">512</span><span class="op">)</span>,</span>
 <span>  highlight <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  highlight_quantile <span class="op">=</span> <span class="fl">0.25</span></span>
+<span>  highlight_quantile <span class="op">=</span> <span class="fl">0.25</span>,</span>
+<span>  palette <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -95,6 +96,23 @@ column yields a discrete scale, a numeric column a continuous one.</p></dd>
 <dt id="arg-raster-dpi">raster_dpi<a class="anchor" aria-label="anchor" href="#arg-raster-dpi"></a></dt>
 <dd><p>Two numerics. Pixel resolution for rasterized plots, passed
 to geom_scattermore(). Default is <code>c(512, 512)</code>.</p></dd>
+
+
+<dt id="arg-highlight">highlight<a class="anchor" aria-label="anchor" href="#arg-highlight"></a></dt>
+<dd><p>Boolean. Shall the high values be more strongly highlighted.
+Only has an effect on continuous colour columns.</p></dd>
+
+
+<dt id="arg-highlight-quantile">highlight_quantile<a class="anchor" aria-label="anchor" href="#arg-highlight-quantile"></a></dt>
+<dd><p>Numeric between <code>[0, 1]</code>. Quantile below which
+points are pushed into the grey background layer. Calculated per <code>facet</code>
+group if <code>facet</code> is supplied.</p></dd>
+
+
+<dt id="arg-palette">palette<a class="anchor" aria-label="anchor" href="#arg-palette"></a></dt>
+<dd><p>Optional string. Palette to use, see <code><a href="bx_colors.html">bx_colors()</a></code>. <code>NULL</code>
+(default) resolves to <code>"main"</code> for discrete and <code>"sequential"</code> for continuous
+colour columns.</p></dd>
 
 </dl></div>
     <div class="section level2">

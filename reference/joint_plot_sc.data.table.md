@@ -11,6 +11,7 @@ joint_plot_sc(
   library_size = "lib_size",
   nb_features = "nnz",
   log_scale = FALSE,
+  palette = c("sequential", "spectral", "viridis", "diverging"),
   ...
 )
 ```
@@ -32,6 +33,12 @@ joint_plot_sc(
 - log_scale:
 
   Logical. Log10-transform both axes (default: FALSE).
+
+- palette:
+
+  String. Continuous palette for the hexbin fill. One of
+  `c("sequential", "spectral", "viridis", "diverging")`, see
+  [`bx_colors()`](https://gregorlueg.github.io/bixverse.plots/reference/bx_colors.md).
 
 - ...:
 

@@ -1,6 +1,11 @@
-# Faceted feature plot over an embedding
+# Feature plot over an embedding
 
-Faceted feature plot over an embedding
+Plots the expression of one or more features over an embedding. By
+default every feature gets its own panel and its own colour bar
+(`scale_mode = "free"`), so a weakly expressed gene is not flattened by
+whatever the loudest gene in the set happens to be. Use
+`scale_mode = "shared"` for a single faceted plot with one colour bar
+across all features.
 
 ## Usage
 
@@ -24,6 +29,9 @@ feature_plot_sc(
   label_font = "bold",
   highlight_features = FALSE,
   highlight_quantile = 0.25,
+  scale_mode = c("free", "shared"),
+  palette = c("sequential", "spectral", "viridis", "diverging"),
+  ncol = NULL,
   ...
 )
 ```
@@ -110,6 +118,27 @@ feature_plot_sc(
 
   Numeric between `[0, 1]`. Defines the threshold.
 
+- scale_mode:
+
+  String. One of `c("free", "shared")`. With `"free"` each feature is
+  drawn as its own plot with its own colour bar and the panels are
+  combined with
+  [`patchwork::wrap_plots()`](https://patchwork.data-imaginist.com/reference/wrap_plots.html).
+  With `"shared"` all features go into one faceted plot with a single
+  colour bar fitted to the pooled expression.
+
+- palette:
+
+  String. Continuous palette for the expression values. One of
+  `c("sequential", "spectral", "viridis", "diverging")`, see
+  [`bx_colors()`](https://gregorlueg.github.io/bixverse.plots/reference/bx_colors.md).
+
+- ncol:
+
+  Optional integer. Number of columns of the panel grid. Only has an
+  effect if `scale_mode = "free"`. If `NULL`, patchwork picks the
+  layout.
+
 - ...:
 
   Additional arguments forwarded to
@@ -120,5 +149,7 @@ feature_plot_sc(
 
 ## Value
 
-A [`ggplot`](https://ggplot2.tidyverse.org/reference/ggplot.html)
-object.
+A
+[`patchwork`](https://patchwork.data-imaginist.com/reference/patchwork-package.html)
+object if `scale_mode = "free"`, otherwise a
+[`ggplot`](https://ggplot2.tidyverse.org/reference/ggplot.html) object.

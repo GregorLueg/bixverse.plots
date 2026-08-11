@@ -17,6 +17,7 @@ violin_plot_sc(
   log_scale = TRUE,
   show_outlier = TRUE,
   raster = NULL,
+  palette = BX_PALETTES,
   ...
 )
 ```
@@ -63,6 +64,13 @@ violin_plot_sc(
 
   Optional boolean. Shall the plot be rasterised. If `NULL` and number
   of cells is larger than `1e5`, defaults to TRUE.
+
+- palette:
+
+  String. Discrete palette for the group colours. One of
+  `c("main", "sequential", "diverging", "viridis", "spectral")`, see
+  [`bx_colors()`](https://gregorlueg.github.io/bixverse.plots/reference/bx_colors.md).
+  Ignored when `show_outlier = TRUE`.
 
 - ...:
 

@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">bixverse.plots</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -53,7 +53,8 @@
 <span>  feature_grouping <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  scale_exp <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  modality <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"rna"</span>, <span class="st">"adt"</span><span class="op">)</span>,</span>
-<span>  cluster_groups <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  cluster_groups <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  palette <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sequential"</span>, <span class="st">"spectral"</span>, <span class="st">"viridis"</span>, <span class="st">"diverging"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -97,6 +98,11 @@ MS4A1 = "B cell", ...). (default: NULL).</p></dd>
 <dt id="arg-cluster-groups">cluster_groups<a class="anchor" aria-label="anchor" href="#arg-cluster-groups"></a></dt>
 <dd><p>Boolean. Use hierarchical clustering on the grouping variable
 to re-order the group labels based on expression similarity.</p></dd>
+
+
+<dt id="arg-palette">palette<a class="anchor" aria-label="anchor" href="#arg-palette"></a></dt>
+<dd><p>String. Continuous palette for the scaled expression. One of
+<code>c("sequential", "spectral", "viridis", "diverging")</code>, see <code><a href="bx_colors.html">bx_colors()</a></code>.</p></dd>
 
 </dl></div>
     <div class="section level2">

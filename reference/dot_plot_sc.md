@@ -13,7 +13,8 @@ dot_plot_sc(
   feature_grouping = NULL,
   scale_exp = TRUE,
   modality = c("rna", "adt"),
-  cluster_groups = TRUE
+  cluster_groups = TRUE,
+  palette = c("sequential", "spectral", "viridis", "diverging")
 )
 ```
 
@@ -56,6 +57,12 @@ dot_plot_sc(
 
   Boolean. Use hierarchical clustering on the grouping variable to
   re-order the group labels based on expression similarity.
+
+- palette:
+
+  String. Continuous palette for the scaled expression. One of
+  `c("sequential", "spectral", "viridis", "diverging")`, see
+  [`bx_colors()`](https://gregorlueg.github.io/bixverse.plots/reference/bx_colors.md).
 
 ## Value
 

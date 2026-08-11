@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">bixverse.plots</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -50,6 +50,7 @@
 <span>  <span class="va">x</span>,</span>
 <span>  library_size <span class="op">=</span> <span class="st">"log10_lib_size"</span>,</span>
 <span>  nb_features <span class="op">=</span> <span class="st">"log10_nnz"</span>,</span>
+<span>  palette <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sequential"</span>, <span class="st">"spectral"</span>, <span class="st">"viridis"</span>, <span class="st">"diverging"</span><span class="op">)</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -68,6 +69,11 @@
 
 <dt id="arg-nb-features">nb_features<a class="anchor" aria-label="anchor" href="#arg-nb-features"></a></dt>
 <dd><p>Character. Column with the number of features per cell.</p></dd>
+
+
+<dt id="arg-palette">palette<a class="anchor" aria-label="anchor" href="#arg-palette"></a></dt>
+<dd><p>String. Continuous palette for the hexbin fill. One of
+<code>c("sequential", "spectral", "viridis", "diverging")</code>, see <code><a href="bx_colors.html">bx_colors()</a></code>.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
