@@ -898,6 +898,128 @@ expect_true(
   info = "joint_plot.CellQc (viridis): correct class"
 )
 
+## paga plot -------------------------------------------------------------------
+
+paga_res <- run_paga_sc(
+  sc_object,
+  cluster_col = "leiden_clusters",
+  .verbose = FALSE
+)
+
+n_paga_clusters <- sum(paga_res$sizes$n_cells > 0L)
+
+p <- paga_plot_sc(sc_object, paga_res, embedding = "umap")
+
+expect_true(
+  checkmate::checkClass(p, "ggplot"),
+  info = "paga_plot_sc: correct class"
+)
+
+built <- ggplot2::ggplot_build(p)
+
+# cells, edges, nodes, labels: the z-order is what makes the plot readable
+expect_equal(
+  current = length(built$data),
+  target = 4L,
+  info = "paga_plot_sc: cells, edges, nodes and labels are all drawn"
+)
+
+expect_equal(
+  current = nrow(built$data[[1]]),
+  target = nrow(sc_object),
+  info = "paga_plot_sc: the bottom layer holds one point per cell"
+)
+
+expect_equal(
+  current = nrow(built$data[[3]]),
+  target = n_paga_clusters,
+  info = "paga_plot_sc: one node per non-empty cluster"
+)
+
+# the graph is stored symmetrically, so a doubled edge layer means the upper
+# triangle filter upstream stopped working
+expect_equal(
+  current = nrow(built$data[[2]]),
+  target = nrow(
+    bixverse::extract_paga_plot_data(
+      sc_object,
+      paga_res,
+      embedding = "umap"
+    )$edges
+  ),
+  info = "paga_plot_sc: every edge is drawn exactly once"
+)
+
+### the switches ---------------------------------------------------------------
+
+p_bare <- paga_plot_sc(
+  sc_object,
+  paga_res,
+  embedding = "umap",
+  show_cells = FALSE,
+  label = FALSE
+)
+
+expect_equal(
+  current = length(ggplot2::ggplot_build(p_bare)$data),
+  target = 2L,
+  info = "paga_plot_sc: dropping cells and labels leaves edges and nodes"
+)
+
+p_tree <- paga_plot_sc(
+  sc_object,
+  paga_res,
+  embedding = "umap",
+  tree_only = TRUE
+)
+
+expect_true(
+  current = nrow(ggplot2::ggplot_build(p_tree)$data[[2]]) <=
+    n_paga_clusters - 1L,
+  info = "paga_plot_sc: the spanning forest holds at most n - 1 edges"
+)
+
+expect_true(
+  current = nrow(ggplot2::ggplot_build(p_tree)$data[[2]]) <
+    nrow(built$data[[2]]),
+  info = "paga_plot_sc: the forest is sparser than the full graph"
+)
+
+### node colouring -------------------------------------------------------------
+
+sc_object[["paga_stat"]] <- seq_len(nrow(sc_object)) / nrow(sc_object)
+
+p_stat <- paga_plot_sc(
+  sc_object,
+  paga_res,
+  embedding = "umap",
+  node_colour_by = "paga_stat"
+)
+
+expect_true(
+  current = inherits(p_stat$scales$get_scales("fill"), "ScaleContinuous"),
+  info = "paga_plot_sc: a node statistic gives a continuous fill scale"
+)
+
+expect_true(
+  current = !inherits(p$scales$get_scales("fill"), "ScaleContinuous"),
+  info = "paga_plot_sc: without one the fill stays discrete by cluster"
+)
+
+p_stat_pal <- paga_plot_sc(
+  sc_object,
+  paga_res,
+  embedding = "umap",
+  node_colour_by = "paga_stat",
+  palette = "spectral"
+)
+
+expect_equal(
+  current = scale_ends(p_stat_pal, "fill"),
+  target = expected_ends("spectral"),
+  info = "paga_plot_sc: honours the palette for the node statistic"
+)
+
 ## cleanup ---------------------------------------------------------------------
 
 on.exit(
