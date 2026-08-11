@@ -1,6 +1,6 @@
 Package: bixverse.plots
 Title: Plotting functions for bixverse
-Version: 0.2.2
+Version: 0.2.3
 Authors@R: 
     c(
       person(
