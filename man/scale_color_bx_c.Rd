@@ -4,12 +4,15 @@
 \alias{scale_color_bx_c}
 \title{Bixverse Color Scale (Continuous)}
 \usage{
-scale_color_bx_c(palette = "sequential", reverse = FALSE, ...)
+scale_color_bx_c(palette = "sequential", reverse = FALSE, n = 20, ...)
 }
 \arguments{
 \item{palette}{Palette name (default: "sequential")}
 
 \item{reverse}{Reverse colors? (default: FALSE)}
+
+\item{n}{Integer. Number of colours to interpolate over (default: 20), see
+\code{\link[=bx_colors]{bx_colors()}}.}
 
 \item{...}{Additional arguments passed to scale_color_gradientn}
 }

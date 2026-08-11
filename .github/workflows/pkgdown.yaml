@@ -2,8 +2,9 @@
 # Need help debugging build failures? Start at https://github.com/r-lib/actions#where-to-find-help
 on:
   push:
-    branches: [ main, master ]
+    branches: [ main ]
   pull_request:
+    branches: [ main ]
   release:
     types: [published]
   workflow_dispatch:
@@ -31,10 +32,35 @@ jobs:
         with:
           use-public-rspm: true
 
+      # bixverse is installed from source here, so this job needs a Rust
+      # toolchain too. sccache shares its cache with the R-CMD-check job.
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: stable
+
+      - name: Setup sccache
+        uses: mozilla-actions/sccache-action@v0.0.10
+
+      - name: Cargo env
+        run: |
+          echo "SCCACHE_GHA_ENABLED=true" >> $GITHUB_ENV
+          echo "RUSTC_WRAPPER=sccache" >> $GITHUB_ENV
+          echo "CARGO_INCREMENTAL=0" >> $GITHUB_ENV
+          echo "CARGO_NET_RETRY=10" >> $GITHUB_ENV
+          echo "CARGO_REGISTRIES_CRATES_IO_PROTOCOL=sparse" >> $GITHUB_ENV
+          echo "CARGO_TERM_COLOR=always" >> $GITHUB_ENV
+          echo "CARGO_PROFILE_RELEASE_LTO=false" >> $GITHUB_ENV
+          echo "CARGO_PROFILE_RELEASE_CODEGEN_UNITS=16" >> $GITHUB_ENV
+
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: any::pkgdown, local::.
           needs: website
+
+      - name: sccache stats
+        if: always()
+        run: sccache --show-stats
 
       - name: Build site
         run: pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE)

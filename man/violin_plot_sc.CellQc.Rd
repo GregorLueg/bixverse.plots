@@ -4,7 +4,14 @@
 \alias{violin_plot_sc.CellQc}
 \title{Per-metric violin plots from a CellQc object}
 \usage{
-\method{violin_plot_sc}{CellQc}(x, log_scale = FALSE, show_outlier = TRUE, raster = NULL, ...)
+\method{violin_plot_sc}{CellQc}(
+  x,
+  log_scale = FALSE,
+  show_outlier = TRUE,
+  raster = NULL,
+  palette = BX_PALETTES,
+  ...
+)
 }
 \arguments{
 \item{x}{A \code{CellQc} object.}
@@ -15,6 +22,10 @@
 
 \item{raster}{Optional boolean. Shall the plot be rasterised. If \code{NULL} and
 number of cells is larger than \code{1e5}, defaults to TRUE.}
+
+\item{palette}{String. Discrete palette for the group colours. One of
+\code{c("main", "sequential", "diverging", "viridis", "spectral")}, see
+\code{\link[=bx_colors]{bx_colors()}}. Ignored when \code{show_outlier = TRUE}.}
 
 \item{...}{Ignored.}
 }

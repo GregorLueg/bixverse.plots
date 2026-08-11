@@ -13,7 +13,8 @@
   point_size = 2.5,
   point_alpha = 0.5,
   raster = FALSE,
-  raster_dpi = c(512, 512)
+  raster_dpi = c(512, 512),
+  palette = "viridis"
 )
 }
 \arguments{
@@ -39,6 +40,8 @@ each point by 2D KDE; \code{"hex"} bins points into hexagons.}
 density variant.}
 
 \item{raster_dpi}{Two numerics. Pixel resolution for rasterised plots.}
+
+\item{palette}{String. Continuous palette to use, see \code{\link[=bx_colors]{bx_colors()}}.}
 }
 \value{
 A \code{\link[ggplot2]{ggplot}} object.

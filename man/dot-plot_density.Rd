@@ -11,7 +11,8 @@
   outlier_groups,
   var_name = NULL,
   log_scale = FALSE,
-  adjust_position_label = 0
+  adjust_position_label = 0,
+  palette = "main"
 )
 }
 \arguments{
@@ -29,6 +30,9 @@
 \item{log_scale}{Logical. Apply a log10 x-axis (default: FALSE).}
 
 \item{adjust_position_label}{Numeric. x-offset for the labels (default: 0).}
+
+\item{palette}{String. Discrete palette for the group fills and labels, see
+\code{\link[=bx_colors]{bx_colors()}}.}
 }
 \value{
 A \code{\link[ggplot2]{ggplot}} object.

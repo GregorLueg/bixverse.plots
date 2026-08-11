@@ -2,7 +2,7 @@
 % Please edit documentation in R/sc_plots.R
 \name{feature_plot_sc}
 \alias{feature_plot_sc}
-\title{Faceted feature plot over an embedding}
+\title{Feature plot over an embedding}
 \usage{
 feature_plot_sc(
   object,
@@ -23,6 +23,9 @@ feature_plot_sc(
   label_font = "bold",
   highlight_features = FALSE,
   highlight_quantile = 0.25,
+  scale_mode = c("free", "shared"),
+  palette = c("sequential", "spectral", "viridis", "diverging"),
+  ncol = NULL,
   ...
 )
 }
@@ -71,13 +74,30 @@ highlighted. Useful for sparsely expressed genes.}
 
 \item{highlight_quantile}{Numeric between \verb{[0, 1]}. Defines the threshold.}
 
+\item{scale_mode}{String. One of \code{c("free", "shared")}. With \code{"free"} each
+feature is drawn as its own plot with its own colour bar and the panels are
+combined with \code{\link[patchwork:wrap_plots]{patchwork::wrap_plots()}}. With \code{"shared"} all features go into
+one faceted plot with a single colour bar fitted to the pooled expression.}
+
+\item{palette}{String. Continuous palette for the expression values. One of
+\code{c("sequential", "spectral", "viridis", "diverging")}, see \code{\link[=bx_colors]{bx_colors()}}.}
+
+\item{ncol}{Optional integer. Number of columns of the panel grid. Only has
+an effect if \code{scale_mode = "free"}. If \code{NULL}, patchwork picks the layout.}
+
 \item{...}{Additional arguments forwarded to
 \code{\link[bixverse:extract_feature_plot_data]{bixverse::extract_feature_plot_data()}} and onward to \code{\link[bixverse:get_embedding]{get_embedding()}}. Do
 not pass \code{modality} here; use \code{embd_modality} instead.}
 }
 \value{
-A \code{\link[ggplot2]{ggplot}} object.
+A \code{\link[patchwork]{patchwork}} object if
+\code{scale_mode = "free"}, otherwise a \code{\link[ggplot2]{ggplot}} object.
 }
 \description{
-Faceted feature plot over an embedding
+Plots the expression of one or more features over an embedding. By default
+every feature gets its own panel and its own colour bar
+(\code{scale_mode = "free"}), so a weakly expressed gene is not flattened by
+whatever the loudest gene in the set happens to be. Use
+\code{scale_mode = "shared"} for a single faceted plot with one colour bar across
+all features.
 }

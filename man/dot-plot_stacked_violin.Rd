@@ -4,7 +4,12 @@
 \alias{.plot_stacked_violin}
 \title{Stacked violin plot worker}
 \usage{
-.plot_stacked_violin(df, feature_labels = NULL, scale_y = "width")
+.plot_stacked_violin(
+  df,
+  feature_labels = NULL,
+  scale_y = "width",
+  palette = "main"
+)
 }
 \arguments{
 \item{df}{data.table. Must contain \code{group}, \code{gene}, \code{expression}. \code{gene} is
@@ -15,6 +20,9 @@ display labels (default: NULL).}
 
 \item{scale_y}{Character. \code{geom_violin} scaling, passed as \code{scale}
 (default: "width").}
+
+\item{palette}{String. Discrete palette for the group fills, see
+\code{\link[=bx_colors]{bx_colors()}}.}
 }
 \value{
 A \code{\link[ggplot2]{ggplot}} object.

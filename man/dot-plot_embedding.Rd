@@ -14,7 +14,8 @@
   raster = FALSE,
   raster_dpi = c(512, 512),
   highlight = FALSE,
-  highlight_quantile = 0.25
+  highlight_quantile = 0.25,
+  palette = NULL
 )
 }
 \arguments{
@@ -35,6 +36,17 @@ column yields a discrete scale, a numeric column a continuous one.}
 
 \item{raster_dpi}{Two numerics. Pixel resolution for rasterized plots, passed
 to geom_scattermore(). Default is \code{c(512, 512)}.}
+
+\item{highlight}{Boolean. Shall the high values be more strongly highlighted.
+Only has an effect on continuous colour columns.}
+
+\item{highlight_quantile}{Numeric between \verb{[0, 1]}. Quantile below which
+points are pushed into the grey background layer. Calculated per \code{facet}
+group if \code{facet} is supplied.}
+
+\item{palette}{Optional string. Palette to use, see \code{\link[=bx_colors]{bx_colors()}}. \code{NULL}
+(default) resolves to \code{"main"} for discrete and \code{"sequential"} for continuous
+colour columns.}
 }
 \value{
 A \code{\link[ggplot2]{ggplot}} object.

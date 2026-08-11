@@ -13,7 +13,8 @@
   var_name = NULL,
   log_scale = TRUE,
   show_outlier = TRUE,
-  raster = FALSE
+  raster = FALSE,
+  palette = "main"
 )
 }
 \arguments{
@@ -35,6 +36,10 @@
 \code{outlier_column} (default: TRUE).}
 
 \item{raster}{Boolean. Shall \code{\link[scattermore:geom_scattermore]{scattermore::geom_scattermore()}} be used.}
+
+\item{palette}{String. Discrete palette for the group colours, see
+\code{\link[=bx_colors]{bx_colors()}}. Ignored when \code{show_outlier = TRUE}, where the jitter is
+coloured by outlier status instead.}
 }
 \value{
 A \code{\link[ggplot2]{ggplot}} object.

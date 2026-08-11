@@ -16,7 +16,8 @@ feature_scatter_plot_sc(
   point_size = 2.5,
   point_alpha = 0.5,
   raster = NULL,
-  raster_dpi = c(512, 512)
+  raster_dpi = c(512, 512),
+  palette = c("viridis", "sequential", "spectral", "diverging")
 )
 }
 \arguments{
@@ -52,6 +53,9 @@ and \code{n_cells > 1e5}, defaults to TRUE. Only applies to
 
 \item{raster_dpi}{Two numerics. Pixel resolution for rasterised plots
 (default: \code{c(512, 512)}).}
+
+\item{palette}{String. Continuous palette for the density / count scale. One
+of \code{c("viridis", "sequential", "spectral", "diverging")}, see \code{\link[=bx_colors]{bx_colors()}}.}
 }
 \value{
 A \code{\link[ggplot2]{ggplot}} object.

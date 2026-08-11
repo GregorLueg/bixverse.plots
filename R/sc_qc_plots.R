@@ -14,6 +14,8 @@
 #' @param var_name Character. x-axis label (default: NULL).
 #' @param log_scale Logical. Apply a log10 x-axis (default: FALSE).
 #' @param adjust_position_label Numeric. x-offset for the labels (default: 0).
+#' @param palette String. Discrete palette for the group fills and labels, see
+#' [bx_colors()].
 #'
 #' @return A \code{\link[ggplot2]{ggplot}} object.
 #'
@@ -25,7 +27,8 @@
   outlier_groups,
   var_name = NULL,
   log_scale = FALSE,
-  adjust_position_label = 0
+  adjust_position_label = 0,
+  palette = "main"
 ) {
   checkmate::assertDataTable(df)
   checkmate::qassert(grouping_column, "S1")
@@ -33,6 +36,7 @@
   checkmate::qassert(log_scale, "B1")
   checkmate::qassert(adjust_position_label, "N1")
   checkmate::qassert(var_name, c("S1", "0"))
+  checkmate::assertChoice(palette, BX_PALETTES)
 
   if (is.null(var_name)) {
     var_name <- variable
@@ -64,8 +68,8 @@
     ) +
     theme_bx() +
     theme(legend.position = "none") +
-    scale_fill_bx() +
-    scale_color_bx() +
+    scale_fill_bx(palette = palette) +
+    scale_color_bx(palette = palette) +
     labs(x = var_name, y = "Density", title = var_name)
 
   if (log_scale) {
@@ -87,6 +91,9 @@
 #' @param show_outlier Logical. Overlay jittered points coloured by
 #' `outlier_column` (default: TRUE).
 #' @param raster Boolean. Shall [scattermore::geom_scattermore()] be used.
+#' @param palette String. Discrete palette for the group colours, see
+#' [bx_colors()]. Ignored when `show_outlier = TRUE`, where the jitter is
+#' coloured by outlier status instead.
 #'
 #' @return A \code{\link[ggplot2]{ggplot}} object.
 #'
@@ -100,7 +107,8 @@
   var_name = NULL,
   log_scale = TRUE,
   show_outlier = TRUE,
-  raster = FALSE
+  raster = FALSE,
+  palette = "main"
 ) {
   checkmate::assertDataTable(df)
   checkmate::qassert(grouping_column, "S1")
@@ -110,6 +118,7 @@
   checkmate::qassert(raster, "B1")
   checkmate::qassert(group_name, c("S1", "0"))
   checkmate::qassert(var_name, c("S1", "0"))
+  checkmate::assertChoice(palette, BX_PALETTES)
   if (show_outlier) {
     checkmate::assertNames(colnames(df), must.include = outlier_column)
   }
@@ -179,7 +188,7 @@
     }
     p <- p +
       jitter_layer +
-      scale_color_bx()
+      scale_color_bx(palette = palette)
   }
 
   return(p)
@@ -191,6 +200,8 @@
 #' @param library_size Character. Column with the library size per cell.
 #' @param nb_features Character. Column with the number of features per cell.
 #' @param log_scale Logical. Log10-transform both axes (default: FALSE).
+#' @param palette String. Continuous palette for the hexbin fill, see
+#' [bx_colors()]. The marginal histograms take the palette's mid colour.
 #'
 #' @return A \code{ggExtraPlot} object.
 #'
@@ -199,7 +210,8 @@
   df,
   library_size = "lib_size",
   nb_features = "nnz",
-  log_scale = FALSE
+  log_scale = FALSE,
+  palette = "sequential"
 ) {
   checkmate::assertDataTable(df)
   checkmate::assertNames(
@@ -207,6 +219,7 @@
     must.include = c(library_size, nb_features)
   )
   checkmate::qassert(log_scale, "B1")
+  checkmate::assertChoice(palette, BX_PALETTES)
 
   if (log_scale) {
     df <- data.table::copy(df)
@@ -224,7 +237,7 @@
   p <- ggplot(df, aes(x = .data[[x_col]], y = .data[[y_col]])) +
     geom_point(alpha = 0) +
     geom_hex(bins = 80) +
-    scale_fill_gradientn(colors = RColorBrewer::brewer.pal(9, "Blues")[4:9]) +
+    scale_fill_bx_c(palette = palette) +
     theme_bx() +
     theme(legend.position = "none") +
     labs(x = "Genes per cell (log10)", y = "UMIs per cell (log10)")
@@ -232,7 +245,7 @@
   ggExtra::ggMarginal(
     p,
     type = "histogram",
-    fill = "steelblue3",
+    fill = bx_colors(palette = palette, n = 5)[3],
     color = "black",
     bins = 50
   )
@@ -247,6 +260,9 @@
 #' @param show_outlier Logical. Overlay outlier points (default: TRUE).
 #' @param raster Optional boolean. Shall the plot be rasterised. If `NULL` and
 #' number of cells is larger than `1e5`, defaults to TRUE.
+#' @param palette String. Discrete palette for the group colours. One of
+#' `c("main", "sequential", "diverging", "viridis", "spectral")`, see
+#' [bx_colors()]. Ignored when `show_outlier = TRUE`.
 #' @param ... Ignored.
 #'
 #' @return A named list of ggplot objects, one per metric.
@@ -259,8 +275,12 @@ violin_plot_sc.CellQc <- function(
   log_scale = FALSE,
   show_outlier = TRUE,
   raster = NULL,
+  palette = BX_PALETTES,
   ...
 ) {
+  palette <- match.arg(palette)
+  checkmate::assertChoice(palette, BX_PALETTES)
+
   plot_df <- bixverse::get_data(x)
 
   n_cells <- nrow(plot_df)
@@ -281,7 +301,8 @@ violin_plot_sc.CellQc <- function(
       var_name = metric_name,
       log_scale = log_scale,
       show_outlier = show_outlier,
-      raster = raster
+      raster = raster,
+      palette = palette
     )
   })
 
@@ -303,6 +324,9 @@ violin_plot_sc.CellQc <- function(
 #' @param show_outlier Logical. Overlay outlier points (default: TRUE).
 #' @param raster Optional boolean. Shall the plot be rasterised. If `NULL` and
 #' number of cells is larger than `1e5`, defaults to TRUE.
+#' @param palette String. Discrete palette for the group colours. One of
+#' `c("main", "sequential", "diverging", "viridis", "spectral")`, see
+#' [bx_colors()]. Ignored when `show_outlier = TRUE`.
 #' @param ... Ignored.
 #'
 #' @return A \code{\link[ggplot2]{ggplot}} object.
@@ -321,9 +345,11 @@ violin_plot_sc.data.table <- function(
   log_scale = TRUE,
   show_outlier = TRUE,
   raster = NULL,
+  palette = BX_PALETTES,
   ...
 ) {
   direction <- match.arg(direction)
+  palette <- match.arg(palette)
   checkmate::assertDataTable(x)
   checkmate::assertNames(
     colnames(x),
@@ -331,6 +357,7 @@ violin_plot_sc.data.table <- function(
   )
   checkmate::qassert(threshold, "N1")
   checkmate::qassert(show_outlier, "B1")
+  checkmate::assertChoice(palette, BX_PALETTES)
 
   n_cells <- nrow(x)
   raster <- raster %||% (n_cells > 1e5)
@@ -358,7 +385,8 @@ violin_plot_sc.data.table <- function(
     var_name = var_name,
     log_scale = log_scale,
     show_outlier = show_outlier,
-    raster = raster
+    raster = raster,
+    palette = palette
   )
 }
 
@@ -368,6 +396,9 @@ violin_plot_sc.data.table <- function(
 #'
 #' @param x A `CellQc` object.
 #' @param adjust_position_label Numeric. x-offset for the labels (default: 0).
+#' @param palette String. Discrete palette for the group fills and labels. One
+#' of `c("main", "sequential", "diverging", "viridis", "spectral")`, see
+#' [bx_colors()].
 #' @param ... Ignored.
 #'
 #' @return A named list of ggplot objects, one per metric.
@@ -375,7 +406,15 @@ violin_plot_sc.data.table <- function(
 #' @export
 #'
 #' @import ggplot2
-density_plot_sc.CellQc <- function(x, adjust_position_label = 0, ...) {
+density_plot_sc.CellQc <- function(
+  x,
+  adjust_position_label = 0,
+  palette = BX_PALETTES,
+  ...
+) {
+  palette <- match.arg(palette)
+  checkmate::assertChoice(palette, BX_PALETTES)
+
   if (is.null(x$per_group_stats)) {
     stop("Density QC requires grouped data; `per_group_stats` is NULL.")
   }
@@ -395,7 +434,8 @@ density_plot_sc.CellQc <- function(x, adjust_position_label = 0, ...) {
       outlier_groups = outlier_groups,
       var_name = metric_name,
       log_scale = FALSE,
-      adjust_position_label = adjust_position_label
+      adjust_position_label = adjust_position_label,
+      palette = palette
     )
   })
 
@@ -414,6 +454,9 @@ density_plot_sc.CellQc <- function(x, adjust_position_label = 0, ...) {
 #' @param var_name Character. x-axis label (default: NULL).
 #' @param log_scale Logical. Apply a log10 x-axis (default: TRUE).
 #' @param adjust_position_label Numeric. x-offset for the labels (default: 0).
+#' @param palette String. Discrete palette for the group fills and labels. One
+#' of `c("main", "sequential", "diverging", "viridis", "spectral")`, see
+#' [bx_colors()].
 #' @param ... Ignored.
 #'
 #' @return A \code{\link[ggplot2]{ggplot}} object.
@@ -430,15 +473,18 @@ density_plot_sc.data.table <- function(
   var_name = NULL,
   log_scale = TRUE,
   adjust_position_label = 0,
+  palette = BX_PALETTES,
   ...
 ) {
   direction <- match.arg(direction)
+  palette <- match.arg(palette)
   checkmate::assertDataTable(x)
   checkmate::assertNames(
     colnames(x),
     must.include = c(grouping_column, variable)
   )
   checkmate::qassert(threshold, "N1")
+  checkmate::assertChoice(palette, BX_PALETTES)
 
   medians <- x[,
     .(group_median = median(.SD[[variable]])),
@@ -462,7 +508,8 @@ density_plot_sc.data.table <- function(
     outlier_groups = outlier_groups,
     var_name = var_name,
     log_scale = log_scale,
-    adjust_position_label = adjust_position_label
+    adjust_position_label = adjust_position_label,
+    palette = palette
   )
 }
 
@@ -471,6 +518,8 @@ density_plot_sc.data.table <- function(
 #' @param x A `CellQc` object.
 #' @param library_size Character. Column with the library size per cell.
 #' @param nb_features Character. Column with the number of features per cell.
+#' @param palette String. Continuous palette for the hexbin fill. One of
+#' `c("sequential", "spectral", "viridis", "diverging")`, see [bx_colors()].
 #' @param ... Ignored.
 #'
 #' @return A \code{ggExtraPlot} object.
@@ -481,8 +530,12 @@ joint_plot_sc.CellQc <- function(
   x,
   library_size = "log10_lib_size",
   nb_features = "log10_nnz",
+  palette = c("sequential", "spectral", "viridis", "diverging"),
   ...
 ) {
+  palette <- match.arg(palette)
+  checkmate::assertChoice(palette, BX_PALETTES)
+
   plot_df <- get_data(x)
   checkmate::assertNames(
     colnames(plot_df),
@@ -493,7 +546,8 @@ joint_plot_sc.CellQc <- function(
     df = plot_df,
     library_size = library_size,
     nb_features = nb_features,
-    log_scale = FALSE
+    log_scale = FALSE,
+    palette = palette
   )
 }
 
@@ -503,6 +557,8 @@ joint_plot_sc.CellQc <- function(
 #' @param library_size Character. Column with the library size per cell.
 #' @param nb_features Character. Column with the number of features per cell.
 #' @param log_scale Logical. Log10-transform both axes (default: FALSE).
+#' @param palette String. Continuous palette for the hexbin fill. One of
+#' `c("sequential", "spectral", "viridis", "diverging")`, see [bx_colors()].
 #' @param ... Ignored.
 #'
 #' @return A \code{ggExtraPlot} object.
@@ -514,12 +570,17 @@ joint_plot_sc.data.table <- function(
   library_size = "lib_size",
   nb_features = "nnz",
   log_scale = FALSE,
+  palette = c("sequential", "spectral", "viridis", "diverging"),
   ...
 ) {
+  palette <- match.arg(palette)
+  checkmate::assertChoice(palette, BX_PALETTES)
+
   .plot_joint(
     df = x,
     library_size = library_size,
     nb_features = nb_features,
-    log_scale = log_scale
+    log_scale = log_scale,
+    palette = palette
   )
 }

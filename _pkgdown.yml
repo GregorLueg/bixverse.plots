@@ -68,6 +68,7 @@ reference:
       - feature_plot_sc
       - stacked_violin_plot_sc
       - feature_scatter_plot_sc
+      - paga_plot_sc
   # Geom extensions
   - title: Geom extensions
     desc: Extensions around the ggplot2 universe

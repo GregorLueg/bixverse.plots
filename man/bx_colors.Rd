@@ -7,11 +7,17 @@
 bx_colors(palette = "main", reverse = FALSE, n = 20, ...)
 }
 \arguments{
-\item{palette}{Palette name: "main", "diverging", "sequential"}
+\item{palette}{Palette name. One of \code{"main"}, \code{"sequential"}, \code{"diverging"},
+\code{"viridis"} or \code{"spectral"}. The latter is a reversed RColorBrewer Spectral,
+i.e. dark indigo for low and dark red for high values.}
 
 \item{reverse}{Logical, reverse the color order? (default: FALSE)}
 
-\item{n}{Integer, number of colours to return.}
+\item{n}{Integer, number of colours to return. Palettes shorter than \code{n}
+(\code{"sequential"}, \code{"diverging"}, \code{"spectral"}) are ramped up to \code{n} colours
+with \code{\link[grDevices:colorRampPalette]{grDevices::colorRampPalette()}}.}
+
+\item{...}{Ignored. Present for backwards compatibility.}
 }
 \value{
 A vector of color hex codes

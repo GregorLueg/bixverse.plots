@@ -12,7 +12,8 @@ dot_plot_sc(
   feature_grouping = NULL,
   scale_exp = TRUE,
   modality = c("rna", "adt"),
-  cluster_groups = TRUE
+  cluster_groups = TRUE,
+  palette = c("sequential", "spectral", "viridis", "diverging")
 )
 }
 \arguments{
@@ -37,6 +38,9 @@ MS4A1 = "B cell", ...). (default: NULL).}
 
 \item{cluster_groups}{Boolean. Use hierarchical clustering on the grouping variable
 to re-order the group labels based on expression similarity.}
+
+\item{palette}{String. Continuous palette for the scaled expression. One of
+\code{c("sequential", "spectral", "viridis", "diverging")}, see \code{\link[=bx_colors]{bx_colors()}}.}
 }
 \value{
 A \code{\link[ggplot2]{ggplot}} object.
