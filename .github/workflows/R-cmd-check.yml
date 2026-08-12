@@ -14,8 +14,8 @@ jobs:
   R-CMD-check:
     uses: GregorLueg/personal-actions/.github/workflows/r-cmd-check.yml@v1
     with:
-      # No src/ here, but bixverse comes from Remotes and builds from source,
-      # so the job still needs a toolchain.
+      # No src/ here, but a rextendr dependency comes from Remotes and builds
+      # from source, so the job still needs a toolchain.
       rust: true
       gpu: false
       windows: false
