@@ -1,3 +1,9 @@
+# bixverse.plots 0.2.4
+
+**Fix:**
+
+- Dependency graph fixed.
+
 # bixverse.plots 0.2.3
 
 **Features:**
