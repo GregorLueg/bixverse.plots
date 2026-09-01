@@ -1,6 +1,6 @@
 Package: bixverse.plots
 Title: Plotting functions for bixverse
-Version: 0.2.4
+Version: 0.2.5
 Authors@R: 
     c(
       person(
@@ -55,7 +55,6 @@ Suggests:
     UpSetR,
     tinytest
 Remotes:
-    GregorLueg/bixverse,
-    GregorLueg/manifoldsR
+    GregorLueg/bixverse
 Config/roxygen2/version: 8.1.0
 URL: https://gregorlueg.github.io/bixverse.plots/

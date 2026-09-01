@@ -18,6 +18,9 @@ jobs:
       # from source, so the job still needs a toolchain.
       rust: true
       gpu: false
-      windows: false
-      linux-runner: ubuntu-22.04
+      windows: true
+      linux-runner: ubuntu-latest
+      # manifoldsR (and later bixverse) come from here as binaries instead of
+      # being rebuilt from source via Remotes.
+      extra-repositories: https://gregorlueg.r-universe.dev
     secrets: inherit
