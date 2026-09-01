@@ -1,5 +1,11 @@
 # Changelog
 
+## bixverse.plots 0.2.5
+
+**Fix:**
+
+- `manifoldsR` now installs from r-universe.dev
+
 ## bixverse.plots 0.2.4
 
 **Fix:**
