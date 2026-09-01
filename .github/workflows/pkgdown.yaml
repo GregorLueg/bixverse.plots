@@ -20,4 +20,5 @@ jobs:
       gpu: false
       # No vignettes in this package, so nothing to render with Quarto.
       quarto: false
+      extra-repositories: https://gregorlueg.r-universe.dev
     secrets: inherit
