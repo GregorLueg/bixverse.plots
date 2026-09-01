@@ -18,6 +18,6 @@ jobs:
       # from source, so the job still needs a toolchain.
       rust: true
       gpu: false
-      windows: false
-      linux-runner: ubuntu-22.04
+      windows: true
+      linux-runner: ubuntu-latest
     secrets: inherit
