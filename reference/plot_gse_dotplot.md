@@ -15,7 +15,9 @@ plot_gse_dotplot(
   size_range = c(2, 5),
   viridis_option = "D",
   direction = -1,
-  .verbose = TRUE
+  max_terms = NULL,
+  .verbose = TRUE,
+  ...
 )
 ```
 
@@ -24,7 +26,7 @@ plot_gse_dotplot(
 - res:
 
   data.table with the enrichment results. Needs to have the columns
-  `c("hits", "target_set_lengths", "gene_set_name", "fdr")`.
+  `c("hits", "target_set_lengths", "gene_set_name", "gene_set_lengths", "fdr")`.
 
 - size_range:
 
@@ -40,9 +42,21 @@ plot_gse_dotplot(
 
   `1` or `-1`. The direction in the colour palette.
 
+- max_terms:
+
+  Optional integer. Show only the this many most significant gene sets.
+  Applied per target set when several were tested. Defaults to `NULL`,
+  i.e. everything that passed the enrichment threshold.
+
 - .verbose:
 
   Boolean. Controls verbosity of the function.
+
+- ...:
+
+  Further parameters to forward to
+  [`wrap_and_truncate()`](https://gregorlueg.github.io/bixverse.plots/reference/wrap_and_truncate.md),
+  which shortens the gene set labels.
 
 ## Value
 

@@ -6,6 +6,11 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>bixverse.plots • bixverse.plots</title>
+<!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="favicon-96x96.png">
+<link rel="icon" type="”image/svg+xml”" href="favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<link rel="icon" sizes="any" href="favicon.ico">
+<link rel="manifest" href="site.webmanifest">
 <script src="lightswitch.js"></script><script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
 <script src="deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
@@ -14,6 +19,7 @@
 <meta property="og:title" content="bixverse.plots">
 <meta name="description" content="Plotting helpers for bixverse">
 <meta property="og:description" content="Plotting helpers for bixverse">
+<meta property="og:image" content="https://gregorlueg.github.io/bixverse.plots/logo.png">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -23,7 +29,7 @@
 
     <a class="navbar-brand me-2" href="index.html">bixverse.plots</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.6</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -34,6 +40,14 @@
       <ul class="navbar-nav me-auto">
 <li class="nav-item"><a class="nav-link" href="reference/index.html">Reference</a></li>
 <li class="nav-item"><a class="nav-link" href="news/index.html">Changelog</a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
+<li><h6 class="dropdown-header" data-toc-skip>Gene set enrichment</h6></li>
+    <li><a class="dropdown-item" href="articles/gsea_visualisation.html">Visualising GSEA results</a></li>
+    <li><a class="dropdown-item" href="articles/ora_visualisation.html">Visualising over-representation results</a></li>
+  </ul>
+</li>
       </ul>
 <ul class="navbar-nav">
 <li class="nav-item"><form class="form-inline" role="search">
@@ -56,34 +70,43 @@
 </nav><div class="container template-home">
 <div class="row">
   <main id="main" class="col-md-9"><div class="section level1">
-<div class="page-header"><h1 id="bixverseplots-package">
-<em>bixverse.plots package</em><a class="anchor" aria-label="anchor" href="#bixverseplots-package"></a>
-</h1></div>
-<p><a href="https://github.com/GregorLueg/bixverse.plots/blob/main/DESCRIPTION" class="external-link"><img src="https://img.shields.io/github/r-package/v/GregorLueg/bixverse.plots?label=R_package&amp;color=orange" alt="r_package"></a> <a href="https://github.com/GregorLueg/bixverse.plots/actions/workflows/R-cmd-check.yml" class="external-link"><img src="https://github.com/GregorLueg/bixverse.plots/actions/workflows/R-cmd-check.yml/badge.svg" alt="CI"></a> <a href="https://opensource.org/licenses/MIT" class="external-link"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"></a> <a href="https://gregorlueg.github.io/bixverse.plots/"><img src="https://img.shields.io/badge/pkgdown-website-1b5e9f?logo=github" alt="pkgdown"></a></p>
-<p></p>
-<p><img src="reference/figures/bixverse_plots_logo.png" width="128" height="128" alt="bixverse.plots logo"></p>
-<p></p>
+<div class="page-header">
+<img src="logo.png" class="logo" alt=""><h1 id="bixverseplots-package-">
+<em>bixverse.plots package</em> <a class="anchor" aria-label="anchor" href="#bixverseplots-package-"></a>
+</h1>
+</div>
+<p><a href="https://github.com/GregorLueg/bixverse.plots/blob/main/DESCRIPTION" class="external-link"><img src="https://img.shields.io/github/r-package/v/GregorLueg/bixverse.plots?label=R_package&amp;color=orange" alt="r_package"></a> <a href="https://gregorlueg.r-universe.dev/bixverse.plots" class="external-link"><img src="https://gregorlueg.r-universe.dev/bixverse.plots/badges/version" alt="bixverse.plots status badge"></a> <a href="https://gregorlueg.r-universe.dev/bixverse.plots" class="external-link"><img src="https://gregorlueg.r-universe.dev/bixverse.plots/badges/version" alt="bixverse.plots status badge"></a> <a href="https://github.com/GregorLueg/bixverse.plots/actions/workflows/R-cmd-check.yml" class="external-link"><img src="https://github.com/GregorLueg/bixverse.plots/actions/workflows/R-cmd-check.yml/badge.svg" alt="CI"></a> <a href="https://opensource.org/licenses/MIT" class="external-link"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"></a> <a href="https://gregorlueg.github.io/bixverse.plots/"><img src="https://img.shields.io/badge/pkgdown-website-1b5e9f?logo=github" alt="pkgdown"></a></p>
 <div class="section level2">
 <h2 id="intro">Intro<a class="anchor" aria-label="anchor" href="#intro"></a>
 </h2>
-<p>This package contains a lot of additional plotting helpers for the <a href="https://github.com/GregorLueg/bixverse" class="external-link">bixverse</a> package. It combines especially well with <code>"0.4.x"</code> versions of <code>bixverse</code> as it supports all of the new single cell functionality. The idea is to not overload the parent package, as this one has already A LOT of code in it.</p>
+<p>This package contains a lot of additional plotting helpers for the <a href="https://github.com/GregorLueg/bixverse" class="external-link">bixverse</a> package. It combines especially well with <code>"0.5.x"</code> versions of <code>bixverse</code> as it supports all of the new single cell functionality. The idea is to not overload the parent package, as this one has already A LOT of code in it.</p>
 </div>
 <div class="section level2">
 <h2 id="release-notes">
 <em>Release notes</em><a class="anchor" aria-label="anchor" href="#release-notes"></a>
 </h2>
 <p>Official release of the package with <strong>0.2.4</strong>. In this version, we have introduced a huge number of plotting helpers for single cell, please refer to this vignette <a href="https://gregorlueg.github.io/bixverse/articles/single_cell_visualisation.html" class="external-link">here</a> for more details.</p>
+<p>The gene set enrichment side has vignettes of its own: <a href="https://gregorlueg.github.io/bixverse.plots/articles/gsea_visualisation.html">GSEA</a> (fgsea and blitzGSEA) and <a href="https://gregorlueg.github.io/bixverse.plots/articles/ora_visualisation.html">over-representation</a>.</p>
 </div>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
-<p>The package depends on <a href="https://github.com/GregorLueg/bixverse" class="external-link">bixverse</a>. Please check the details there for the set-up of Rust. Some of the Rust-accelerated functions are being used here.</p>
+<p>r-universe gives you a pre-built binary of both this package and <code>bixverse</code>, so no Rust toolchain and no compile:</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span></span>
+<span>  <span class="st">"bixverse.plots"</span>,</span>
+<span>  repos <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"https://gregorlueg.r-universe.dev"</span>, <span class="st">"https://cloud.r-project.org"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>Building from source needs Rust, because <code>bixverse</code> does. Check the <a href="https://github.com/GregorLueg/bixverse" class="external-link">bixverse README</a> for that set-up. Keep the r-universe repo in the list either way:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>repos <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"https://gregorlueg.r-universe.dev"</span>, <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"repos"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"https://github.com/GregorLueg/bixverse.plots"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="aim">Aim<a class="anchor" aria-label="anchor" href="#aim"></a>
 </h2>
 <p>Provide additional plotting capabilities to <code>bixverse</code>.</p>
-<p><em>Last update to the read-me: 11.08.2026</em></p>
+<p><em>Last update to the read-me: 04.09.2026</em></p>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="license">

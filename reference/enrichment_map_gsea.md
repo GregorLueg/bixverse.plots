@@ -25,7 +25,11 @@ enrichment_map_gsea(
 - res:
 
   data.table with the enrichment results. Needs to have the columns
-  `c("geneset_name", "nes", "fdr")`.
+  `c("pathway_name", "nes", "fdr")`, i.e. the output of
+  [`bixverse::calc_fgsea()`](https://gregorlueg.github.io/bixverse/reference/calc_fgsea.html)
+  or
+  [`bixverse::calc_blitzgsea()`](https://gregorlueg.github.io/bixverse/reference/calc_blitzgsea.html).
+  A `geneset_name` column is accepted with a deprecation warning.
 
 - threshold:
 

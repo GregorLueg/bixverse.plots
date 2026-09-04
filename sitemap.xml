@@ -1,13 +1,20 @@
 <urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
 <url><loc>https://gregorlueg.github.io/bixverse.plots/404.html</loc></url>
 <url><loc>https://gregorlueg.github.io/bixverse.plots/LICENSE-text.html</loc></url>
+<url><loc>https://gregorlueg.github.io/bixverse.plots/articles/gsea_visualisation.html</loc></url>
+<url><loc>https://gregorlueg.github.io/bixverse.plots/articles/index.html</loc></url>
+<url><loc>https://gregorlueg.github.io/bixverse.plots/articles/ora_visualisation.html</loc></url>
 <url><loc>https://gregorlueg.github.io/bixverse.plots/authors.html</loc></url>
 <url><loc>https://gregorlueg.github.io/bixverse.plots/index.html</loc></url>
 <url><loc>https://gregorlueg.github.io/bixverse.plots/news/index.html</loc></url>
+<url><loc>https://gregorlueg.github.io/bixverse.plots/reference/assertBlitzGseaNull.html</loc></url>
 <url><loc>https://gregorlueg.github.io/bixverse.plots/reference/assertPlotParams.html</loc></url>
 <url><loc>https://gregorlueg.github.io/bixverse.plots/reference/assertVolcanoParams.html</loc></url>
 <url><loc>https://gregorlueg.github.io/bixverse.plots/reference/auto_point_size.html</loc></url>
+<url><loc>https://gregorlueg.github.io/bixverse.plots/reference/blitz_null_density.html</loc></url>
+<url><loc>https://gregorlueg.github.io/bixverse.plots/reference/blitz_tail_at.html</loc></url>
 <url><loc>https://gregorlueg.github.io/bixverse.plots/reference/bx_colors.html</loc></url>
+<url><loc>https://gregorlueg.github.io/bixverse.plots/reference/checkBlitzGseaNull.html</loc></url>
 <url><loc>https://gregorlueg.github.io/bixverse.plots/reference/checkPlotParams.html</loc></url>
 <url><loc>https://gregorlueg.github.io/bixverse.plots/reference/checkVolcanoParams.html</loc></url>
 <url><loc>https://gregorlueg.github.io/bixverse.plots/reference/density_plot_sc.CellQc.html</loc></url>
@@ -37,6 +44,8 @@
 <url><loc>https://gregorlueg.github.io/bixverse.plots/reference/paga_plot_sc.html</loc></url>
 <url><loc>https://gregorlueg.github.io/bixverse.plots/reference/params_plots.html</loc></url>
 <url><loc>https://gregorlueg.github.io/bixverse.plots/reference/params_volcano.html</loc></url>
+<url><loc>https://gregorlueg.github.io/bixverse.plots/reference/plot_blitzgsea_es_null.html</loc></url>
+<url><loc>https://gregorlueg.github.io/bixverse.plots/reference/plot_blitzgsea_null.html</loc></url>
 <url><loc>https://gregorlueg.github.io/bixverse.plots/reference/plot_enrichment_map_ggraph.html</loc></url>
 <url><loc>https://gregorlueg.github.io/bixverse.plots/reference/plot_enrichment_map_visnetwork.html</loc></url>
 <url><loc>https://gregorlueg.github.io/bixverse.plots/reference/plot_gse_dotplot.html</loc></url>

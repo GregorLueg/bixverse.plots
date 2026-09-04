@@ -9,7 +9,9 @@ helper_gse_dot_plot(
   res,
   size_range = c(2, 5),
   viridis_option = "D",
-  direction = -1
+  direction = -1,
+  max_terms = NULL,
+  ...
 )
 ```
 
@@ -18,7 +20,7 @@ helper_gse_dot_plot(
 - res:
 
   data.table with the enrichment results. Needs to have the columns
-  `c("hits", "target_set_lengths", "gene_set_name", "fdr")`.
+  `c("hits", "target_set_lengths", "gene_set_name", "gene_set_lengths", "fdr")`.
 
 - size_range:
 
@@ -33,6 +35,15 @@ helper_gse_dot_plot(
 - direction:
 
   `1` or `-1`. The direction in the colour palette.
+
+- max_terms:
+
+  Optional integer. Show only this many most significant gene sets.
+
+- ...:
+
+  Further parameters to forward to
+  [`wrap_and_truncate()`](https://gregorlueg.github.io/bixverse.plots/reference/wrap_and_truncate.md).
 
 ## Value
 

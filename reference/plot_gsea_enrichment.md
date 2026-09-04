@@ -46,9 +46,14 @@ plot_gsea_enrichment(
 
 - tick_size:
 
-  Numeric. The tick size. Defaults ot `0.2`.
+  Numeric. The tick size. Defaults to `0.2`.
 
 - text_size:
 
-  Numeric. The text size. Defaults ot `8`. Only relevant when
+  Numeric. The text size. Defaults to `5`. Only relevant when
   `gsea_results` is provided.
+
+## Value
+
+A named list of `ggplot` objects, one per element of
+`pathways_of_interest` that survived the size filters.

@@ -25,10 +25,10 @@ paga_plot_sc(
   embd_modality = c("rna", "adt", "wnn"),
   centroid = c("median", "mean"),
   point_size = NULL,
-  point_alpha = 0.2,
+  point_alpha = 0.4,
   raster = NULL,
   raster_dpi = c(512, 512),
-  cell_colour = "grey85",
+  cell_colour = "grey80",
   edge_colour = "grey40",
   edge_width = c(0.2, 3),
   max_node_size = 12,
@@ -96,7 +96,7 @@ paga_plot_sc(
 
 - point_alpha:
 
-  Numeric. Alpha of the cells (default: 0.2).
+  Numeric. Alpha of the cells (default: 0.4).
 
 - raster:
 
@@ -110,7 +110,7 @@ paga_plot_sc(
 
 - cell_colour:
 
-  String. Colour of the cell layer (default: "grey85").
+  String. Colour of the cell layer (default: "grey80").
 
 - edge_colour:
 

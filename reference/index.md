@@ -21,6 +21,10 @@ Utilities to save plots to PNG or PDF
   : Generate GSE dotplots
 - [`plot_gsea_enrichment()`](https://gregorlueg.github.io/bixverse.plots/reference/plot_gsea_enrichment.md)
   : Plot GSEA enrichment results
+- [`plot_blitzgsea_null()`](https://gregorlueg.github.io/bixverse.plots/reference/plot_blitzgsea_null.md)
+  : Plot the blitzGSEA calibration
+- [`plot_blitzgsea_es_null()`](https://gregorlueg.github.io/bixverse.plots/reference/plot_blitzgsea_es_null.md)
+  : Plot observed enrichment scores against the blitzGSEA null
 
 ## Enrichment map plotting
 

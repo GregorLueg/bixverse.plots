@@ -17,7 +17,7 @@ set_bx_theme(base_size = 12, base_family = "Helvetica")
 
 - base_family:
 
-  Base font family (default: "Arial")
+  Base font family (default: "Helvetica")
 
 ## Value
 

@@ -45,7 +45,7 @@ plot_enrichment_map_ggraph(
 
   Named numeric. The names indicate the community size and the values
   how many pathways per community to show. An example would be
-  `c(15 = 3, 5 = 2, 2 = 1, 1 = 0)`
+  `c("15" = 3, "5" = 2, "2" = 1, "1" = 0)`, which is also the default.
 
 - font_size:
 
