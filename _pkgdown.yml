@@ -2,24 +2,41 @@ url: https://gregorlueg.github.io/bixverse.plots/
 
 template:
   bootstrap: 5
-  bootswatch: lux
   light-switch: true
+  theme: atom-one-light
+  theme-dark: atom-one-dark
   bslib:
-    # lux uses navbar-padding-y: 1.5rem, so pkgdown's 56px default is too small
-    pkgdown-nav-height: 104px
+    primary: "#3C4B6D"
+    border-radius: 0.5rem
+    btn-border-radius: 0.25rem
 
 home:
   title: "bixverse.plots"
   description: "Plotting helpers for bixverse"
 navbar:
   structure:
-    left: [intro, reference, news]
+    left: [intro, reference, news, articles]
     right: [search, lightswitch, github]
   components:
+    articles:
+      text: Articles
+      menu:
+        - text: "Gene set enrichment"
+        - text: Visualising GSEA results
+          href: articles/gsea_visualisation.html
+        - text: Visualising over-representation results
+          href: articles/ora_visualisation.html
     github:
       icon: fab fa-github
       href: https://github.com/GregorLueg/bixverse.plots
       aria-label: GitHub
+
+articles:
+  - title: Articles
+    navbar: Articles
+    contents:
+      - gsea_visualisation
+      - ora_visualisation
 
 reference:
   # Helpers to save various plot types to disk
@@ -36,6 +53,8 @@ reference:
       - get_gsea_enrichment_data
       - plot_gse_dotplot
       - plot_gsea_enrichment
+      - plot_blitzgsea_null
+      - plot_blitzgsea_es_null
   # Enrichment map
   - title: Enrichment map plotting
     desc: Generate enrichment map plots

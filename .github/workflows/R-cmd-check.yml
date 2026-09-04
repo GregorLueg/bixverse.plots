@@ -14,13 +14,12 @@ jobs:
   R-CMD-check:
     uses: GregorLueg/personal-actions/.github/workflows/r-cmd-check.yml@v1
     with:
-      # No src/ here, but a rextendr dependency comes from Remotes and builds
-      # from source, so the job still needs a toolchain.
+      # No src/ here, but a rextendr dependency can still fall back to a source
+      # build on a platform r-universe has no binary for.
       rust: true
       gpu: false
       windows: true
       linux-runner: ubuntu-latest
-      # manifoldsR (and later bixverse) come from here as binaries instead of
-      # being rebuilt from source via Remotes.
+      macos-x86: true
       extra-repositories: https://gregorlueg.r-universe.dev
     secrets: inherit

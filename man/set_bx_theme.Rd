@@ -9,7 +9,7 @@ set_bx_theme(base_size = 12, base_family = "Helvetica")
 \arguments{
 \item{base_size}{Base font size (default: 12)}
 
-\item{base_family}{Base font family (default: "Arial")}
+\item{base_family}{Base font family (default: "Helvetica")}
 }
 \value{
 NULL (sets theme invisibly)

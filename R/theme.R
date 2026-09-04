@@ -103,7 +103,7 @@ theme_bx <- function(
 #' Sets the Bixverse theme as the default for all ggplot2 plots in the session
 #'
 #' @param base_size Base font size (default: 12)
-#' @param base_family Base font family (default: "Arial")
+#' @param base_family Base font family (default: "Helvetica")
 #'
 #' @return NULL (sets theme invisibly)
 #' @export

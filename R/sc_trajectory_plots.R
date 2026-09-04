@@ -37,12 +37,12 @@
 #' that drag a mean off its cluster.
 #' @param point_size Optional numeric. Size of the cells. If not provided, will
 #' be auto-determined.
-#' @param point_alpha Numeric. Alpha of the cells (default: 0.2).
+#' @param point_alpha Numeric. Alpha of the cells (default: 0.4).
 #' @param raster Optional boolean. Shall the cell layer be rasterised. If `NULL`
 #' and the number of cells is larger than `1e5`, defaults to TRUE.
 #' @param raster_dpi Two numerics. Pixel resolution for rasterized plots, passed
 #' to geom_scattermore(). Default is `c(512, 512)`.
-#' @param cell_colour String. Colour of the cell layer (default: "grey85").
+#' @param cell_colour String. Colour of the cell layer (default: "grey80").
 #' @param edge_colour String. Colour of the edges (default: "grey40").
 #' @param edge_width Two numerics. Range the edge widths are scaled into
 #' (default: `c(0.2, 3)`).

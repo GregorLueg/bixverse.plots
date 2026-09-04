@@ -31,7 +31,8 @@ prepare_mitch_scores <- function(res, fdr_threshold = 0.05) {
   )
   checkmate::qassert(fdr_threshold, "N1[0, 1]")
 
-  # function body
+  # function body. copy, otherwise the setorder reorders the caller's table
+  res <- data.table::copy(res)
   setorder(res, -s_dist)
 
   # significant pathways

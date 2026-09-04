@@ -1,3 +1,13 @@
+# bixverse.plots 0.2.6
+
+**Docs:**
+
+- Some proper vignettes and a pkgdown website in a nice style
+
+**Fix:**
+
+- `manifoldsR` and `bixverse` now installs from r-universe.dev
+
 # bixverse.plots 0.2.5
 
 **Fix:**

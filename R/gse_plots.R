@@ -10,13 +10,19 @@
 #' single plot and in the latter case a list of plots per target set.
 #'
 #' @param res data.table with the enrichment results. Needs to have the columns
-#' `c("hits", "target_set_lengths", "gene_set_name", "fdr")`.
+#' `c("hits", "target_set_lengths", "gene_set_name", "gene_set_lengths",
+#' "fdr")`.
 #' @param size_range Numerical vector of size 2. Defines the size range for the
 #' dots in the plot.
 #' @param viridis_option String. The option to forward to
 #' [ggplot2::scale_fill_viridis_c()].
 #' @param direction `1` or `-1`. The direction in the colour palette.
+#' @param max_terms Optional integer. Show only the this many most significant
+#' gene sets. Applied per target set when several were tested. Defaults to
+#' `NULL`, i.e. everything that passed the enrichment threshold.
 #' @param .verbose Boolean. Controls verbosity of the function.
+#' @param ... Further parameters to forward to
+#' [bixverse.plots::wrap_and_truncate()], which shortens the gene set labels.
 #'
 #' @return If the output of [bixverse::gse_hypergeometric_list()] was provided,
 #' a list of dotplots per target gene set. Otherwise, a single GSE OAE dot plot.
@@ -27,17 +33,26 @@ plot_gse_dotplot <- function(
   size_range = c(2, 5),
   viridis_option = "D",
   direction = -1,
-  .verbose = TRUE
+  max_terms = NULL,
+  .verbose = TRUE,
+  ...
 ) {
   # checks
   checkmate::assertDataTable(res)
   checkmate::assertNames(
     names(res),
-    must.include = c("hits", "target_set_lengths", "gene_set_name", "fdr")
+    must.include = c(
+      "hits",
+      "target_set_lengths",
+      "gene_set_name",
+      "gene_set_lengths",
+      "fdr"
+    )
   )
   checkmate::qassert(size_range, "N2")
   checkmate::assertChoice(viridis_option, LETTERS[1:8])
   checkmate::assertChoice(direction, c(-1, 1))
+  checkmate::assertInt(max_terms, lower = 1L, null.ok = TRUE)
   checkmate::qassert(.verbose, "B1")
 
   # split if several target sets were tested
@@ -64,14 +79,18 @@ plot_gse_dotplot <- function(
         helper_gse_dot_plot,
         size_range = size_range,
         viridis_option = viridis_option,
-        direction = direction
+        direction = direction,
+        max_terms = max_terms,
+        ...
       )
     },
     "data.table" = helper_gse_dot_plot(
       res,
       size_range = size_range,
       viridis_option = viridis_option,
-      direction = direction
+      direction = direction,
+      max_terms = max_terms,
+      ...
     )
   )
 
@@ -83,12 +102,17 @@ plot_gse_dotplot <- function(
 #' Helper to generate a GSE dot plot
 #'
 #' @param res data.table with the enrichment results. Needs to have the columns
-#' `c("hits", "target_set_lengths", "gene_set_name", "fdr")`.
+#' `c("hits", "target_set_lengths", "gene_set_name", "gene_set_lengths",
+#' "fdr")`.
 #' @param size_range Numerical vector of size 2. Defines the size range for the
 #' dots in the plot.
 #' @param viridis_option String. The option to forward to
 #' [ggplot2::scale_fill_viridis_c()].
 #' @param direction `1` or `-1`. The direction in the colour palette.
+#' @param max_terms Optional integer. Show only this many most significant gene
+#' sets.
+#' @param ... Further parameters to forward to
+#' [bixverse.plots::wrap_and_truncate()].
 #'
 #' @return The GSE dot plot.
 #'
@@ -99,20 +123,48 @@ helper_gse_dot_plot <- function(
   res,
   size_range = c(2, 5),
   viridis_option = "D",
-  direction = -1
+  direction = -1,
+  max_terms = NULL,
+  ...
 ) {
   # checks
   checkmate::assertDataTable(res)
   checkmate::assertNames(
     names(res),
-    must.include = c("hits", "target_set_lengths", "gene_set_name", "fdr")
+    must.include = c(
+      "hits",
+      "target_set_lengths",
+      "gene_set_name",
+      "gene_set_lengths",
+      "fdr"
+    )
   )
   checkmate::qassert(size_range, "N2")
   checkmate::assertChoice(viridis_option, LETTERS[1:8])
   checkmate::assertChoice(direction, c(-1, 1))
+  checkmate::assertInt(max_terms, lower = 1L, null.ok = TRUE)
 
   # data processing
   res <- data.table::copy(res)[, gene_ratio := hits / target_set_lengths]
+
+  if (!is.null(max_terms) && nrow(res) > max_terms) {
+    data.table::setorder(res, fdr)
+    res <- res[seq_len(max_terms)]
+  }
+
+  # gene set names are long enough on real libraries to swallow the panel.
+  # make.unique guards against two names truncating onto each other, which
+  # would otherwise blow up the factor levels below.
+  res[,
+    gene_set_name := make.unique(vapply(
+      gene_set_name,
+      wrap_and_truncate,
+      character(1),
+      ...,
+      USE.NAMES = FALSE
+    ))
+  ]
+
   data.table::setorder(res, gene_ratio)
   order <- res[, gene_set_name]
   res[, gene_set_name := factor(x = gene_set_name, levels = order)]
@@ -251,7 +303,9 @@ enrichment_map_oae <- function(
 #' for subsequent visualisations.
 #'
 #' @param res data.table with the enrichment results. Needs to have the columns
-#' `c("geneset_name", "nes", "fdr")`.
+#' `c("pathway_name", "nes", "fdr")`, i.e. the output of
+#' [bixverse::calc_fgsea()] or [bixverse::calc_blitzgsea()]. A `geneset_name`
+#' column is accepted with a deprecation warning.
 #' @param threshold Numeric. The FDR threshold you wish to filter for.
 #' @param pathways Named list. The original pathway list used for the
 #' calculation of the overenrichment analysis.
@@ -281,9 +335,19 @@ enrichment_map_gsea <- function(
 ) {
   # checks
   checkmate::assertDataTable(res)
+  # `geneset_name` was the original contract, but no bixverse GSEA function ever
+  # emitted it. They all return `pathway_name`.
+  if ("geneset_name" %in% names(res) && !"pathway_name" %in% names(res)) {
+    warning(paste(
+      "`geneset_name` is deprecated as a column name.",
+      "Please use `pathway_name` instead."
+    ))
+    res <- data.table::copy(res)
+    data.table::setnames(res, "geneset_name", "pathway_name")
+  }
   checkmate::assertNames(
     names(res),
-    must.include = c("geneset_name", "nes", "fdr")
+    must.include = c("pathway_name", "nes", "fdr")
   )
   checkmate::qassert(threshold, "N[0, 1]")
   checkmate::assertList(pathways, types = "character", names = "named")
@@ -295,7 +359,7 @@ enrichment_map_gsea <- function(
   res <- res[fdr <= threshold]
 
   # calculate similarities
-  enriched_gs <- res[["geneset_name"]]
+  enriched_gs <- res[["pathway_name"]]
   edges <- data.table::setDT(bixverse::rs_set_similarity_list(
     list = pathways[enriched_gs],
     overlap_coefficient = overlap_coefficient
@@ -326,7 +390,7 @@ enrichment_map_gsea <- function(
   )
 
   igraph::V(g)$nes <- res[
-    match(enriched_gs, geneset_name),
+    match(enriched_gs, pathway_name),
     nes
   ]
 
@@ -356,7 +420,7 @@ enrichment_map_gsea <- function(
 #' include no matter what.
 #' @param adaptive_thresholds Named numeric. The names indicate the community
 #' size and the values how many pathways per community to show. An example would
-#' be `c(15 = 3, 5 = 2, 2 = 1, 1 = 0)`
+#' be `c("15" = 3, "5" = 2, "2" = 1, "1" = 0)`, which is also the default.
 #' @param font_size Numeric. Font size of the labels on top of the enrichment
 #' map.
 #' @param ... Other parameters you wish to forward to
@@ -517,8 +581,9 @@ plot_enrichment_map_visnetwork <- function(g) {
 
   if (color_type == "nes") {
     max_abs <- max(abs(color_values))
+    # same direction as plot_enrichment_map_ggraph: positive NES red
     colour_palette <- scales::col_numeric(
-      palette = c("darkred", "white", "darkblue"),
+      palette = c("#235070", "white", "#8b3a2b"),
       domain = c(-max_abs, max_abs)
     )
     color_label <- "NES"

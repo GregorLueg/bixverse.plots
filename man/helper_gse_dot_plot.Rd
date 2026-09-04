@@ -8,12 +8,14 @@ helper_gse_dot_plot(
   res,
   size_range = c(2, 5),
   viridis_option = "D",
-  direction = -1
+  direction = -1,
+  max_terms = NULL,
+  ...
 )
 }
 \arguments{
 \item{res}{data.table with the enrichment results. Needs to have the columns
-\code{c("hits", "target_set_lengths", "gene_set_name", "fdr")}.}
+\code{c("hits", "target_set_lengths", "gene_set_name", "gene_set_lengths", "fdr")}.}
 
 \item{size_range}{Numerical vector of size 2. Defines the size range for the
 dots in the plot.}
@@ -22,6 +24,12 @@ dots in the plot.}
 \code{\link[ggplot2:scale_fill_viridis_c]{ggplot2::scale_fill_viridis_c()}}.}
 
 \item{direction}{\code{1} or \code{-1}. The direction in the colour palette.}
+
+\item{max_terms}{Optional integer. Show only this many most significant gene
+sets.}
+
+\item{...}{Further parameters to forward to
+\code{\link[=wrap_and_truncate]{wrap_and_truncate()}}.}
 }
 \value{
 The GSE dot plot.

@@ -70,6 +70,67 @@ p <- plot_gse_dotplot(res = oae_res)
 
 expect_true(current = "ggplot" %in% class(p), info = "dotplot - single version")
 
+### term capping and label wrapping --------------------------------------------
+
+expect_error(
+  current = plot_gse_dotplot(res = oae_res, max_terms = 0L),
+  info = "dotplot - max_terms has to be positive"
+)
+
+p_capped <- plot_gse_dotplot(res = oae_res, max_terms = 3L)
+
+expect_equal(
+  nrow(p_capped$data),
+  3L,
+  info = "dotplot - max_terms caps the number of gene sets"
+)
+
+expect_true(
+  {
+    kept <- as.character(p_capped$data$gene_set_name)
+    expected <- data.table::setorder(
+      data.table::copy(oae_res),
+      fdr
+    )[1:3, gene_set_name]
+    setequal(kept, expected)
+  },
+  info = "dotplot - max_terms keeps the most significant gene sets"
+)
+
+expect_true(
+  nrow(plot_gse_dotplot(res = oae_res, max_terms = 1000L)$data) ==
+    nrow(oae_res),
+  info = "dotplot - max_terms above the number of gene sets is a no-op"
+)
+
+# long, nearly identical names truncate onto each other. That has to widen the
+# labels rather than blow up the factor levels.
+long_res <- data.table::copy(oae_res)[1:3]
+long_res[,
+  gene_set_name := paste0(
+    "a very long and largely identical gene set name number ",
+    1:3
+  )
+]
+
+p_wrapped <- plot_gse_dotplot(long_res, width = 20L, max_lines = 1L)
+
+expect_true(
+  "ggplot" %in% class(p_wrapped),
+  info = "dotplot - colliding truncated labels do not error"
+)
+
+expect_equal(
+  length(levels(p_wrapped$data$gene_set_name)),
+  3L,
+  info = "dotplot - colliding labels stay distinct"
+)
+
+expect_true(
+  all(nchar(levels(p_wrapped$data$gene_set_name)) < 30L),
+  info = "dotplot - wrap_and_truncate arguments are forwarded"
+)
+
 ### list case ------------------------------------------------------------------
 
 oae_res_ls <- bixverse::gse_hypergeometric_list(
@@ -166,7 +227,7 @@ gsea_map_pathways <- list(
   "pathway_g" = letters[22:24]
 )
 gsea_result <- data.table::data.table(
-  geneset_name = c("pathway_c", "pathway_d", "pathway_e", "pathway_f"),
+  pathway_name = c("pathway_c", "pathway_d", "pathway_e", "pathway_f"),
   nes = c(2.1, 1.8, -1.9, -2.3),
   fdr = c(0.01, 0.02, 0.015, 0.005)
 )
@@ -198,6 +259,24 @@ expect_equal(
   enrichment_map_igraph_gsea$color_type,
   "nes",
   info = "GSEA graph has correct color_type"
+)
+
+# deprecated geneset_name column still works, but warns
+gsea_result_old <- data.table::copy(gsea_result)
+data.table::setnames(gsea_result_old, "pathway_name", "geneset_name")
+
+expect_warning(
+  current = enrichment_map_gsea(
+    res = gsea_result_old,
+    threshold = 1.0,
+    pathways = gsea_map_pathways
+  ),
+  info = "deprecated geneset_name column warns"
+)
+
+expect_true(
+  "geneset_name" %in% names(gsea_result_old),
+  info = "deprecated path does not rename the caller's table"
 )
 
 ### ggraph - OAE ---------------------------------------------------------------

@@ -16,10 +16,10 @@ paga_plot_sc(
   embd_modality = c("rna", "adt", "wnn"),
   centroid = c("median", "mean"),
   point_size = NULL,
-  point_alpha = 0.2,
+  point_alpha = 0.4,
   raster = NULL,
   raster_dpi = c(512, 512),
-  cell_colour = "grey85",
+  cell_colour = "grey80",
   edge_colour = "grey40",
   edge_width = c(0.2, 3),
   max_node_size = 12,
@@ -62,7 +62,7 @@ that drag a mean off its cluster.}
 \item{point_size}{Optional numeric. Size of the cells. If not provided, will
 be auto-determined.}
 
-\item{point_alpha}{Numeric. Alpha of the cells (default: 0.2).}
+\item{point_alpha}{Numeric. Alpha of the cells (default: 0.4).}
 
 \item{raster}{Optional boolean. Shall the cell layer be rasterised. If \code{NULL}
 and the number of cells is larger than \code{1e5}, defaults to TRUE.}
@@ -70,7 +70,7 @@ and the number of cells is larger than \code{1e5}, defaults to TRUE.}
 \item{raster_dpi}{Two numerics. Pixel resolution for rasterized plots, passed
 to geom_scattermore(). Default is \code{c(512, 512)}.}
 
-\item{cell_colour}{String. Colour of the cell layer (default: "grey85").}
+\item{cell_colour}{String. Colour of the cell layer (default: "grey80").}
 
 \item{edge_colour}{String. Colour of the edges (default: "grey40").}
 

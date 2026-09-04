@@ -10,3 +10,7 @@ workbench.R
 
 scratch.R
 docs
+pkgdown/favicon/*
+
+# Claude
+.claude/worktrees/

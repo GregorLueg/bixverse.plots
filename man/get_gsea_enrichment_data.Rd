@@ -25,10 +25,22 @@ These strings need to be represented in the names of pathways.}
 provided, the FDR and NES for the given pathway of interest will be also
 added to the plot.}
 
-\item{gsea_param}{Numeric. Defaults to \code{1}}
+\item{gsea_param}{Numeric. Defaults to \code{1}.}
 }
 \value{
-A list of \code{gsea_par_plot_data}
+A named list of \code{gsea_par_plot_data} objects, one per pathway that
+survived the size filters. Each one is a list with the following elements:
+\itemize{
+\item curve_dt - data.table with the running enrichment score, columns
+\code{rank} and \code{ES}.
+\item ticks_dt - data.table with the positions of the pathway genes,
+columns \code{rank} and \code{stat}.
+\item stats_dt - data.table with the ranked statistic, columns \code{rank} and
+\code{stat}.
+\item key_points - Named numeric with \code{pos_es}, \code{neg_es} and \code{spread_es},
+plus \code{nes} and \code{fdr} if \code{gsea_results} was provided.
+\item additional_label - String or \code{NULL}. The NES/FDR annotation.
+}
 }
 \description{
 Helper function to get the plot data for GSEA plots
