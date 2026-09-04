@@ -55,11 +55,16 @@ data(exampleRanks, package = "fgsea")
 stats <- sort(exampleRanks, decreasing = TRUE)
 gene_universe <- names(stats)
 
+# the numeric Reactome prefix carries nothing and the underscores make for
+# ugly labels. Clean the names once, up front
+pathways <- examplePathways
+names(pathways) <- gsub("_", " ", gsub("^\\d+_", "", names(pathways)))
+
 target_genes <- head(gene_universe, 500)
 
 ora_res <- gse_hypergeometric(
   target_genes = target_genes,
-  gene_set_list = examplePathways,
+  gene_set_list = pathways,
   gene_universe = gene_universe,
   threshold = 0.05
 )
@@ -75,7 +80,7 @@ head(ora_res)
 ```{r}
 #| label: dotplot
 #| fig-cap: "Over-represented Reactome pathways in the top 500 genes."
-#| fig-height: 6
+#| fig-height: 7
 plot_gse_dotplot(ora_res)
 ```
 
@@ -96,7 +101,9 @@ interesting than a small point at the same x position.
 | `size_range` | Point size range, smallest to largest gene set. |
 | `viridis_option` | Which viridis map to use for the fill, `"A"` through `"H"`. |
 | `direction` | `1` or `-1`, flips the fill scale. |
+| `max_terms` | Keep only the N most significant sets. Defaults to `NULL`, everything. |
 | `.verbose` | Silences the message about splitting when several target sets are present. |
+| `...` | Forwarded to `wrap_and_truncate()`, which shortens the labels. `width` and `max_lines` are the ones you want. |
 
 ### Several target sets at once
 
@@ -117,7 +124,7 @@ target_list <- list(
 
 ora_res_ls <- gse_hypergeometric_list(
   target_genes_list = target_list,
-  gene_set_list = examplePathways,
+  gene_set_list = pathways,
   gene_universe = gene_universe,
   threshold = 0.05
 )
@@ -130,18 +137,28 @@ The cell cycle story survives every cut, which is reassuring, but the long tail
 is entirely an artefact of where you drew the line. This is the reason to reach
 for GSEA when you have a full ranking.
 
+54 gene sets do not fit on a dot plot, and Reactome names are long enough to
+swallow the panel whole. `max_terms` keeps the most significant N, and anything
+in `...` goes to `wrap_and_truncate()` for the labels.
+
 ```{r}
 #| label: dotplot-list-plots
-#| fig-cap: "Top 250 against top 1000, same ranking."
+#| fig-cap: "Top 250 genes, capped at the 20 most significant sets."
 #| fig-height: 6
-plots <- plot_gse_dotplot(ora_res_ls, .verbose = FALSE)
+plots <- plot_gse_dotplot(
+  ora_res_ls,
+  max_terms = 20L,
+  width = 40L,
+  .verbose = FALSE
+)
 
 plots$top_250
 ```
 
 ```{r}
 #| label: dotplot-list-plots-2
-#| fig-height: 9
+#| fig-cap: "Same treatment on the top 1000, where 54 sets came back."
+#| fig-height: 6
 plots$top_1000
 ```
 
@@ -159,7 +176,7 @@ coloured by `-log10(FDR)` here, where the GSEA version colours by NES.
 enrichment_map <- enrichment_map_oae(
   res = ora_res,
   threshold = 0.05,
-  pathways = examplePathways,
+  pathways = pathways,
   min_sim = 0.2,
   resolution = 1.0
 )
@@ -186,7 +203,7 @@ the graph into more, tighter communities. On this data 0.1 gives 89 edges across
 enrichment_map_strict <- enrichment_map_oae(
   res = ora_res,
   threshold = 0.05,
-  pathways = examplePathways,
+  pathways = pathways,
   min_sim = 0.4
 )
 
@@ -208,7 +225,7 @@ usually what you meant for a hierarchy like Reactome.
 enrichment_map_overlap <- enrichment_map_oae(
   res = ora_res,
   threshold = 0.05,
-  pathways = examplePathways,
+  pathways = pathways,
   overlap_coefficient = TRUE,
   min_sim = 0.5
 )

@@ -17,7 +17,12 @@
 #' @param viridis_option String. The option to forward to
 #' [ggplot2::scale_fill_viridis_c()].
 #' @param direction `1` or `-1`. The direction in the colour palette.
+#' @param max_terms Optional integer. Show only the this many most significant
+#' gene sets. Applied per target set when several were tested. Defaults to
+#' `NULL`, i.e. everything that passed the enrichment threshold.
 #' @param .verbose Boolean. Controls verbosity of the function.
+#' @param ... Further parameters to forward to
+#' [bixverse.plots::wrap_and_truncate()], which shortens the gene set labels.
 #'
 #' @return If the output of [bixverse::gse_hypergeometric_list()] was provided,
 #' a list of dotplots per target gene set. Otherwise, a single GSE OAE dot plot.
@@ -28,7 +33,9 @@ plot_gse_dotplot <- function(
   size_range = c(2, 5),
   viridis_option = "D",
   direction = -1,
-  .verbose = TRUE
+  max_terms = NULL,
+  .verbose = TRUE,
+  ...
 ) {
   # checks
   checkmate::assertDataTable(res)
@@ -45,6 +52,7 @@ plot_gse_dotplot <- function(
   checkmate::qassert(size_range, "N2")
   checkmate::assertChoice(viridis_option, LETTERS[1:8])
   checkmate::assertChoice(direction, c(-1, 1))
+  checkmate::assertInt(max_terms, lower = 1L, null.ok = TRUE)
   checkmate::qassert(.verbose, "B1")
 
   # split if several target sets were tested
@@ -71,14 +79,18 @@ plot_gse_dotplot <- function(
         helper_gse_dot_plot,
         size_range = size_range,
         viridis_option = viridis_option,
-        direction = direction
+        direction = direction,
+        max_terms = max_terms,
+        ...
       )
     },
     "data.table" = helper_gse_dot_plot(
       res,
       size_range = size_range,
       viridis_option = viridis_option,
-      direction = direction
+      direction = direction,
+      max_terms = max_terms,
+      ...
     )
   )
 
@@ -97,6 +109,10 @@ plot_gse_dotplot <- function(
 #' @param viridis_option String. The option to forward to
 #' [ggplot2::scale_fill_viridis_c()].
 #' @param direction `1` or `-1`. The direction in the colour palette.
+#' @param max_terms Optional integer. Show only this many most significant gene
+#' sets.
+#' @param ... Further parameters to forward to
+#' [bixverse.plots::wrap_and_truncate()].
 #'
 #' @return The GSE dot plot.
 #'
@@ -107,7 +123,9 @@ helper_gse_dot_plot <- function(
   res,
   size_range = c(2, 5),
   viridis_option = "D",
-  direction = -1
+  direction = -1,
+  max_terms = NULL,
+  ...
 ) {
   # checks
   checkmate::assertDataTable(res)
@@ -124,9 +142,29 @@ helper_gse_dot_plot <- function(
   checkmate::qassert(size_range, "N2")
   checkmate::assertChoice(viridis_option, LETTERS[1:8])
   checkmate::assertChoice(direction, c(-1, 1))
+  checkmate::assertInt(max_terms, lower = 1L, null.ok = TRUE)
 
   # data processing
   res <- data.table::copy(res)[, gene_ratio := hits / target_set_lengths]
+
+  if (!is.null(max_terms) && nrow(res) > max_terms) {
+    data.table::setorder(res, fdr)
+    res <- res[seq_len(max_terms)]
+  }
+
+  # gene set names are long enough on real libraries to swallow the panel.
+  # make.unique guards against two names truncating onto each other, which
+  # would otherwise blow up the factor levels below.
+  res[,
+    gene_set_name := make.unique(vapply(
+      gene_set_name,
+      wrap_and_truncate,
+      character(1),
+      ...,
+      USE.NAMES = FALSE
+    ))
+  ]
+
   data.table::setorder(res, gene_ratio)
   order <- res[, gene_set_name]
   res[, gene_set_name := factor(x = gene_set_name, levels = order)]

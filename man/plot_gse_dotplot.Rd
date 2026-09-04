@@ -9,7 +9,9 @@ plot_gse_dotplot(
   size_range = c(2, 5),
   viridis_option = "D",
   direction = -1,
-  .verbose = TRUE
+  max_terms = NULL,
+  .verbose = TRUE,
+  ...
 )
 }
 \arguments{
@@ -24,7 +26,14 @@ dots in the plot.}
 
 \item{direction}{\code{1} or \code{-1}. The direction in the colour palette.}
 
+\item{max_terms}{Optional integer. Show only the this many most significant
+gene sets. Applied per target set when several were tested. Defaults to
+\code{NULL}, i.e. everything that passed the enrichment threshold.}
+
 \item{.verbose}{Boolean. Controls verbosity of the function.}
+
+\item{...}{Further parameters to forward to
+\code{\link[=wrap_and_truncate]{wrap_and_truncate()}}, which shortens the gene set labels.}
 }
 \value{
 If the output of \code{\link[bixverse:gse_hypergeometric_list]{bixverse::gse_hypergeometric_list()}} was provided,
