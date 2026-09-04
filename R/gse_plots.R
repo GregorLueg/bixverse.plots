@@ -10,7 +10,8 @@
 #' single plot and in the latter case a list of plots per target set.
 #'
 #' @param res data.table with the enrichment results. Needs to have the columns
-#' `c("hits", "target_set_lengths", "gene_set_name", "fdr")`.
+#' `c("hits", "target_set_lengths", "gene_set_name", "gene_set_lengths",
+#' "fdr")`.
 #' @param size_range Numerical vector of size 2. Defines the size range for the
 #' dots in the plot.
 #' @param viridis_option String. The option to forward to
@@ -33,7 +34,13 @@ plot_gse_dotplot <- function(
   checkmate::assertDataTable(res)
   checkmate::assertNames(
     names(res),
-    must.include = c("hits", "target_set_lengths", "gene_set_name", "fdr")
+    must.include = c(
+      "hits",
+      "target_set_lengths",
+      "gene_set_name",
+      "gene_set_lengths",
+      "fdr"
+    )
   )
   checkmate::qassert(size_range, "N2")
   checkmate::assertChoice(viridis_option, LETTERS[1:8])
@@ -83,7 +90,8 @@ plot_gse_dotplot <- function(
 #' Helper to generate a GSE dot plot
 #'
 #' @param res data.table with the enrichment results. Needs to have the columns
-#' `c("hits", "target_set_lengths", "gene_set_name", "fdr")`.
+#' `c("hits", "target_set_lengths", "gene_set_name", "gene_set_lengths",
+#' "fdr")`.
 #' @param size_range Numerical vector of size 2. Defines the size range for the
 #' dots in the plot.
 #' @param viridis_option String. The option to forward to
@@ -105,7 +113,13 @@ helper_gse_dot_plot <- function(
   checkmate::assertDataTable(res)
   checkmate::assertNames(
     names(res),
-    must.include = c("hits", "target_set_lengths", "gene_set_name", "fdr")
+    must.include = c(
+      "hits",
+      "target_set_lengths",
+      "gene_set_name",
+      "gene_set_lengths",
+      "fdr"
+    )
   )
   checkmate::qassert(size_range, "N2")
   checkmate::assertChoice(viridis_option, LETTERS[1:8])
@@ -251,7 +265,9 @@ enrichment_map_oae <- function(
 #' for subsequent visualisations.
 #'
 #' @param res data.table with the enrichment results. Needs to have the columns
-#' `c("geneset_name", "nes", "fdr")`.
+#' `c("pathway_name", "nes", "fdr")`, i.e. the output of
+#' [bixverse::calc_fgsea()] or [bixverse::calc_blitzgsea()]. A `geneset_name`
+#' column is accepted with a deprecation warning.
 #' @param threshold Numeric. The FDR threshold you wish to filter for.
 #' @param pathways Named list. The original pathway list used for the
 #' calculation of the overenrichment analysis.
@@ -281,9 +297,19 @@ enrichment_map_gsea <- function(
 ) {
   # checks
   checkmate::assertDataTable(res)
+  # `geneset_name` was the original contract, but no bixverse GSEA function ever
+  # emitted it. They all return `pathway_name`.
+  if ("geneset_name" %in% names(res) && !"pathway_name" %in% names(res)) {
+    warning(paste(
+      "`geneset_name` is deprecated as a column name.",
+      "Please use `pathway_name` instead."
+    ))
+    res <- data.table::copy(res)
+    data.table::setnames(res, "geneset_name", "pathway_name")
+  }
   checkmate::assertNames(
     names(res),
-    must.include = c("geneset_name", "nes", "fdr")
+    must.include = c("pathway_name", "nes", "fdr")
   )
   checkmate::qassert(threshold, "N[0, 1]")
   checkmate::assertList(pathways, types = "character", names = "named")
@@ -295,7 +321,7 @@ enrichment_map_gsea <- function(
   res <- res[fdr <= threshold]
 
   # calculate similarities
-  enriched_gs <- res[["geneset_name"]]
+  enriched_gs <- res[["pathway_name"]]
   edges <- data.table::setDT(bixverse::rs_set_similarity_list(
     list = pathways[enriched_gs],
     overlap_coefficient = overlap_coefficient
@@ -326,7 +352,7 @@ enrichment_map_gsea <- function(
   )
 
   igraph::V(g)$nes <- res[
-    match(enriched_gs, geneset_name),
+    match(enriched_gs, pathway_name),
     nes
   ]
 
@@ -356,7 +382,7 @@ enrichment_map_gsea <- function(
 #' include no matter what.
 #' @param adaptive_thresholds Named numeric. The names indicate the community
 #' size and the values how many pathways per community to show. An example would
-#' be `c(15 = 3, 5 = 2, 2 = 1, 1 = 0)`
+#' be `c("15" = 3, "5" = 2, "2" = 1, "1" = 0)`, which is also the default.
 #' @param font_size Numeric. Font size of the labels on top of the enrichment
 #' map.
 #' @param ... Other parameters you wish to forward to
@@ -517,8 +543,9 @@ plot_enrichment_map_visnetwork <- function(g) {
 
   if (color_type == "nes") {
     max_abs <- max(abs(color_values))
+    # same direction as plot_enrichment_map_ggraph: positive NES red
     colour_palette <- scales::col_numeric(
-      palette = c("darkred", "white", "darkblue"),
+      palette = c("#235070", "white", "#8b3a2b"),
       domain = c(-max_abs, max_abs)
     )
     color_label <- "NES"

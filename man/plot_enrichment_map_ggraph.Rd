@@ -29,7 +29,7 @@ include no matter what.}
 
 \item{adaptive_thresholds}{Named numeric. The names indicate the community
 size and the values how many pathways per community to show. An example would
-be \verb{c(15 = 3, 5 = 2, 2 = 1, 1 = 0)}}
+be \code{c("15" = 3, "5" = 2, "2" = 1, "1" = 0)}, which is also the default.}
 
 \item{font_size}{Numeric. Font size of the labels on top of the enrichment
 map.}

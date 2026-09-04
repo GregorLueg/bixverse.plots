@@ -13,7 +13,7 @@ helper_gse_dot_plot(
 }
 \arguments{
 \item{res}{data.table with the enrichment results. Needs to have the columns
-\code{c("hits", "target_set_lengths", "gene_set_name", "fdr")}.}
+\code{c("hits", "target_set_lengths", "gene_set_name", "gene_set_lengths", "fdr")}.}
 
 \item{size_range}{Numerical vector of size 2. Defines the size range for the
 dots in the plot.}

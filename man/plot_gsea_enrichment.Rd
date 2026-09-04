@@ -29,10 +29,14 @@ added to the plot.}
 
 \item{gsea_param}{Numeric. Defaults to \code{1}.}
 
-\item{tick_size}{Numeric. The tick size. Defaults ot \code{0.2}.}
+\item{tick_size}{Numeric. The tick size. Defaults to \code{0.2}.}
 
-\item{text_size}{Numeric. The text size. Defaults ot \code{8}. Only relevant when
+\item{text_size}{Numeric. The text size. Defaults to \code{5}. Only relevant when
 \code{gsea_results} is provided.}
+}
+\value{
+A named list of \code{ggplot} objects, one per element of
+\code{pathways_of_interest} that survived the size filters.
 }
 \description{
 Helper function to create the classical GSEA plots for a set of pathways

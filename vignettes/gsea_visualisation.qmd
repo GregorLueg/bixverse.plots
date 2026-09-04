@@ -1,0 +1,347 @@
+---
+title: "Visualising GSEA results"
+date: last-modified
+date-format: YYYY-MM-DD
+vignette: >
+  %\VignetteIndexEntry{gsea_visualisation}
+  %\VignetteEngine{quarto::html}
+  %\VignetteEncoding{UTF-8}
+knitr:
+  opts_chunk:
+    collapse: true
+    comment: '#>'
+author:
+  - name: "Gregor Lueg"
+---
+
+## Intro
+
+`bixverse` gives you ranked gene set enrichment through `calc_fgsea()` and
+`calc_blitzgsea()`. This vignette covers what to do with the results: running
+enrichment curves, enrichment maps, and the calibration diagnostics that only
+blitzGSEA has.
+
+For the methods themselves, see the
+[gene set enrichment vignette](https://gregorlueg.github.io/bixverse/articles/gse_methods.html)
+in the parent package. This one assumes you already have results in hand.
+
+```{r}
+#| label: setup
+library(bixverse)
+library(bixverse.plots)
+library(data.table)
+library(ggplot2)
+library(magrittr)
+```
+
+## The data
+
+`fgsea` ships a mouse ranked list and a set of Reactome pathways. 12,000 genes,
+586 pathways, and enough real signal to make the plots worth looking at.
+
+```{r}
+#| label: data
+#| eval: !expr requireNamespace("fgsea", quietly = TRUE)
+data(examplePathways, package = "fgsea")
+data(exampleRanks, package = "fgsea")
+
+stats <- sort(exampleRanks, decreasing = TRUE)
+
+gsea_res <- calc_fgsea(
+  stats = stats,
+  pathways = examplePathways,
+  gsea_params = params_gsea(min_size = 15L)
+)
+
+head(gsea_res[, .(pathway_name, es, nes, pvals, fdr)])
+```
+
+## Enrichment plots
+
+`plot_gsea_enrichment()` draws the classical GSEA figure: the running
+enrichment score across the ranked list, a rug of where the pathway genes sit,
+and the ranked statistic underneath. It returns a **named list**, one ggplot per
+pathway, so you can plot a handful in one call.
+
+```{r}
+#| label: enrichment-plain
+#| fig-cap: "Running enrichment score for the top two hits."
+top_pathways <- gsea_res[1:2, pathway_name]
+
+plots <- plot_gsea_enrichment(
+  stats = stats,
+  pathways = examplePathways,
+  pathways_of_interest = top_pathways
+)
+
+plots[[1]]
+```
+
+Hand it the results table as well and it annotates each panel with the NES and
+FDR. Worth doing: a running score curve on its own tells you the shape of the
+enrichment but nothing about whether it is significant.
+
+```{r}
+#| label: enrichment-annotated
+#| fig-cap: "Same pathway, now with NES and FDR from the results table."
+plots <- plot_gsea_enrichment(
+  stats = stats,
+  pathways = examplePathways,
+  pathways_of_interest = top_pathways,
+  gsea_results = gsea_res
+)
+
+plots[[1]]
+```
+
+**Key arguments:**
+
+| Argument | Description |
+| --- | --- |
+| `stats` | Named numeric vector of the gene level statistic. Sort it descending. |
+| `pathways` | The full named list you ran the enrichment on, not just the ones you are plotting. |
+| `pathways_of_interest` | Which pathways to draw. Every one has to be in `names(pathways)`. |
+| `gsea_results` | Optional. Needs `pathway_name`, `nes` and `fdr`, which is what `calc_fgsea()` and `calc_blitzgsea()` both return. |
+| `tick_size` | Height of the rug ticks. |
+| `text_size` | Size of the NES/FDR annotation. Only does anything when `gsea_results` is given. |
+
+Note the size filter: the function drops pathways with fewer than three genes
+present in `stats`, and they disappear from the returned list without comment.
+If you get back fewer plots than you asked for, that is why.
+
+**Extracting the plotting data**
+
+Alternatively, you can pull the underlying data out and build your own plot.
+`get_gsea_enrichment_data()` returns the curve, the tick positions and the key
+points per pathway.
+
+```{r}
+#| label: enrichment-data
+enrichment_data <- get_gsea_enrichment_data(
+  stats = stats,
+  pathways = examplePathways,
+  pathways_of_interest = top_pathways,
+  gsea_results = gsea_res
+)
+
+str(enrichment_data[[1]], max.level = 1)
+
+head(enrichment_data[[1]]$curve_dt)
+```
+
+## Enrichment maps
+
+Ranked enrichment on a library like Reactome gives you a lot of hits that are
+mostly the same genes wearing different names. An enrichment map makes that
+redundancy visible: gene sets become nodes, similarity between them becomes
+edges, and Louvain clustering groups the ones that are telling you the same
+thing.
+
+`enrichment_map_gsea()` builds the `igraph`. It takes `calc_fgsea()` output
+directly.
+
+```{r}
+#| label: enrichment-map-igraph
+enrichment_map <- enrichment_map_gsea(
+  res = gsea_res,
+  threshold = 1e-4,
+  pathways = examplePathways,
+  min_sim = 0.2,
+  resolution = 1.0
+)
+
+enrichment_map
+```
+
+Nodes are sized by `log10` of the gene set size and coloured by NES. The graph
+carries its own layout, so the two renderers below agree on where things sit.
+
+```{r}
+#| label: enrichment-map-ggraph
+#| fig-cap: "Enrichment map, adaptive labelling."
+plot_enrichment_map_ggraph(enrichment_map, label_nodes = "adaptive")
+```
+
+Labelling is the part you will actually tune. `"adaptive"` scales the number of
+labels to the community size, which keeps big clusters readable; `"all"` labels
+everything and works up to maybe thirty nodes; an integer takes the top N by
+node size; `NULL` drops labels entirely.
+
+```{r}
+#| label: enrichment-map-labels
+#| fig-cap: "Top five nodes by size, everything else left bare."
+plot_enrichment_map_ggraph(enrichment_map, label_nodes = 5L)
+```
+
+Long Reactome names need wrapping. `...` goes straight to
+`wrap_and_truncate()`, so `width` and `max_lines` are set when you build the
+graph, not when you plot it.
+
+```{r}
+#| label: enrichment-map-wrap
+#| fig-cap: "Shorter labels via wrap_and_truncate()."
+enrichment_map_short <- enrichment_map_gsea(
+  res = gsea_res,
+  threshold = 1e-4,
+  pathways = examplePathways,
+  width = 25L,
+  max_lines = 2L
+)
+
+plot_enrichment_map_ggraph(enrichment_map_short, label_nodes = "all")
+```
+
+For anything beyond a handful of nodes the static version stops being useful and
+you want to hover. `plot_enrichment_map_visnetwork()` takes the same graph and
+gives you an interactive widget, same colours and same layout.
+
+```{r}
+#| label: enrichment-map-visnetwork
+plot_enrichment_map_visnetwork(enrichment_map)
+```
+
+## blitzGSEA
+
+blitzGSEA calibrates a gamma null once against the signature and then reads
+every pathway's p-value off the fitted tail. Cost per pathway collapses, which
+is what makes it worth using on large libraries. The results table has the same
+`pathway_name`, `nes` and `fdr` columns as `calc_fgsea()`, so everything above
+works on it unchanged.
+
+```{r}
+#| label: blitz-run
+#| eval: !expr requireNamespace("fgsea", quietly = TRUE)
+blitz_params <- params_blitzgsea(min_size = 15L)
+
+null_model <- blitzgsea_calibrate(
+  stats = stats,
+  blitz_params = blitz_params
+)
+
+blitz_res <- calc_blitzgsea(
+  stats = stats,
+  pathways = examplePathways,
+  blitz_params = blitz_params,
+  null_model = null_model
+)
+
+head(blitz_res[, .(pathway_name, es, nes, pvals, fdr, size)])
+```
+
+### Centre your stats before drawing the curve
+
+One trap. `params_blitzgsea()` defaults to `centre = TRUE`, and the enrichment
+score is not invariant to an offset: the walk weights each gene by `|stat|^p`,
+so shifting the statistic changes the score. `plot_gsea_enrichment()` draws the
+uncentred walk. Hand it the raw ranks next to `calc_blitzgsea()` output and the
+curve peaks somewhere other than the `es` in the table.
+
+Subtract the mean and they line up exactly:
+
+```{r}
+#| label: blitz-centring
+top_blitz <- blitz_res[1, pathway_name]
+
+peak_of <- function(s) {
+  d <- get_gsea_enrichment_data(
+    stats = s,
+    pathways = examplePathways,
+    pathways_of_interest = top_blitz
+  )
+  kp <- d[[1]]$key_points
+  kp[which.max(abs(kp[c("pos_es", "neg_es")]))]
+}
+
+c(
+  reported = blitz_res[1, es],
+  raw = peak_of(stats),
+  centred = peak_of(stats - mean(stats))
+)
+```
+
+So centre first:
+
+```{r}
+#| label: blitz-enrichment
+#| fig-cap: "blitzGSEA hit, drawn on the centred signature."
+plot_gsea_enrichment(
+  stats = stats - mean(stats),
+  pathways = examplePathways,
+  pathways_of_interest = top_blitz,
+  gsea_results = blitz_res
+)[[1]]
+```
+
+Running `calc_fgsea()` instead? Then leave the stats alone. Only blitzGSEA
+centres.
+
+### Is the calibration any good?
+
+Everything blitzGSEA reports rests on the gamma fits describing the permutation
+scores. `plot_blitzgsea_null()` shows the smoothed parameters across the anchor
+grid, one line per tail, with the Kolmogorov-Smirnov goodness-of-fit p-values in
+the subtitle.
+
+```{r}
+#| label: blitz-null
+#| fig-cap: "Smoothed gamma parameters across the anchor grid."
+#| fig-height: 7
+plot_blitzgsea_null(null_model)
+```
+
+What you want is smooth curves and KS p-values comfortably above 0.05. Sharp
+kinks or a fit that sags at one end of the size range mean the tails are
+misbehaving for gene sets of that size, and the p-values there are optimistic.
+More permutations is the usual fix. `calc_blitzgsea()` warns on its own when the
+mean KS p-value drops below 0.05, but the warning is one number for the whole
+grid and this plot tells you *where* it went wrong.
+
+The calibration depends only on the signature, never on the library. Score five
+libraries against one ranking and you pay for this once, which is why
+`blitzgsea_calibrate()` hands the null back as a plain list you can `saveRDS()`.
+
+### Where the p-value comes from
+
+`plot_blitzgsea_es_null()` puts the observed score on the fitted null at that
+pathway's size, with the tail beyond it shaded. That shaded area, doubled, is
+the p-value in the results table.
+
+```{r}
+#| label: blitz-es-null
+#| fig-cap: "Observed enrichment score against the fitted null."
+es_plots <- plot_blitzgsea_es_null(
+  null_model = null_model,
+  res = blitz_res,
+  pathways_of_interest = blitz_res[1:2, pathway_name]
+)
+
+es_plots[[1]]
+```
+
+The gamma parameters are interpolated log-linearly from the anchor grid to the
+pathway's exact size, matching what the Rust does when it scores. This is the
+fitted density, not a histogram: the permutation draws never leave Rust, so
+there is no empirical null to overlay on it.
+
+A non-significant pathway looks like what you would expect, the score sitting
+in the body of the distribution:
+
+```{r}
+#| label: blitz-es-null-boring
+#| fig-cap: "A pathway that is not going anywhere."
+boring <- blitz_res[fdr > 0.5][1, pathway_name]
+
+plot_blitzgsea_es_null(
+  null_model = null_model,
+  res = blitz_res,
+  pathways_of_interest = boring
+)[[1]]
+```
+
+## Related
+
+Over-representation results (hypergeometric tests) get their own plotting
+helpers, covered in the
+[ORA vignette](https://gregorlueg.github.io/bixverse.plots/articles/ora_visualisation.html).
+Both vignettes use the same dataset, so the enrichment maps there are directly
+comparable to the ones here.

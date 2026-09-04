@@ -18,9 +18,12 @@
 #' provided, the FDR and NES for the given pathway of interest will be also
 #' added to the plot.
 #' @param gsea_param Numeric. Defaults to `1`.
-#' @param tick_size Numeric. The tick size. Defaults ot `0.2`.
-#' @param text_size Numeric. The text size. Defaults ot `8`. Only relevant when
+#' @param tick_size Numeric. The tick size. Defaults to `0.2`.
+#' @param text_size Numeric. The text size. Defaults to `5`. Only relevant when
 #' `gsea_results` is provided.
+#'
+#' @returns A named list of `ggplot` objects, one per element of
+#' `pathways_of_interest` that survived the size filters.
 #'
 #' @import ggplot2
 #'
@@ -145,12 +148,26 @@ plot_gsea_enrichment <- function(
 #' @param gsea_results Optional data.table with the bixverse GSEA results. If
 #' provided, the FDR and NES for the given pathway of interest will be also
 #' added to the plot.
-#' @param gsea_param Numeric. Defaults to `1`
+#' @param gsea_param Numeric. Defaults to `1`.
 #'
-#' @return A list of `gsea_par_plot_data`
+#' @returns A named list of `gsea_par_plot_data` objects, one per pathway that
+#' survived the size filters. Each one is a list with the following elements:
+#' \itemize{
+#'  \item curve_dt - data.table with the running enrichment score, columns
+#'  `rank` and `ES`.
+#'  \item ticks_dt - data.table with the positions of the pathway genes,
+#'  columns `rank` and `stat`.
+#'  \item stats_dt - data.table with the ranked statistic, columns `rank` and
+#'  `stat`.
+#'  \item key_points - Named numeric with `pos_es`, `neg_es` and `spread_es`,
+#'  plus `nes` and `fdr` if `gsea_results` was provided.
+#'  \item additional_label - String or `NULL`. The NES/FDR annotation.
+#' }
 #'
 #' @importFrom zeallot `%<-%`
 #' @import data.table
+#'
+#' @export
 get_gsea_enrichment_data <- function(
   stats,
   pathways,

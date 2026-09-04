@@ -17,7 +17,9 @@ enrichment_map_gsea(
 }
 \arguments{
 \item{res}{data.table with the enrichment results. Needs to have the columns
-\code{c("geneset_name", "nes", "fdr")}.}
+\code{c("pathway_name", "nes", "fdr")}, i.e. the output of
+\code{\link[bixverse:calc_fgsea]{bixverse::calc_fgsea()}} or \code{\link[bixverse:calc_blitzgsea]{bixverse::calc_blitzgsea()}}. A \code{geneset_name}
+column is accepted with a deprecation warning.}
 
 \item{threshold}{Numeric. The FDR threshold you wish to filter for.}
 

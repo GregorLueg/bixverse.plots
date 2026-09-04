@@ -166,7 +166,7 @@ gsea_map_pathways <- list(
   "pathway_g" = letters[22:24]
 )
 gsea_result <- data.table::data.table(
-  geneset_name = c("pathway_c", "pathway_d", "pathway_e", "pathway_f"),
+  pathway_name = c("pathway_c", "pathway_d", "pathway_e", "pathway_f"),
   nes = c(2.1, 1.8, -1.9, -2.3),
   fdr = c(0.01, 0.02, 0.015, 0.005)
 )
@@ -198,6 +198,24 @@ expect_equal(
   enrichment_map_igraph_gsea$color_type,
   "nes",
   info = "GSEA graph has correct color_type"
+)
+
+# deprecated geneset_name column still works, but warns
+gsea_result_old <- data.table::copy(gsea_result)
+data.table::setnames(gsea_result_old, "pathway_name", "geneset_name")
+
+expect_warning(
+  current = enrichment_map_gsea(
+    res = gsea_result_old,
+    threshold = 1.0,
+    pathways = gsea_map_pathways
+  ),
+  info = "deprecated geneset_name column warns"
+)
+
+expect_true(
+  "geneset_name" %in% names(gsea_result_old),
+  info = "deprecated path does not rename the caller's table"
 )
 
 ### ggraph - OAE ---------------------------------------------------------------
