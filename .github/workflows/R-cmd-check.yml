@@ -20,7 +20,6 @@ jobs:
       gpu: false
       windows: true
       linux-runner: ubuntu-latest
-      # bixverse and manifoldsR come from here as binaries. This is the only
-      # thing resolving them, there is no Remotes fallback.
+      macos-x86: true
       extra-repositories: https://gregorlueg.r-universe.dev
     secrets: inherit
