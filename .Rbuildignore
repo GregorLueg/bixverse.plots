@@ -6,5 +6,7 @@
 ^pkgdown$
 ^\.github$
 ^vignettes$
-^doc$
-^Meta$
+^[.]?air[.]toml$
+^\.vscode$
+^\.claude$
+^renovate\.json$
