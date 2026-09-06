@@ -210,11 +210,11 @@ enrichment_map <- enrichment_map_oae(
 )
 
 enrichment_map
-#> IGRAPH 19de90c UNW- 24 66 -- 
+#> IGRAPH db71997 UNW- 24 66 -- 
 #> + attr: layout (g/n), color_type (g/c), name (v/c), size (v/n),
 #> | community (v/n), label (v/c), neg_log10_fdr (v/n), color_value (v/n),
 #> | weight (e/n)
-#> + edges from 19de90c (vertex names):
+#> + edges from db71997 (vertex names):
 #> [1] Cell Cycle Checkpoints                             --Activation of ATR in response to replication stress
 #> [2] DNA strand elongation                              --Activation of ATR in response to replication stress
 #> [3] G2 M Checkpoints                                   --Activation of ATR in response to replication stress

@@ -147,11 +147,11 @@ enrichment_data <- get_gsea_enrichment_data(
 str(enrichment_data[[1]], max.level = 1)
 #> List of 5
 #>  $ curve_dt        :Classes 'data.table' and 'data.frame':   740 obs. of  2 variables:
-#>   ..- attr(*, ".internal.selfref")=<pointer: 0x555d8f78fb80> 
+#>   ..- attr(*, ".internal.selfref")=<pointer: 0x562488e05b80> 
 #>  $ ticks_dt        :Classes 'data.table' and 'data.frame':   369 obs. of  2 variables:
-#>   ..- attr(*, ".internal.selfref")=<pointer: 0x555d8f78fb80> 
+#>   ..- attr(*, ".internal.selfref")=<pointer: 0x562488e05b80> 
 #>  $ stats_dt        :Classes 'data.table' and 'data.frame':   12000 obs. of  2 variables:
-#>   ..- attr(*, ".internal.selfref")=<pointer: 0x555d8f78fb80> 
+#>   ..- attr(*, ".internal.selfref")=<pointer: 0x562488e05b80> 
 #>  $ key_points      : Named num [1:5] 5.39e-01 -3.38e-03 5.42e-01 2.67 1.24e-23
 #>   ..- attr(*, "names")= chr [1:5] "pos_es" "neg_es" "spread_es" "nes" ...
 #>  $ additional_label: logi TRUE
@@ -192,11 +192,11 @@ enrichment_map <- enrichment_map_gsea(
 )
 
 enrichment_map
-#> IGRAPH 3826639 UNW- 36 172 -- 
+#> IGRAPH 1fa8b5e UNW- 36 172 -- 
 #> + attr: layout (g/n), color_type (g/c), name (v/c), size (v/n),
 #> | community (v/n), label (v/c), nes (v/n), color_value (v/n), weight
 #> | (e/n)
-#> + edges from 3826639 (vertex names):
+#> + edges from 1fa8b5e (vertex names):
 #> [1] 5990977_DNA_Replication_Pre-Initiation--5990978_M_G1_Transition               
 #> [2] 5990981_DNA_Replication               --5990977_DNA_Replication_Pre-Initiation
 #> [3] 5990977_DNA_Replication_Pre-Initiation--5990983_Regulation_of_DNA_replication 
