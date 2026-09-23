@@ -18,12 +18,14 @@ params_volcano(
 
 - x_axis:
 
-  String. Column holding the effect size (e.g. `"log2FC"`).
+  String. Column holding the effect size (e.g. `"log2FC"`). Defaults to
+  `"log2FC"`.
 
 - y_axis:
 
   String. Column holding the raw significance values (e.g. `"FDR"`,
   `"fdr"`, `"q_value"`). The function applies `-log10()` internally.
+  Defaults to `"FDR"`.
 
 - colour:
 
@@ -42,4 +44,22 @@ params_volcano(
 
 ## Value
 
-A list with the parameters for usage in subsequent functions.
+A named list with the following elements:
+
+- x_axis - String. Column holding the effect size (e.g. `"log2FC"`).
+  Defaults to `"log2FC"`.
+
+- y_axis - String. Column holding the raw significance values (e.g.
+  `"FDR"`, `"fdr"`, `"q_value"`). The function applies `-log10()`
+  internally. Defaults to `"FDR"`.
+
+- colour - String or `NULL`. Column to colour points by (continuous
+  gradient). If `NULL`, points are coloured by `x_axis`. Defaults to
+  `NULL`.
+
+- label_column - String or `NULL`. Column holding feature labels.
+  Required if `top_features_to_label` is set. Defaults to `NULL`.
+
+- top_features_to_label - Integer or `NULL`. Number of features to
+  label, ranked by `y_axis` ascending (most significant first). Defaults
+  to `NULL`.

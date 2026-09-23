@@ -19,30 +19,46 @@ params_plots(
 
 - width:
 
-  Float. Width of the plot.
+  Numeric. Width of the plot. Defaults to `5.0`.
 
 - height:
 
-  Float. Height of the plot.
+  Numeric. Height of the plot. Defaults to `5.0`.
 
 - file_type:
 
-  String. One of `c(".png", "pdf")`. Plot type to save. Might be
-  expanded to other file types. Defaults to `".png"`
+  String. Plot type to save. Might be expanded to other file types. One
+  of `c(".png", ".pdf")`. Defaults to `".png"`.
 
 - unit:
 
-  String. One of `c("in", "px", "cm")`. Unit type for `width` and
-  `height`. Defaults to `"in"`.
+  String. Unit type for `width` and `height`. One of
+  `c("in", "px", "cm")`. Defaults to `"in"`.
 
 - res:
 
-  Integer. Resolution for PNGs.
+  Integer. Resolution for PNGs. Defaults to `450L`.
 
 - create_dir:
 
-  Boolean. Shall the plot directory be generated recursively.
+  Boolean. Shall the plot directory be generated recursively. Defaults
+  to `TRUE`.
 
 ## Value
 
-A list with the parameters for usage in subsequent functions.
+A named list with the following elements:
+
+- width - Numeric. Width of the plot. Defaults to `5.0`.
+
+- height - Numeric. Height of the plot. Defaults to `5.0`.
+
+- file_type - String. Plot type to save. Might be expanded to other file
+  types. One of `c(".png", ".pdf")`. Defaults to `".png"`.
+
+- unit - String. Unit type for `width` and `height`. One of
+  `c("in", "px", "cm")`. Defaults to `"in"`.
+
+- res - Integer. Resolution for PNGs. Defaults to `450L`.
+
+- create_dir - Boolean. Shall the plot directory be generated
+  recursively. Defaults to `TRUE`.

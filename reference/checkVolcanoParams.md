@@ -1,7 +1,7 @@
-# Check volcano plot parameters
+# Check volcano params
 
-Checkmate extension for checking the volcano plot parameters. If `dt` is
-supplied, also verifies that the referenced columns exist in it.
+Checkmate extension for the output of
+[`params_volcano()`](https://gregorlueg.github.io/bixverse.plots/reference/params_volcano.md).
 
 ## Usage
 
@@ -13,12 +13,13 @@ checkVolcanoParams(x, dt = NULL)
 
 - x:
 
-  The list to check/assert.
+  The object to check.
 
 - dt:
 
-  Optional data.table/data.frame to cross-check column names against.
+  Extra context for the check.
 
 ## Value
 
-`TRUE` if the check was successful, otherwise an error message.
+`TRUE` if the check was successful, otherwise a checkmate-style error
+string.

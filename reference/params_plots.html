@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">bixverse.plots</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.6</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.7</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -65,35 +65,42 @@
 
 
 <dl><dt id="arg-width">width<a class="anchor" aria-label="anchor" href="#arg-width"></a></dt>
-<dd><p>Float. Width of the plot.</p></dd>
+<dd><p>Numeric. Width of the plot. Defaults to <code>5.0</code>.</p></dd>
 
 
 <dt id="arg-height">height<a class="anchor" aria-label="anchor" href="#arg-height"></a></dt>
-<dd><p>Float. Height of the plot.</p></dd>
+<dd><p>Numeric. Height of the plot. Defaults to <code>5.0</code>.</p></dd>
 
 
 <dt id="arg-file-type">file_type<a class="anchor" aria-label="anchor" href="#arg-file-type"></a></dt>
-<dd><p>String. One of <code>c(".png", "pdf")</code>. Plot type to save. Might
-be expanded to other file types. Defaults to <code>".png"</code></p></dd>
+<dd><p>String. Plot type to save. Might be expanded to other file
+types. One of <code>c(".png", ".pdf")</code>. Defaults to <code>".png"</code>.</p></dd>
 
 
 <dt id="arg-unit">unit<a class="anchor" aria-label="anchor" href="#arg-unit"></a></dt>
-<dd><p>String. One of <code>c("in", "px", "cm")</code>. Unit type for <code>width</code> and
-<code>height</code>. Defaults to <code>"in"</code>.</p></dd>
+<dd><p>String. Unit type for <code>width</code> and <code>height</code>. One of <code>c("in", "px", "cm")</code>. Defaults to <code>"in"</code>.</p></dd>
 
 
 <dt id="arg-res">res<a class="anchor" aria-label="anchor" href="#arg-res"></a></dt>
-<dd><p>Integer. Resolution for PNGs.</p></dd>
+<dd><p>Integer. Resolution for PNGs. Defaults to <code>450L</code>.</p></dd>
 
 
 <dt id="arg-create-dir">create_dir<a class="anchor" aria-label="anchor" href="#arg-create-dir"></a></dt>
-<dd><p>Boolean. Shall the plot directory be generated recursively.</p></dd>
+<dd><p>Boolean. Shall the plot directory be generated recursively.
+Defaults to <code>TRUE</code>.</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A list with the parameters for usage in subsequent functions.</p>
-    </div>
+    <p>A named list with the following elements:</p><ul><li><p>width - Numeric. Width of the plot. Defaults to <code>5.0</code>.</p></li>
+<li><p>height - Numeric. Height of the plot. Defaults to <code>5.0</code>.</p></li>
+<li><p>file_type - String. Plot type to save. Might be expanded to other file
+types. One of <code>c(".png", ".pdf")</code>. Defaults to <code>".png"</code>.</p></li>
+<li><p>unit - String. Unit type for <code>width</code> and <code>height</code>. One of <code>c("in", "px", "cm")</code>. Defaults to <code>"in"</code>.</p></li>
+<li><p>res - Integer. Resolution for PNGs. Defaults to <code>450L</code>.</p></li>
+<li><p>create_dir - Boolean. Shall the plot directory be generated
+recursively. Defaults to <code>TRUE</code>.</p></li>
+</ul></div>
 
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>

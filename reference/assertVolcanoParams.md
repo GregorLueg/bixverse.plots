@@ -1,6 +1,6 @@
-# Assert volcano plot parameters
+# Assert volcano params
 
-Checkmate extension for asserting the volcano plot parameters.
+Assert volcano params
 
 ## Usage
 
@@ -12,16 +12,15 @@ assertVolcanoParams(x, dt = NULL, .var.name = checkmate::vname(x), add = NULL)
 
 - x:
 
-  The list to check/assert.
+  The object to check.
 
 - dt:
 
-  Optional data.table/data.frame to cross-check column names against.
+  Extra context for the check.
 
 - .var.name:
 
-  Name of the checked object to print in assertions. Defaults to the
-  heuristic implemented in checkmate.
+  Name of the checked object to print in assertions.
 
 - add:
 

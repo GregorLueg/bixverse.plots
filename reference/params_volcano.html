@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">bixverse.plots</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.6</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.7</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -64,12 +64,14 @@
 
 
 <dl><dt id="arg-x-axis">x_axis<a class="anchor" aria-label="anchor" href="#arg-x-axis"></a></dt>
-<dd><p>String. Column holding the effect size (e.g. <code>"log2FC"</code>).</p></dd>
+<dd><p>String. Column holding the effect size (e.g. <code>"log2FC"</code>).
+Defaults to <code>"log2FC"</code>.</p></dd>
 
 
 <dt id="arg-y-axis">y_axis<a class="anchor" aria-label="anchor" href="#arg-y-axis"></a></dt>
 <dd><p>String. Column holding the raw significance values (e.g.
-<code>"FDR"</code>, <code>"fdr"</code>, <code>"q_value"</code>). The function applies <code>-log10()</code> internally.</p></dd>
+<code>"FDR"</code>, <code>"fdr"</code>, <code>"q_value"</code>). The function applies <code>-log10()</code> internally.
+Defaults to <code>"FDR"</code>.</p></dd>
 
 
 <dt id="arg-colour">colour<a class="anchor" aria-label="anchor" href="#arg-colour"></a></dt>
@@ -89,8 +91,19 @@ ranked by <code>y_axis</code> ascending (most significant first). Defaults to <c
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A list with the parameters for usage in subsequent functions.</p>
-    </div>
+    <p>A named list with the following elements:</p><ul><li><p>x_axis - String. Column holding the effect size (e.g. <code>"log2FC"</code>).
+Defaults to <code>"log2FC"</code>.</p></li>
+<li><p>y_axis - String. Column holding the raw significance values (e.g.
+<code>"FDR"</code>, <code>"fdr"</code>, <code>"q_value"</code>). The function applies <code>-log10()</code> internally.
+Defaults to <code>"FDR"</code>.</p></li>
+<li><p>colour - String or <code>NULL</code>. Column to colour points by (continuous
+gradient). If <code>NULL</code>, points are coloured by <code>x_axis</code>. Defaults to <code>NULL</code>.</p></li>
+<li><p>label_column - String or <code>NULL</code>. Column holding feature labels.
+Required if <code>top_features_to_label</code> is set. Defaults to <code>NULL</code>.</p></li>
+<li><p>top_features_to_label - Integer or <code>NULL</code>. Number of features to
+label, ranked by <code>y_axis</code> ascending (most significant first). Defaults to
+<code>NULL</code>.</p></li>
+</ul></div>
 
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
