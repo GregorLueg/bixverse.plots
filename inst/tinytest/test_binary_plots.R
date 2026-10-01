@@ -45,3 +45,30 @@ expect_error(
   current = plot_binary_heatmap(binary_mat * 1),
   info = "binary heatmap - numeric matrix is rejected"
 )
+
+p_annot <- plot_binary_heatmap(
+  binary_mat,
+  sample_groups = sample_groups,
+  group_annotation = c(g1 = "sensitive", g2 = "resistant")
+)
+
+# the first rect layer is the annotation strip
+annot_layer <- purrr::detect_index(
+  p_annot$layers,
+  \(l) inherits(l$geom, "GeomRect")
+)
+
+expect_equal(
+  current = sort(ggplot2::get_layer_data(p_annot, i = annot_layer)$fill),
+  target = sort(bx_colors("viridis", n = 2L)),
+  info = "binary heatmap - annotation strip gets one rect per label"
+)
+
+expect_error(
+  current = plot_binary_heatmap(
+    binary_mat,
+    sample_groups = sample_groups,
+    group_annotation = c(g1 = "sensitive")
+  ),
+  info = "binary heatmap - annotation must cover every sample group"
+)

@@ -10,6 +10,8 @@
 #' separated by white gaps. Groups get a thin colour strip with their labels
 #' written next to it. Sample and feature groups share one colour mapping, so a
 #' feature group with the same name as a sample group gets the same colour.
+#' `group_annotation` adds a second strip with a legend between the matrix and
+#' the sample group strip, e.g. the response group of each cell line.
 #'
 #' Filtering, ordering and binning happen in
 #' [bixverse::extract_binary_heatmap_data()]. If the samples were binned the
@@ -32,6 +34,11 @@
 #' @param group_gap Numeric between `[0, 0.1]`. Width of each gap between
 #' groups as fraction of the axis length. Applied per boundary, so with many
 #' groups keep it small. `0` removes the gaps.
+#' @param group_annotation Optional named character vector or factor mapping
+#' every sample group to a coarser label. Factor levels set the legend order.
+#' Ignored if there is only one sample group.
+#' @param annotation_colours Optional named character vector of colours for
+#' the `group_annotation` labels. `NULL` (default) uses viridis.
 #' @param palette String. Discrete palette for the group strips, see
 #' [bx_colors()].
 #' @param .verbose Boolean. Controls verbosity of the extraction.
@@ -49,6 +56,8 @@ plot_binary_heatmap <- function(
   heatmap_params = bixverse::params_binary_heatmap(),
   show_feature_labels = NULL,
   group_gap = 0.001,
+  group_annotation = NULL,
+  annotation_colours = NULL,
   palette = c("main", "sequential", "diverging", "viridis", "spectral"),
   .verbose = FALSE
 ) {
@@ -59,6 +68,17 @@ plot_binary_heatmap <- function(
   )
   checkmate::qassert(show_feature_labels, c("0", "B1"))
   checkmate::qassert(group_gap, "N1[0,0.1]")
+  checkmate::assert(
+    checkmate::checkNull(group_annotation),
+    checkmate::checkCharacter(group_annotation, any.missing = FALSE),
+    checkmate::checkFactor(group_annotation, any.missing = FALSE)
+  )
+  checkmate::assertCharacter(
+    annotation_colours,
+    any.missing = FALSE,
+    names = "unique",
+    null.ok = TRUE
+  )
   checkmate::assertChoice(palette, BX_PALETTES)
   checkmate::qassert(.verbose, "B1")
 
@@ -127,12 +147,19 @@ plot_binary_heatmap <- function(
   strip_y <- 0.03 * abs(y_min)
   show_col_strip <- nrow(col_blocks) > 1L
   show_row_strip <- nrow(row_blocks) > 1L
+  show_annot_strip <- show_col_strip && !is.null(group_annotation)
+  # the annotation strip sits right on top of the matrix and pushes the group
+  # strip up by one strip height
+  col_strip_offset <- if (show_annot_strip) strip_y else 0
 
   p <- ggplot() +
     raster_layers +
     coord_cartesian(
       xlim = c(if (show_row_strip) -strip_x * 1.5 else 0, x_max),
-      ylim = c(y_min, if (show_col_strip) strip_y * 1.5 else 0),
+      ylim = c(
+        y_min,
+        if (show_col_strip) strip_y * 1.5 + col_strip_offset else 0
+      ),
       expand = FALSE,
       clip = "off"
     ) +
@@ -147,21 +174,52 @@ plot_binary_heatmap <- function(
       bx_colors(palette, n = length(grp_levels)),
       grp_levels
     )
-    p <- p + scale_fill_manual(values = grp_cols, guide = "none")
   }
 
-  if (show_col_strip) {
-    col_blocks[, `:=`(ymin = strip_y * 0.5, ymax = strip_y * 1.5)]
+  if (show_annot_strip) {
+    checkmate::assertNames(
+      names(group_annotation),
+      must.include = as.character(col_blocks$group)
+    )
+    annot_map <- as.factor(group_annotation)
+    annot_cols <- annotation_colours %||%
+      stats::setNames(
+        bx_colors("viridis", n = nlevels(annot_map)),
+        levels(annot_map)
+      )
+    checkmate::assertNames(names(annot_cols), must.include = levels(annot_map))
+
+    # neighbouring groups with the same label merge into one rect
+    col_blocks[, annot := annot_map[as.character(group)]]
+    annot_runs <- col_blocks[,
+      .(xmin = min(xmin), xmax = max(xmax), annot = annot[1]),
+      by = .(run = data.table::rleid(annot))
+    ]
     p <- p +
       geom_rect(
-        data = col_blocks,
+        data = annot_runs,
         aes(
           xmin = xmin,
           xmax = xmax,
-          ymin = ymin,
-          ymax = ymax,
-          fill = as.character(group)
+          ymin = strip_y * 0.5,
+          ymax = strip_y * 1.5,
+          fill = annot
         )
+      ) +
+      scale_fill_manual(values = annot_cols, name = NULL, drop = TRUE) +
+      theme(legend.position = "bottom")
+  }
+
+  if (show_col_strip) {
+    col_blocks[, `:=`(
+      ymin = strip_y * 0.5 + col_strip_offset,
+      ymax = strip_y * 1.5 + col_strip_offset
+    )]
+    p <- p +
+      geom_rect(
+        data = col_blocks,
+        aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax),
+        fill = grp_cols[as.character(col_blocks$group)]
       ) +
       geom_text(
         data = col_blocks,
@@ -177,13 +235,8 @@ plot_binary_heatmap <- function(
     p <- p +
       geom_rect(
         data = row_blocks,
-        aes(
-          xmin = xmin,
-          xmax = xmax,
-          ymin = ymin,
-          ymax = ymax,
-          fill = as.character(group)
-        )
+        aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax),
+        fill = grp_cols[as.character(row_blocks$group)]
       ) +
       geom_text(
         data = row_blocks,

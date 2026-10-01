@@ -11,6 +11,8 @@ plot_binary_heatmap(
   heatmap_params = bixverse::params_binary_heatmap(),
   show_feature_labels = NULL,
   group_gap = 0.001,
+  group_annotation = NULL,
+  annotation_colours = NULL,
   palette = c("main", "sequential", "diverging", "viridis", "spectral"),
   .verbose = FALSE
 )
@@ -36,6 +38,13 @@ shown. \code{NULL} (default) shows them for up to 80 features.}
 groups as fraction of the axis length. Applied per boundary, so with many
 groups keep it small. \code{0} removes the gaps.}
 
+\item{group_annotation}{Optional named character vector or factor mapping
+every sample group to a coarser label. Factor levels set the legend order.
+Ignored if there is only one sample group.}
+
+\item{annotation_colours}{Optional named character vector of colours for
+the \code{group_annotation} labels. \code{NULL} (default) uses viridis.}
+
 \item{palette}{String. Discrete palette for the group strips, see
 \code{\link[=bx_colors]{bx_colors()}}.}
 
@@ -52,6 +61,8 @@ stays light no matter how many samples there are, and the blocks are
 separated by white gaps. Groups get a thin colour strip with their labels
 written next to it. Sample and feature groups share one colour mapping, so a
 feature group with the same name as a sample group gets the same colour.
+\code{group_annotation} adds a second strip with a legend between the matrix and
+the sample group strip, e.g. the response group of each cell line.
 
 Filtering, ordering and binning happen in
 \code{\link[bixverse:extract_binary_heatmap_data]{bixverse::extract_binary_heatmap_data()}}. If the samples were binned the
