@@ -78,10 +78,14 @@ Generate different single cell plots
   : Feature plot over an embedding
 - [`stacked_violin_plot_sc()`](https://gregorlueg.github.io/bixverse.plots/reference/stacked_violin_plot_sc.md)
   : Stacked violin plot of gene expression across groups
+- [`heatmap_plot_sc()`](https://gregorlueg.github.io/bixverse.plots/reference/heatmap_plot_sc.md)
+  : Heatmap of marker genes x cells across groups
 - [`feature_scatter_plot_sc()`](https://gregorlueg.github.io/bixverse.plots/reference/feature_scatter_plot_sc.md)
   : Scatter / hex plot of two features against each other
 - [`paga_plot_sc()`](https://gregorlueg.github.io/bixverse.plots/reference/paga_plot_sc.md)
   : PAGA abstracted graph over an embedding
+- [`plot_binary_heatmap()`](https://gregorlueg.github.io/bixverse.plots/reference/plot_binary_heatmap.md)
+  : Binary heatmap, e.g. SCENIC regulon on/off calls
 
 ## Geom extensions
 

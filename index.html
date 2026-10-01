@@ -29,7 +29,7 @@
 
     <a class="navbar-brand me-2" href="index.html">bixverse.plots</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.7</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.8</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -77,16 +77,76 @@
 </div>
 <p><a href="https://github.com/GregorLueg/bixverse.plots/blob/main/DESCRIPTION" class="external-link"><img src="https://img.shields.io/github/r-package/v/GregorLueg/bixverse.plots?label=R_package&amp;color=orange" alt="r_package"></a> <a href="https://gregorlueg.r-universe.dev/bixverse.plots" class="external-link"><img src="https://gregorlueg.r-universe.dev/bixverse.plots/badges/version" alt="bixverse.plots status badge"></a> <a href="https://github.com/GregorLueg/bixverse.plots/actions/workflows/R-cmd-check.yml" class="external-link"><img src="https://github.com/GregorLueg/bixverse.plots/actions/workflows/R-cmd-check.yml/badge.svg" alt="CI"></a> <a href="https://opensource.org/licenses/MIT" class="external-link"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"></a> <a href="https://gregorlueg.github.io/bixverse.plots/"><img src="https://img.shields.io/badge/pkgdown-website-1b5e9f?logo=github" alt="pkgdown"></a></p>
 <div class="section level2">
-<h2 id="intro">Intro<a class="anchor" aria-label="anchor" href="#intro"></a>
+<h2 id="what-is-this">What is this?<a class="anchor" aria-label="anchor" href="#what-is-this"></a>
 </h2>
-<p>This package contains a lot of additional plotting helpers for the <a href="https://github.com/GregorLueg/bixverse" class="external-link">bixverse</a> package. It combines especially well with <code>"0.5.x"</code> versions of <code>bixverse</code> as it supports all of the new single cell functionality. The idea is to not overload the parent package, as this one has already A LOT of code in it.</p>
+<p>Plotting helpers for <a href="https://github.com/GregorLueg/bixverse" class="external-link">bixverse</a>. The parent package already has A LOT of code in it, so the plots live here. Every function is plain <code>ggplot2</code> under the hood: take the plot, add layers, change the theme, done. Pair it with <code>bixverse</code> <code>0.5.x</code> for the single cell side.</p>
 </div>
 <div class="section level2">
-<h2 id="release-notes">
-<em>Release notes</em><a class="anchor" aria-label="anchor" href="#release-notes"></a>
+<h2 id="whats-in-the-box">What’s in the box?<a class="anchor" aria-label="anchor" href="#whats-in-the-box"></a>
 </h2>
-<p>Official release of the package with <strong>0.2.4</strong>. In this version, we have introduced a huge number of plotting helpers for single cell, please refer to this vignette <a href="https://gregorlueg.github.io/bixverse/articles/single_cell_visualisation.html" class="external-link">here</a> for more details.</p>
-<p>The gene set enrichment side has vignettes of its own: <a href="https://gregorlueg.github.io/bixverse.plots/articles/gsea_visualisation.html">GSEA</a> (fgsea and blitzGSEA) and <a href="https://gregorlueg.github.io/bixverse.plots/articles/ora_visualisation.html">over-representation</a>.</p>
+<table class="table">
+<colgroup>
+<col width="50%">
+<col width="50%">
+</colgroup>
+<thead><tr>
+<th>Area</th>
+<th>Functions</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>Single cell QC</td>
+<td>
+<code><a href="reference/violin_plot_sc.html">violin_plot_sc()</a></code>, <code><a href="reference/density_plot_sc.html">density_plot_sc()</a></code>, <code><a href="reference/joint_plot_sc.html">joint_plot_sc()</a></code>
+</td>
+</tr>
+<tr>
+<td>Embeddings</td>
+<td>
+<code><a href="reference/embedding_plot_sc.html">embedding_plot_sc()</a></code>, <code><a href="reference/feature_plot_sc.html">feature_plot_sc()</a></code>, <code><a href="reference/label_centroids.html">label_centroids()</a></code>
+</td>
+</tr>
+<tr>
+<td>Markers per cluster</td>
+<td>
+<code><a href="reference/dot_plot_sc.html">dot_plot_sc()</a></code>, <code><a href="reference/stacked_violin_plot_sc.html">stacked_violin_plot_sc()</a></code>, <code><a href="reference/heatmap_plot_sc.html">heatmap_plot_sc()</a></code>
+</td>
+</tr>
+<tr>
+<td>Feature pairs, trajectories</td>
+<td>
+<code><a href="reference/feature_scatter_plot_sc.html">feature_scatter_plot_sc()</a></code>, <code><a href="reference/paga_plot_sc.html">paga_plot_sc()</a></code>
+</td>
+</tr>
+<tr>
+<td>On/off matrices (SCENIC)</td>
+<td><code><a href="reference/plot_binary_heatmap.html">plot_binary_heatmap()</a></code></td>
+</tr>
+<tr>
+<td>Gene set enrichment</td>
+<td>
+<code><a href="reference/plot_gsea_enrichment.html">plot_gsea_enrichment()</a></code>, <code><a href="reference/plot_gse_dotplot.html">plot_gse_dotplot()</a></code>, <code><a href="reference/plot_blitzgsea_null.html">plot_blitzgsea_null()</a></code>, <code><a href="reference/plot_blitzgsea_es_null.html">plot_blitzgsea_es_null()</a></code>
+</td>
+</tr>
+<tr>
+<td>Enrichment maps</td>
+<td>
+<code><a href="reference/enrichment_map_gsea.html">enrichment_map_gsea()</a></code>, <code><a href="reference/enrichment_map_oae.html">enrichment_map_oae()</a></code>, <code><a href="reference/plot_enrichment_map_ggraph.html">plot_enrichment_map_ggraph()</a></code>, <code><a href="reference/plot_enrichment_map_visnetwork.html">plot_enrichment_map_visnetwork()</a></code>
+</td>
+</tr>
+<tr>
+<td>Differential expression</td>
+<td><code><a href="reference/volcano_plot.html">volcano_plot()</a></code></td>
+</tr>
+<tr>
+<td>Styling and saving</td>
+<td>
+<code><a href="reference/theme_bx.html">theme_bx()</a></code>, <code><a href="reference/scale_color_bx.html">scale_color_bx()</a></code>, <code><a href="reference/scale_fill_bx.html">scale_fill_bx()</a></code> (+ <code>_c</code> variants), <code><a href="reference/save_plot.html">save_plot()</a></code>, <code><a href="reference/save_plot_ls.html">save_plot_ls()</a></code>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Want to see them in action? The single cell plots get their tour in the <a href="https://gregorlueg.github.io/bixverse/articles/single_cell_visualisation.html" class="external-link">bixverse single cell visualisation vignette</a>. Gene set enrichment has vignettes here: <a href="https://gregorlueg.github.io/bixverse.plots/articles/gsea_visualisation.html">GSEA</a> (fgsea and blitzGSEA) and <a href="https://gregorlueg.github.io/bixverse.plots/articles/ora_visualisation.html">over-representation</a>. What changed between versions is in <a href="NEWS.html">NEWS</a>.</p>
 </div>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
@@ -101,12 +161,7 @@
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>repos <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"https://gregorlueg.r-universe.dev"</span>, <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"repos"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"https://github.com/GregorLueg/bixverse.plots"</span><span class="op">)</span></span></code></pre></div>
-</div>
-<div class="section level2">
-<h2 id="aim">Aim<a class="anchor" aria-label="anchor" href="#aim"></a>
-</h2>
-<p>Provide additional plotting capabilities to <code>bixverse</code>.</p>
-<p><em>Last update to the read-me: 04.09.2026</em></p>
+<p><em>Last update to the read-me: 01.10.2026</em></p>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="license">
