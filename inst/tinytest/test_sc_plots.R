@@ -757,6 +757,77 @@ expect_equal(
   info = "stacked_violin: honours palette"
 )
 
+### heatmap --------------------------------------------------------------------
+
+n_rasters <- \(p) {
+  sum(purrr::map_lgl(p$layers, \(l) inherits(l$geom, "GeomRasterAnn")))
+}
+hm_groups <- setNames(c("a", "a", "b", "b"), dot_features)
+
+p <- heatmap_plot_sc(sc_object, dot_features, "cell_grp")
+expect_inherits(
+  current = p,
+  class = "ggplot",
+  info = "heatmap: returns a ggplot"
+)
+
+# Hiroshige runs red to blue, the heatmap flips it so red means high
+expect_equal(
+  current = scale_ends(p, "fill"),
+  target = rev(expected_ends("diverging", n = 100)),
+  info = "heatmap: diverging palette is flipped, red is high"
+)
+
+p <- heatmap_plot_sc(
+  sc_object,
+  dot_features,
+  "cell_grp",
+  feature_grouping = hm_groups
+)
+expect_equal(
+  current = n_rasters(p),
+  target = n_grp * 2L,
+  info = "heatmap: one raster per cell group x gene group"
+)
+
+p <- heatmap_plot_sc(
+  sc_object,
+  dot_features,
+  "cell_grp",
+  max_cells_per_group = 20L
+)
+expect_true(
+  all(purrr::map_lgl(p$layers[seq_len(n_grp)], \(l) {
+    ncol(l$geom_params$raster) == 20L
+  })),
+  info = "heatmap: max_cells_per_group caps every block"
+)
+
+hm_labels <- setNames(c("A1", "A2", "B1", "B2"), dot_features)
+p <- heatmap_plot_sc(
+  sc_object,
+  dot_features,
+  "cell_grp",
+  feature_labels = hm_labels,
+  feature_grouping = setNames(c("a", "a", "b", "b"), hm_labels)
+)
+expect_equal(
+  current = n_rasters(p),
+  target = n_grp * 2L,
+  info = "heatmap: feature_grouping keyed by display label"
+)
+
+expect_error(
+  current = heatmap_plot_sc(
+    sc_object,
+    dot_features,
+    "cell_grp",
+    feature_labels = hm_labels,
+    feature_grouping = hm_groups
+  ),
+  info = "heatmap: feature_grouping must cover the display labels"
+)
+
 ### feature scatter ------------------------------------------------------------
 
 p <- feature_scatter_plot_sc(sc_object, "gene_001", "gene_002")
