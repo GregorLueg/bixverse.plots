@@ -29,8 +29,9 @@
 #' Only used if `x` is a matrix.
 #' @param show_feature_labels Optional boolean. Shall the feature names be
 #' shown. `NULL` (default) shows them for up to 80 features.
-#' @param group_gap Numeric between `[0, 0.1]`. Gap between groups as fraction
-#' of the axis length.
+#' @param group_gap Numeric between `[0, 0.1]`. Width of each gap between
+#' groups as fraction of the axis length. Applied per boundary, so with many
+#' groups keep it small. `0` removes the gaps.
 #' @param palette String. Discrete palette for the group strips, see
 #' [bx_colors()].
 #' @param .verbose Boolean. Controls verbosity of the extraction.
@@ -47,7 +48,7 @@ plot_binary_heatmap <- function(
   feature_groups = NULL,
   heatmap_params = bixverse::params_binary_heatmap(),
   show_feature_labels = NULL,
-  group_gap = 0.01,
+  group_gap = 0.001,
   palette = c("main", "sequential", "diverging", "viridis", "spectral"),
   .verbose = FALSE
 ) {

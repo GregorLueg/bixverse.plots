@@ -10,7 +10,7 @@ plot_binary_heatmap(
   feature_groups = NULL,
   heatmap_params = bixverse::params_binary_heatmap(),
   show_feature_labels = NULL,
-  group_gap = 0.01,
+  group_gap = 0.001,
   palette = c("main", "sequential", "diverging", "viridis", "spectral"),
   .verbose = FALSE
 )
@@ -32,8 +32,9 @@ Only used if \code{x} is a matrix.}
 \item{show_feature_labels}{Optional boolean. Shall the feature names be
 shown. \code{NULL} (default) shows them for up to 80 features.}
 
-\item{group_gap}{Numeric between \verb{[0, 0.1]}. Gap between groups as fraction
-of the axis length.}
+\item{group_gap}{Numeric between \verb{[0, 0.1]}. Width of each gap between
+groups as fraction of the axis length. Applied per boundary, so with many
+groups keep it small. \code{0} removes the gaps.}
 
 \item{palette}{String. Discrete palette for the group strips, see
 \code{\link[=bx_colors]{bx_colors()}}.}
