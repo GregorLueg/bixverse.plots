@@ -860,6 +860,186 @@ stacked_violin_plot_sc <- function(
   )
 }
 
+### heatmap --------------------------------------------------------------------
+
+#' Heatmap of marker genes x cells across groups
+#'
+#' @description
+#' The classic marker heatmap to show which cluster is what: genes as rows,
+#' cells as columns, cells grouped by `grouping_variable` with white gaps and a
+#' colour strip per group. With `feature_grouping` the genes get grouped per
+#' cell type, too. Every block of cell group x gene group is drawn as one
+#' raster, not one tile per cell.
+#'
+#' PDF viewers tend to smooth embedded rasters. If the blocks look blurry in a
+#' PDF, save as PNG instead.
+#'
+#' @param object A single cell class.
+#' @param features Character vector. Gene IDs to plot, one row each, in this
+#' order.
+#' @param grouping_variable String. Obs column to group the cells by. Factor
+#' levels set the group order.
+#' @param feature_labels Optional named character vector mapping gene ids to
+#' display labels (default: NULL).
+#' @param feature_grouping Optional named character vector mapping gene ids to
+#' grouping labels, e.g. cell type labels. If feature_labels is provided,
+#' the character vectors should contain the mapping of feature display labels to
+#' their respective groups (e.g. c(CD3E = "T cell", CD8A = "T cell",
+#' MS4A1 = "B cell", ...). Groups are ordered by first appearance.
+#' (default: NULL).
+#' @param scale Boolean. Whether to z-score the expression values per gene.
+#' @param clip Optional numeric. Clip z-scores if `scale = TRUE`. Without it a
+#' handful of extreme cells flatten the colour range.
+#' @param modality String. One of `c("rna", "adt")`.
+#' @param max_cells_per_group Optional integer. Subsample every group to at
+#' most this many cells. `NULL` (default) draws all cells.
+#' @param seed Integer. Seed for the subsampling.
+#' @param group_gap Numeric between `[0, 0.1]`. Width of each gap between
+#' groups as fraction of the axis length. `0` removes the gaps.
+#' @param show_feature_labels Optional boolean. Shall the gene names be shown.
+#' `NULL` (default) shows them for up to 80 genes.
+#' @param palette String. Continuous palette for the expression values. One of
+#' `c("diverging", "spectral", "viridis", "sequential")`, see [bx_colors()].
+#'
+#' @return A \code{\link[ggplot2]{ggplot}} object.
+#'
+#' @export
+#' @import ggplot2
+heatmap_plot_sc <- function(
+  object,
+  features,
+  grouping_variable,
+  feature_labels = NULL,
+  feature_grouping = NULL,
+  scale = TRUE,
+  clip = 2.5,
+  modality = c("rna", "adt"),
+  max_cells_per_group = NULL,
+  seed = 42L,
+  group_gap = 0.002,
+  show_feature_labels = NULL,
+  palette = c("diverging", "spectral", "viridis", "sequential")
+) {
+  modality <- match.arg(modality)
+  palette <- match.arg(palette)
+
+  checkmate::qassert(features, "S+")
+  checkmate::qassert(grouping_variable, "S1")
+  checkmate::assertCharacter(feature_labels, names = "unique", null.ok = TRUE)
+  checkmate::assertCharacter(feature_grouping, names = "unique", null.ok = TRUE)
+  checkmate::qassert(scale, "B1")
+  checkmate::qassert(clip, c("0", "N1(0,)"))
+  checkmate::assertInt(max_cells_per_group, lower = 1, null.ok = TRUE)
+  checkmate::qassert(seed, "I1")
+  checkmate::qassert(group_gap, "N1[0,0.1]")
+  checkmate::qassert(show_feature_labels, c("0", "B1"))
+  checkmate::assertChoice(palette, BX_PALETTES)
+
+  dt <- bixverse::extract_gene_expression(
+    object,
+    features = features,
+    obs_cols = grouping_variable,
+    scale = scale,
+    clip = clip,
+    modality = modality
+  )
+  feature_cols <- setdiff(names(dt), c("cell_id", grouping_variable))
+  data.table::setnames(dt, grouping_variable, ".group")
+  dt[, .group := as.factor(.group)]
+
+  if (!is.null(max_cells_per_group)) {
+    set.seed(seed)
+    dt <- dt[
+      dt[, .I[sample.int(.N, min(.N, max_cells_per_group))], by = .group]$V1
+    ]
+  }
+  data.table::setorder(dt, .group)
+
+  labels <- if (is.null(feature_labels)) {
+    feature_cols
+  } else {
+    checkmate::assertNames(feature_cols, subset.of = names(feature_labels))
+    unname(feature_labels[feature_cols])
+  }
+
+  row_annot <- if (is.null(feature_grouping)) {
+    data.table::data.table(feature = labels, group = factor("all"))
+  } else {
+    checkmate::assertNames(labels, subset.of = names(feature_grouping))
+    grp <- unname(feature_grouping[labels])
+    data.table::data.table(
+      feature = labels,
+      group = factor(grp, levels = unique(grp))
+    )
+  }
+  # rows grouped by gene group, input order within a group
+  row_order <- order(as.integer(row_annot$group))
+  row_annot <- row_annot[row_order]
+  row_annot[, row_idx := .I]
+
+  col_annot <- data.table::data.table(
+    col_idx = seq_len(nrow(dt)),
+    group = dt$.group
+  )
+
+  mat <- t(as.matrix(dt[, feature_cols[row_order], with = FALSE]))
+  # z-scores get a range centred on zero, so a diverging palette sits right
+  domain <- if (scale) {
+    c(-1, 1) * max(abs(mat), na.rm = TRUE)
+  } else {
+    range(mat, na.rm = TRUE)
+  }
+  # Hiroshige runs red to blue, flipped so red means high
+  reverse <- palette == "diverging"
+  colour_fun <- scales::col_numeric(
+    bx_colors(palette, reverse = reverse, n = 100L),
+    domain = domain
+  )
+  colour_mat <- matrix(colour_fun(mat), nrow(mat))
+
+  layout <- .heatmap_blocks(
+    colour_mat = colour_mat,
+    col_annot = col_annot,
+    row_annot = row_annot,
+    group_gap = group_gap
+  )
+
+  # rasters carry no legend; an invisible tile layer draws the colour bar
+  p <- ggplot() +
+    layout$layers +
+    geom_tile(
+      data = data.table::data.table(value = domain),
+      aes(x = 0, y = 0, fill = value),
+      alpha = 0
+    ) +
+    scale_fill_bx_c(
+      palette = palette,
+      reverse = reverse,
+      n = 100L,
+      limits = domain
+    ) +
+    labs(fill = if (scale) "Scaled\nexpression" else "Expression") +
+    theme_void()
+
+  show_feature_labels <- show_feature_labels %||% (nrow(mat) <= 80L)
+  p <- .heatmap_strips(
+    p,
+    layout = layout,
+    show_feature_labels = show_feature_labels
+  )
+
+  if (show_feature_labels) {
+    # the gene labels sit in the right margin, push the colour bar past them.
+    # same ~2.2 pt per char per mm text size as in .heatmap_strips()
+    p <- p +
+      theme(
+        legend.box.spacing = unit(5 + 4.4 * max(nchar(labels)), "pt"),
+        plot.margin = margin_part(r = 5)
+      )
+  }
+  p
+}
+
 ### scatter plot ---------------------------------------------------------------
 
 #' Scatter / hex plot of two features against each other
