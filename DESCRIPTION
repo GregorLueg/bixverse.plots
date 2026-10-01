@@ -23,7 +23,7 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 Imports:
-    bixverse (>= 0.5.0),
+    bixverse (>= 0.5.5),
     checkmate,
     data.table,
     fields,
