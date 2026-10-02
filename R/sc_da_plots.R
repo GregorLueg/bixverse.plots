@@ -8,8 +8,8 @@
 #'
 #' @description
 #' The Milo neighbourhood graph figure: every tested neighbourhood sits at its
-#' index cell in an embedding, connected to the neighbourhoods it shares cells
-#' with. With `colour_by = "logFC"` the
+#' index cell in an embedding, sized by its cell count and connected to the
+#' neighbourhoods it shares cells with. With `colour_by = "logFC"` the
 #' significant neighbourhoods are filled by their logFC and drawn on top,
 #' strongest last, while the rest stay white underneath.
 #'
@@ -37,8 +37,8 @@
 #' @param edge_colour String. Colour of the edges (default: "grey50").
 #' @param edge_width Two numerics. Range the edge widths are scaled into
 #' (default: `c(0.1, 1.5)`).
-#' @param node_size Numeric. Size of the nodes. Every neighbourhood holds
-#' `k + 1` cells, so unlike Milo there is no size to map (default: 2).
+#' @param size_range Two numerics. Range the node sizes are scaled into
+#' (default: `c(0.5, 4)`).
 #' @param palette Optional string. Palette for the nodes, see [bx_colors()].
 #' `NULL` (default) resolves to `"diverging"` for logFC, centred at zero, and
 #' `"main"` for the cell types.
@@ -65,7 +65,7 @@ milo_nhood_plot_sc <- function(
   cell_colour = "grey90",
   edge_colour = "grey50",
   edge_width = c(0.1, 1.5),
-  node_size = 2,
+  size_range = c(0.5, 4),
   palette = NULL
 ) {
   colour_by <- match.arg(colour_by)
@@ -84,7 +84,7 @@ milo_nhood_plot_sc <- function(
   checkmate::qassert(cell_colour, "S1")
   checkmate::qassert(edge_colour, "S1")
   checkmate::qassert(edge_width, "N2")
-  checkmate::qassert(node_size, "N1(0,)")
+  checkmate::qassert(size_range, "N2")
   checkmate::assertChoice(palette, BX_PALETTES, null.ok = TRUE)
 
   ## extract data
@@ -190,18 +190,22 @@ milo_nhood_plot_sc <- function(
       mapping = aes(
         x = dim_1,
         y = dim_2,
+        size = size,
         fill = .data[[colour_by]]
       ),
-      size = node_size,
       shape = 21,
       colour = "grey30",
       stroke = 0.2
     ) +
+    scale_size(range = size_range) +
     fill_scale +
+    # the size keys inherit the fill aesthetic, which draws them white on white
+    guides(size = guide_legend(override.aes = list(fill = "grey60"))) +
     theme_bx() +
     labs(
       x = sprintf("%s 1", embedding),
       y = sprintf("%s 2", embedding),
+      size = "Nhood size",
       linewidth = "Shared cells",
       fill = if (colour_by == "logFC") "logFC" else "Majority cell type"
     )

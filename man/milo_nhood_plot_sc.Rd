@@ -20,7 +20,7 @@ milo_nhood_plot_sc(
   cell_colour = "grey90",
   edge_colour = "grey50",
   edge_width = c(0.1, 1.5),
-  node_size = 2,
+  size_range = c(0.5, 4),
   palette = NULL
 )
 }
@@ -64,8 +64,8 @@ to geom_scattermore(). Default is \code{c(512, 512)}.}
 \item{edge_width}{Two numerics. Range the edge widths are scaled into
 (default: \code{c(0.1, 1.5)}).}
 
-\item{node_size}{Numeric. Size of the nodes. Every neighbourhood holds
-\code{k + 1} cells, so unlike Milo there is no size to map (default: 2).}
+\item{size_range}{Two numerics. Range the node sizes are scaled into
+(default: \code{c(0.5, 4)}).}
 
 \item{palette}{Optional string. Palette for the nodes, see \code{\link[=bx_colors]{bx_colors()}}.
 \code{NULL} (default) resolves to \code{"diverging"} for logFC, centred at zero, and
@@ -76,8 +76,8 @@ A \code{\link[ggplot2]{ggplot}} object.
 }
 \description{
 The Milo neighbourhood graph figure: every tested neighbourhood sits at its
-index cell in an embedding, connected to the neighbourhoods it shares cells
-with. With \code{colour_by = "logFC"} the
+index cell in an embedding, sized by its cell count and connected to the
+neighbourhoods it shares cells with. With \code{colour_by = "logFC"} the
 significant neighbourhoods are filled by their logFC and drawn on top,
 strongest last, while the rest stay white underneath.
 }
