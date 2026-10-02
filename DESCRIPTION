@@ -1,6 +1,6 @@
 Package: bixverse.plots
 Title: Plotting functions for bixverse
-Version: 0.2.8
+Version: 0.2.9
 Authors@R: 
     c(
       person(
@@ -23,7 +23,7 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 Imports:
-    bixverse (>= 0.5.5),
+    bixverse (>= 0.5.7),
     checkmate,
     data.table,
     fields,
