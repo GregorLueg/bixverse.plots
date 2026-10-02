@@ -1091,6 +1091,127 @@ expect_equal(
   info = "paga_plot_sc: honours the palette for the node statistic"
 )
 
+## milo neighbourhood plot -----------------------------------------------------
+
+# sample ids skewed by cell group, so some neighbourhoods come out significant
+cell_grp <- sc_object[["cell_grp"]]$cell_grp
+first_grp <- cell_grp == sort(unique(cell_grp))[1]
+milo_samples <- ifelse(
+  first_grp,
+  sample(c(1:3, rep(4:6, 4)), length(cell_grp), replace = TRUE),
+  sample(1:6, length(cell_grp), replace = TRUE)
+)
+sc_object <- set_sc_new_obs_col_multiple(
+  sc_object,
+  new_data = list(milo_sample = sprintf("s%i", milo_samples))
+)
+
+milo_design <- data.frame(
+  grp = rep(c("ctr", "trt"), each = 3),
+  row.names = sprintf("s%i", 1:6)
+)
+
+milo_res <- get_miloR_abundances_sc(
+  sc_object,
+  sample_id_col = "milo_sample",
+  miloR_params = params_sc_miloR(k_refine = no_pcs),
+  .verbose = FALSE
+)
+milo_res <- test_nhoods(milo_res, design = ~grp, design_df = milo_design)
+milo_res <- add_nhoods_info(milo_res, cell_info = cell_grp)
+
+milo_dt <- bixverse::extract_milo_plot_data(
+  sc_object,
+  milo_res,
+  embedding = "umap"
+)
+
+p <- milo_nhood_plot_sc(sc_object, milo_res, embedding = "umap")
+built <- ggplot2::ggplot_build(p)
+
+expect_true(
+  checkmate::checkClass(p, "ggplot"),
+  info = "milo_nhood_plot_sc: correct class"
+)
+
+expect_equal(
+  current = length(built$data),
+  target = 3L,
+  info = "milo_nhood_plot_sc: cells, edges and nodes are all drawn"
+)
+
+expect_equal(
+  current = nrow(built$data[[2]]),
+  target = nrow(milo_dt$edges),
+  info = "milo_nhood_plot_sc: every edge is drawn exactly once"
+)
+
+expect_equal(
+  current = nrow(built$data[[3]]),
+  target = nrow(milo_dt$nodes),
+  info = "milo_nhood_plot_sc: one node per tested neighbourhood"
+)
+
+expect_true(
+  any(milo_dt$nodes$is_sig),
+  info = "milo_nhood_plot_sc: the skewed samples give significant nodes"
+)
+
+# non-significant nodes go first and are blanked, significant ones last
+n_ns <- sum(!milo_dt$nodes$is_sig)
+expect_true(
+  all(built$data[[3]]$fill[seq_len(n_ns)] == "white") &&
+    all(built$data[[3]]$fill[-seq_len(n_ns)] != "white"),
+  info = "milo_nhood_plot_sc: non-significant nodes white and underneath"
+)
+
+p_ct <- milo_nhood_plot_sc(
+  sc_object,
+  milo_res,
+  embedding = "umap",
+  colour_by = "majority_celltype",
+  show_cells = FALSE
+)
+
+expect_equal(
+  current = length(ggplot2::ggplot_build(p_ct)$data),
+  target = 2L,
+  info = "milo_nhood_plot_sc: dropping cells leaves edges and nodes"
+)
+
+expect_equal(
+  current = length(unique(ggplot2::ggplot_build(p_ct)$data[[2]]$fill)),
+  target = length(unique(milo_dt$nodes$majority_celltype)),
+  info = "milo_nhood_plot_sc: one fill per majority cell type"
+)
+
+p_none <- milo_nhood_plot_sc(
+  sc_object,
+  milo_res,
+  embedding = "umap",
+  alpha = 0
+)
+
+expect_true(
+  all(ggplot2::ggplot_build(p_none)$data[[3]]$fill == "white"),
+  info = "milo_nhood_plot_sc: no significant nodes draws without error"
+)
+
+expect_error(
+  milo_nhood_plot_sc(
+    sc_object,
+    get_miloR_abundances_sc(
+      sc_object,
+      sample_id_col = "milo_sample",
+      miloR_params = params_sc_miloR(k_refine = no_pcs),
+      .verbose = FALSE
+    ),
+    embedding = "umap"
+  ),
+  pattern = "test_nhoods",
+  info = "milo_nhood_plot_sc: untested miloR object errors"
+)
+
 ## cleanup ---------------------------------------------------------------------
 
 on.exit(

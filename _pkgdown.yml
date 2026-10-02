@@ -89,6 +89,7 @@ reference:
       - heatmap_plot_sc
       - feature_scatter_plot_sc
       - paga_plot_sc
+      - milo_nhood_plot_sc
       - plot_binary_heatmap
   # Geom extensions
   - title: Geom extensions
