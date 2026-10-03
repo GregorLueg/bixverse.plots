@@ -84,6 +84,8 @@ Generate different single cell plots
   : Scatter / hex plot of two features against each other
 - [`paga_plot_sc()`](https://gregorlueg.github.io/bixverse.plots/reference/paga_plot_sc.md)
   : PAGA abstracted graph over an embedding
+- [`milo_nhood_plot_sc()`](https://gregorlueg.github.io/bixverse.plots/reference/milo_nhood_plot_sc.md)
+  : miloR neighbourhood graph over an embedding
 - [`plot_binary_heatmap()`](https://gregorlueg.github.io/bixverse.plots/reference/plot_binary_heatmap.md)
   : Binary heatmap, e.g. SCENIC regulon on/off calls
 
