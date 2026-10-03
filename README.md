@@ -21,6 +21,7 @@ the theme, done. Pair it with `bixverse` `0.5.x` for the single cell side.
 | Embeddings | `embedding_plot_sc()`, `feature_plot_sc()`, `label_centroids()` |
 | Markers per cluster | `dot_plot_sc()`, `stacked_violin_plot_sc()`, `heatmap_plot_sc()` |
 | Feature pairs, trajectories | `feature_scatter_plot_sc()`, `paga_plot_sc()` |
+| Differential abundance | `milo_nhood_plot_sc()` |
 | On/off matrices (SCENIC) | `plot_binary_heatmap()` |
 | Gene set enrichment | `plot_gsea_enrichment()`, `plot_gse_dotplot()`, `plot_blitzgsea_null()`, `plot_blitzgsea_es_null()` |
 | Enrichment maps | `enrichment_map_gsea()`, `enrichment_map_oae()`, `plot_enrichment_map_ggraph()`, `plot_enrichment_map_visnetwork()` |

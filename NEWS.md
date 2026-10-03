@@ -1,3 +1,13 @@
+# bixverse.plots 0.2.9
+
+**Features:**
+
+- `milo_nhood_plot_sc()`: the Milo neighbourhood graph over an embedding. Each
+  neighbourhood sits at its index cell, sized by its cell count and connected
+  to the neighbourhoods it shares cells with. Coloured by logFC, with the
+  non-significant ones left white underneath, or by majority cell type. Needs
+  `bixverse` >= 0.5.7 for `extract_milo_plot_data()`.
+
 # bixverse.plots 0.2.8
 
 **Features:**
