@@ -140,7 +140,6 @@ sc_object <- load_r_data(
     min_lib_size = min_lib_size,
     min_cells = min_cells_exp
   ),
-  streaming = 0L,
   .verbose = FALSE
 )
 
@@ -149,8 +148,7 @@ sc_object <- calculate_pca_sc(sc_object, no_pcs = no_pcs, .verbose = FALSE)
 sc_object <- find_neighbours_sc(
   object = sc_object,
   neighbours_params = params_sc_neighbours(
-    full_snn = FALSE,
-    pruning = 0,
+    graph = list(pruning = 0),
     knn = list(knn_method = "kmknn")
   ),
   .verbose = FALSE
@@ -508,7 +506,6 @@ sc_mm <- load_r_data(
     min_lib_size = min_lib_size,
     min_cells = min_cells_exp
   ),
-  streaming = 0L,
   .verbose = FALSE
 )
 
