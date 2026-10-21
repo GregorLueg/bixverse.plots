@@ -1,5 +1,15 @@
 # Changelog
 
+## bixverse.plots 0.3.0
+
+**Changes:**
+
+- Requires `bixverse` \>= 0.8.0.
+- Tests follow the 0.8.0 API: `full_snn` is gone from
+  [`params_sc_neighbours()`](https://gregorlueg.github.io/bixverse/reference/params_sc_neighbours.html),
+  the pruning now goes via `graph = list(pruning = 0)`. Dropped the
+  removed `streaming` argument from the count loaders.
+
 ## bixverse.plots 0.2.9
 
 **Features:**
