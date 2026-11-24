@@ -12,7 +12,7 @@ feature_scatter_plot_sc(
   remove_zeros = TRUE,
   smoothness = 10,
   bins = 60,
-  modality = c("rna", "adt"),
+  modality = c("rna", "adt", "atac"),
   point_size = 2.5,
   point_alpha = 0.5,
   raster = NULL,
@@ -23,11 +23,11 @@ feature_scatter_plot_sc(
 \arguments{
 \item{object}{A single cell class.}
 
-\item{feature_1}{String. First feature (x-axis), optionally \verb{_rna} / \verb{_adt}
-suffixed.}
+\item{feature_1}{String. First feature (x-axis), optionally
+\verb{_rna} / \verb{_adt} / \verb{_atac} suffixed.}
 
-\item{feature_2}{String. Second feature (y-axis), optionally \verb{_rna} / \verb{_adt}
-suffixed.}
+\item{feature_2}{String. Second feature (y-axis), optionally
+\verb{_rna} / \verb{_adt} / \verb{_atac} suffixed.}
 
 \item{geom}{String. \code{"density"} or \code{"hex"} (default: \code{"density"}).}
 
@@ -41,7 +41,7 @@ Only used for \code{geom = "density"}.}
 \code{geom = "hex"}.}
 
 \item{modality}{String. Fallback modality for unsuffixed features. One
-of \code{c("rna", "adt")}.}
+of \code{c("rna", "adt", "atac")}.}
 
 \item{point_size}{Numeric. Point size for density plots (default: 2.5).}
 

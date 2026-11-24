@@ -12,7 +12,7 @@ milo_nhood_plot_sc(
   overlap = 1L,
   colour_by = c("logFC", "majority_celltype"),
   show_cells = TRUE,
-  embd_modality = c("rna", "adt", "wnn"),
+  embd_modality = c("rna", "adt", "atac", "wnn"),
   point_size = NULL,
   point_alpha = 0.4,
   raster = NULL,
@@ -43,8 +43,8 @@ latter needs \code{\link[bixverse:add_nhoods_info]{bixverse::add_nhoods_info()}}
 \item{show_cells}{Boolean. Draw the cells underneath the graph
 (default: TRUE).}
 
-\item{embd_modality}{String. One of \code{c("rna", "adt", "wnn")}. Modality the
-embedding is pulled from.}
+\item{embd_modality}{String. One of \code{c("rna", "adt", "atac", "wnn")}.
+Modality the embedding is pulled from.}
 
 \item{point_size}{Optional numeric. Size of the cells. If not provided, will
 be auto-determined.}

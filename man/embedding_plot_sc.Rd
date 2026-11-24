@@ -10,7 +10,7 @@ embedding_plot_sc(
   colour_by,
   label_by = NULL,
   discrete = NULL,
-  embd_modality = c("rna", "adt", "wnn"),
+  embd_modality = c("rna", "adt", "atac", "wnn"),
   point_size = NULL,
   point_alpha = 0.5,
   raster = NULL,
@@ -35,7 +35,7 @@ embedding_plot_sc(
 type.}
 
 \item{embd_modality}{String. Modality the embedding is pulled from. One of
-\code{c("rna", "adt", "wnn")}. Use \code{"wnn"} for WNN-derived embeddings.}
+\code{c("rna", "adt", "atac", "wnn")}. Use \code{"wnn"} for WNN-derived embeddings.}
 
 \item{point_size}{Optional numeric. Defines the point size. If not provided,
 will be auto-determined.}

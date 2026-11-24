@@ -13,7 +13,7 @@ paga_plot_sc(
   node_colour_by = NULL,
   show_cells = TRUE,
   label = TRUE,
-  embd_modality = c("rna", "adt", "wnn"),
+  embd_modality = c("rna", "adt", "atac", "wnn"),
   centroid = c("median", "mean"),
   point_size = NULL,
   point_alpha = 0.4,
@@ -52,8 +52,8 @@ cluster, e.g. \code{"palantir_pseudotime"}, giving continuously coloured nodes.
 
 \item{label}{Boolean. Label the nodes with their cluster (default: TRUE).}
 
-\item{embd_modality}{String. One of \code{c("rna", "adt", "wnn")}. Modality the
-embedding is pulled from.}
+\item{embd_modality}{String. One of \code{c("rna", "adt", "atac", "wnn")}.
+Modality the embedding is pulled from.}
 
 \item{centroid}{String. One of \code{c("median", "mean")}. How a cluster's
 position is summarised. Median by default, since embeddings throw stragglers

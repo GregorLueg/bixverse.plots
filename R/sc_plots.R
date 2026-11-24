@@ -454,7 +454,7 @@
 #' `colour_by` to a factor. `NULL` (default) picks the scale from the column
 #' type.
 #' @param embd_modality String. Modality the embedding is pulled from. One of
-#' `c("rna", "adt", "wnn")`. Use `"wnn"` for WNN-derived embeddings.
+#' `c("rna", "adt", "atac", "wnn")`. Use `"wnn"` for WNN-derived embeddings.
 #' @param point_size Optional numeric. Defines the point size. If not provided,
 #' will be auto-determined.
 #' @param point_alpha Numeric. Defines the alpha.
@@ -480,7 +480,7 @@ embedding_plot_sc <- function(
   colour_by,
   label_by = NULL,
   discrete = NULL,
-  embd_modality = c("rna", "adt", "wnn"),
+  embd_modality = c("rna", "adt", "atac", "wnn"),
   point_size = NULL,
   point_alpha = 0.5,
   raster = NULL,
@@ -576,9 +576,14 @@ embedding_plot_sc <- function(
 #' @param scale Boolean. Whether to z-score the expression values.
 #' @param clip Optional numeric. Clip z-scores if `scale = TRUE`.
 #' @param expr_modality String. Modality the expression is pulled from. One of
-#' `c("rna", "adt")`.
+#' `c("rna", "adt", "atac")`.
 #' @param embd_modality String. Modality the embedding is pulled from. One of
-#' `c("rna", "adt", "wnn")`. Use `"wnn"` for WNN-derived embeddings.
+#' `c("rna", "adt", "atac", "wnn")`. Use `"wnn"` for WNN-derived embeddings.
+#' @param expr_sc Optional single cell class to take the expression from,
+#' e.g. the gene activity of [bixverse::gene_activity_sc()], while the
+#' embedding and `label_by` still come from `object`. Must keep the same cells
+#' as `object`. `expr_modality` applies to `expr_sc`. If `NULL` (default),
+#' the expression comes from `object`.
 #' @param point_size Optional numeric. Defines the point size. If not provided,
 #' will be auto-determined.
 #' @param point_alpha Numeric. Defines the alpha.
@@ -617,8 +622,9 @@ feature_plot_sc <- function(
   feature_labels = NULL,
   scale = FALSE,
   clip = NULL,
-  expr_modality = c("rna", "adt"),
-  embd_modality = c("rna", "adt", "wnn"),
+  expr_modality = c("rna", "adt", "atac"),
+  embd_modality = c("rna", "adt", "atac", "wnn"),
+  expr_sc = NULL,
   point_size = NULL,
   point_alpha = 0.5,
   raster = NULL,
@@ -652,23 +658,56 @@ feature_plot_sc <- function(
   checkmate::assertChoice(scale_mode, c("free", "shared"))
   checkmate::assertChoice(palette, BX_PALETTES)
   checkmate::assertInt(ncol, lower = 1, null.ok = TRUE)
+  checkmate::assertTRUE(is.null(expr_sc) || S7::S7_inherits(expr_sc))
 
   if (!is.null(label_by)) {
     c_names <- c(label_by)
   } else {
     c_names <- NULL
   }
-  dt <- bixverse::extract_feature_plot_data(
-    object,
-    features = features,
-    embedding = embedding,
-    scale = scale,
-    clip = clip,
-    obs_col = c_names,
-    expr_modality = expr_modality,
-    embd_modality = embd_modality,
-    ...
-  )
+  if (is.null(expr_sc)) {
+    dt <- bixverse::extract_feature_plot_data(
+      object,
+      features = features,
+      embedding = embedding,
+      scale = scale,
+      clip = clip,
+      obs_col = c_names,
+      expr_modality = expr_modality,
+      embd_modality = embd_modality,
+      ...
+    )
+  } else {
+    if (
+      !identical(
+        bixverse::get_cell_names(object, TRUE),
+        bixverse::get_cell_names(expr_sc, TRUE)
+      )
+    ) {
+      stop("`object` and `expr_sc` do not keep the same cells.")
+    }
+    expr <- bixverse::extract_gene_expression(
+      expr_sc,
+      features = features,
+      scale = scale,
+      clip = clip,
+      modality = expr_modality
+    )
+    embd <- bixverse::extract_embedding_data(
+      object,
+      embedding = embedding,
+      modality = embd_modality,
+      obs_cols = c_names,
+      ...
+    )
+    feature_cols <- setdiff(names(expr), "cell_id")
+    dt <- data.table::melt(
+      merge(expr, embd, by = "cell_id", sort = FALSE),
+      measure.vars = feature_cols,
+      variable.name = "gene",
+      value.name = "expression"
+    )
+  }
 
   data.table::setorder(dt, expression)
 
@@ -766,7 +805,7 @@ feature_plot_sc <- function(
 #' their respecitve groups (e.g. c(CD3E = "T cell", CD8A = "T cell",
 #' MS4A1 = "B cell", ...). (default: NULL).
 #' @param scale_exp Boolean. Whether to min-max scale mean expression per gene.
-#' @param modality String. One of `c("rna", "adt")`.
+#' @param modality String. One of `c("rna", "adt", "atac")`.
 #' @param cluster_groups Boolean. Use hierarchical clustering on the grouping variable
 #' to re-order the group labels based on expression similarity.
 #' @param palette String. Continuous palette for the scaled expression. One of
@@ -783,7 +822,7 @@ dot_plot_sc <- function(
   feature_labels = NULL,
   feature_grouping = NULL,
   scale_exp = TRUE,
-  modality = c("rna", "adt"),
+  modality = c("rna", "adt", "atac"),
   cluster_groups = TRUE,
   palette = c("sequential", "spectral", "viridis", "diverging")
 ) {
@@ -820,7 +859,7 @@ dot_plot_sc <- function(
 #' display labels (default: NULL).
 #' @param scale Boolean. Whether to z-score the expression values.
 #' @param clip Optional numeric. Clip z-scores if `scale = TRUE`.
-#' @param modality String. One of `c("rna", "adt")`.
+#' @param modality String. One of `c("rna", "adt", "atac")`.
 #' @param palette String. Discrete palette for the group fills. One of
 #' `c("main", "sequential", "diverging", "viridis", "spectral")`, see
 #' [bx_colors()].
@@ -836,7 +875,7 @@ stacked_violin_plot_sc <- function(
   feature_labels = NULL,
   scale = FALSE,
   clip = NULL,
-  modality = c("rna", "adt"),
+  modality = c("rna", "adt", "atac"),
   palette = BX_PALETTES
 ) {
   modality <- match.arg(modality)
@@ -890,7 +929,7 @@ stacked_violin_plot_sc <- function(
 #' @param scale Boolean. Whether to z-score the expression values per gene.
 #' @param clip Optional numeric. Clip z-scores if `scale = TRUE`. Without it a
 #' handful of extreme cells flatten the colour range.
-#' @param modality String. One of `c("rna", "adt")`.
+#' @param modality String. One of `c("rna", "adt", "atac")`.
 #' @param max_cells_per_group Optional integer. Subsample every group to at
 #' most this many cells. `NULL` (default) draws all cells.
 #' @param seed Integer. Seed for the subsampling.
@@ -913,7 +952,7 @@ heatmap_plot_sc <- function(
   feature_grouping = NULL,
   scale = TRUE,
   clip = 2.5,
-  modality = c("rna", "adt"),
+  modality = c("rna", "adt", "atac"),
   max_cells_per_group = NULL,
   seed = 42L,
   group_gap = 0.002,
@@ -1052,10 +1091,10 @@ heatmap_plot_sc <- function(
 #' `geom = "hex"` cells are binned into hexagons.
 #'
 #' @param object A single cell class.
-#' @param feature_1 String. First feature (x-axis), optionally `_rna` / `_adt`
-#' suffixed.
-#' @param feature_2 String. Second feature (y-axis), optionally `_rna` / `_adt`
-#' suffixed.
+#' @param feature_1 String. First feature (x-axis), optionally
+#' `_rna` / `_adt` / `_atac` suffixed.
+#' @param feature_2 String. Second feature (y-axis), optionally
+#' `_rna` / `_adt` / `_atac` suffixed.
 #' @param geom String. `"density"` or `"hex"` (default: `"density"`).
 #' @param remove_zeros Boolean. Drop cells where both features are zero
 #' (default: TRUE).
@@ -1064,7 +1103,7 @@ heatmap_plot_sc <- function(
 #' @param bins Numeric. Number of hex bins (default: 60). Only used for
 #' `geom = "hex"`.
 #' @param modality String. Fallback modality for unsuffixed features. One
-#' of `c("rna", "adt")`.
+#' of `c("rna", "adt", "atac")`.
 #' @param point_size Numeric. Point size for density plots (default: 2.5).
 #' @param point_alpha Numeric. Alpha for density plots (default: 0.5).
 #' @param raster Optional boolean. Shall the plot be rasterised. If `NULL`
@@ -1087,7 +1126,7 @@ feature_scatter_plot_sc <- function(
   remove_zeros = TRUE,
   smoothness = 10,
   bins = 60,
-  modality = c("rna", "adt"),
+  modality = c("rna", "adt", "atac"),
   point_size = 2.5,
   point_alpha = 0.5,
   raster = NULL,

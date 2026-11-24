@@ -24,8 +24,8 @@
 #' latter needs [bixverse::add_nhoods_info()] to have been run.
 #' @param show_cells Boolean. Draw the cells underneath the graph
 #' (default: TRUE).
-#' @param embd_modality String. One of `c("rna", "adt", "wnn")`. Modality the
-#' embedding is pulled from.
+#' @param embd_modality String. One of `c("rna", "adt", "atac", "wnn")`.
+#' Modality the embedding is pulled from.
 #' @param point_size Optional numeric. Size of the cells. If not provided, will
 #' be auto-determined.
 #' @param point_alpha Numeric. Alpha of the cells (default: 0.4).
@@ -57,7 +57,7 @@ milo_nhood_plot_sc <- function(
   overlap = 1L,
   colour_by = c("logFC", "majority_celltype"),
   show_cells = TRUE,
-  embd_modality = c("rna", "adt", "wnn"),
+  embd_modality = c("rna", "adt", "atac", "wnn"),
   point_size = NULL,
   point_alpha = 0.4,
   raster = NULL,

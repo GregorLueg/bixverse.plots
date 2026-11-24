@@ -12,7 +12,7 @@ heatmap_plot_sc(
   feature_grouping = NULL,
   scale = TRUE,
   clip = 2.5,
-  modality = c("rna", "adt"),
+  modality = c("rna", "adt", "atac"),
   max_cells_per_group = NULL,
   seed = 42L,
   group_gap = 0.002,
@@ -44,7 +44,7 @@ MS4A1 = "B cell", ...). Groups are ordered by first appearance.
 \item{clip}{Optional numeric. Clip z-scores if \code{scale = TRUE}. Without it a
 handful of extreme cells flatten the colour range.}
 
-\item{modality}{String. One of \code{c("rna", "adt")}.}
+\item{modality}{String. One of \code{c("rna", "adt", "atac")}.}
 
 \item{max_cells_per_group}{Optional integer. Subsample every group to at
 most this many cells. \code{NULL} (default) draws all cells.}

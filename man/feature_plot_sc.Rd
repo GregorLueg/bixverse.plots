@@ -11,8 +11,9 @@ feature_plot_sc(
   feature_labels = NULL,
   scale = FALSE,
   clip = NULL,
-  expr_modality = c("rna", "adt"),
-  embd_modality = c("rna", "adt", "wnn"),
+  expr_modality = c("rna", "adt", "atac"),
+  embd_modality = c("rna", "adt", "atac", "wnn"),
+  expr_sc = NULL,
   point_size = NULL,
   point_alpha = 0.5,
   raster = NULL,
@@ -45,10 +46,16 @@ display labels (default: NULL).}
 \item{clip}{Optional numeric. Clip z-scores if \code{scale = TRUE}.}
 
 \item{expr_modality}{String. Modality the expression is pulled from. One of
-\code{c("rna", "adt")}.}
+\code{c("rna", "adt", "atac")}.}
 
 \item{embd_modality}{String. Modality the embedding is pulled from. One of
-\code{c("rna", "adt", "wnn")}. Use \code{"wnn"} for WNN-derived embeddings.}
+\code{c("rna", "adt", "atac", "wnn")}. Use \code{"wnn"} for WNN-derived embeddings.}
+
+\item{expr_sc}{Optional single cell class to take the expression from,
+e.g. the gene activity of \code{\link[bixverse:gene_activity_sc]{bixverse::gene_activity_sc()}}, while the
+embedding and \code{label_by} still come from \code{object}. Must keep the same cells
+as \code{object}. \code{expr_modality} applies to \code{expr_sc}. If \code{NULL} (default),
+the expression comes from \code{object}.}
 
 \item{point_size}{Optional numeric. Defines the point size. If not provided,
 will be auto-determined.}

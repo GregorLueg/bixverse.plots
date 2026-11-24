@@ -11,7 +11,7 @@ dot_plot_sc(
   feature_labels = NULL,
   feature_grouping = NULL,
   scale_exp = TRUE,
-  modality = c("rna", "adt"),
+  modality = c("rna", "adt", "atac"),
   cluster_groups = TRUE,
   palette = c("sequential", "spectral", "viridis", "diverging")
 )
@@ -34,7 +34,7 @@ MS4A1 = "B cell", ...). (default: NULL).}
 
 \item{scale_exp}{Boolean. Whether to min-max scale mean expression per gene.}
 
-\item{modality}{String. One of \code{c("rna", "adt")}.}
+\item{modality}{String. One of \code{c("rna", "adt", "atac")}.}
 
 \item{cluster_groups}{Boolean. Use hierarchical clustering on the grouping variable
 to re-order the group labels based on expression similarity.}

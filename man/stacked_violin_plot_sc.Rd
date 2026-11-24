@@ -11,7 +11,7 @@ stacked_violin_plot_sc(
   feature_labels = NULL,
   scale = FALSE,
   clip = NULL,
-  modality = c("rna", "adt"),
+  modality = c("rna", "adt", "atac"),
   palette = BX_PALETTES
 )
 }
@@ -29,7 +29,7 @@ display labels (default: NULL).}
 
 \item{clip}{Optional numeric. Clip z-scores if \code{scale = TRUE}.}
 
-\item{modality}{String. One of \code{c("rna", "adt")}.}
+\item{modality}{String. One of \code{c("rna", "adt", "atac")}.}
 
 \item{palette}{String. Discrete palette for the group fills. One of
 \code{c("main", "sequential", "diverging", "viridis", "spectral")}, see

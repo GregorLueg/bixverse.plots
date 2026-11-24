@@ -30,8 +30,8 @@
 #' @param show_cells Boolean. Draw the cells underneath the graph
 #' (default: TRUE).
 #' @param label Boolean. Label the nodes with their cluster (default: TRUE).
-#' @param embd_modality String. One of `c("rna", "adt", "wnn")`. Modality the
-#' embedding is pulled from.
+#' @param embd_modality String. One of `c("rna", "adt", "atac", "wnn")`.
+#' Modality the embedding is pulled from.
 #' @param centroid String. One of `c("median", "mean")`. How a cluster's
 #' position is summarised. Median by default, since embeddings throw stragglers
 #' that drag a mean off its cluster.
@@ -70,7 +70,7 @@ paga_plot_sc <- function(
   node_colour_by = NULL,
   show_cells = TRUE,
   label = TRUE,
-  embd_modality = c("rna", "adt", "wnn"),
+  embd_modality = c("rna", "adt", "atac", "wnn"),
   centroid = c("median", "mean"),
   point_size = NULL,
   point_alpha = 0.4,

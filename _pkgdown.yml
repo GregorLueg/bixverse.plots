@@ -91,6 +91,12 @@ reference:
       - paga_plot_sc
       - milo_nhood_plot_sc
       - plot_binary_heatmap
+  - title: Single cell ATAC plotting functions
+    desc: QC plots for single cell ATAC
+    contents:
+      - lsi_depth_plot_sc
+      - tss_profile_plot_sc
+      - fragment_length_plot_sc
   # Geom extensions
   - title: Geom extensions
     desc: Extensions around the ggplot2 universe
