@@ -1,3 +1,21 @@
+# bixverse.plots 0.4.0
+
+**Features:**
+
+- scATAC QC plots: `lsi_depth_plot_sc()`, `tss_profile_plot_sc()` and
+  `fragment_length_plot_sc()`, drawn from `bixverse::get_lsi_depth_cor()` and
+  `bixverse::fragment_profiles_sc()`.
+- `"atac"` is accepted as a modality by the embedding, feature, dot, stacked
+  violin, heatmap, feature scatter, Milo and PAGA plots. Feature pairs take an
+  `_atac` suffix.
+- `feature_plot_sc()` gains `expr_sc`: colour the embedding of one object by
+  the expression of another with the same cells, e.g. gene activity on the
+  ATAC embedding.
+
+**Changes:**
+
+- Requires `bixverse` >= 0.10.0. Results of existing plots are unchanged.
+
 # bixverse.plots 0.3.0
 
 **Changes:**
